@@ -41,10 +41,10 @@ public class SaTokenDialect extends AbstractProcessorDialect {
      */
     @Override
     public Set<IProcessor> getProcessors(final String prefix) {
-    	return new HashSet<IProcessor>(Arrays.asList(
-    			new SaTokenTagProcessor(prefix, "hasRole", StpUtil::hasRole),
-    			new SaTokenTagProcessor(prefix, "hasPermission", StpUtil::hasPermission)
-    			));
+    	return new HashSet<>(Arrays.asList(
+          new SaTokenTagProcessor(prefix, "hasRole", StpUtil::hasRole),
+          new SaTokenTagProcessor(prefix, "hasPermission", StpUtil::hasPermission)
+      ));
     }
 
 }

@@ -1,10 +1,12 @@
 package com.fc.v2.model.auto;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+@TableName("sys_area")
 public class SysArea implements Serializable {
     private Integer id;
 

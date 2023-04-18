@@ -19,7 +19,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 
 import com.fc.v2.model.auto.TsysOperLog;
-import com.fc.v2.model.auto.TsysUser;
+import com.fc.v2.model.auto.User;
 import com.fc.v2.satoken.SaTokenUtil;
 import com.fc.v2.service.SysOperLogService;
 import com.fc.v2.util.ServletUtils;
@@ -83,7 +83,7 @@ public class LogAspect
             }
 
             // 获取当前的用户
-            TsysUser currentUser = SaTokenUtil.getUser();
+            User currentUser = SaTokenUtil.getUser();
 
             // *========数据库日志=========*//
             TsysOperLog operLog = new TsysOperLog();

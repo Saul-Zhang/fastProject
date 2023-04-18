@@ -1,50 +1,23 @@
 package com.fc.v2.model.auto;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public class TSysRoleUser implements Serializable {
-    private String id;
+@Data
+@TableName("rel_role_user")
+@NoArgsConstructor
+@AllArgsConstructor
+public class RelationRoleUser implements Serializable {
 
-    private String sysUserId;
+  private static final long serialVersionUID = 1L;
 
-    private String sysRoleId;
+  private String id;
 
-    private static final long serialVersionUID = 1L;
+  private String userId;
 
-    public String getId() {
-        return id;
-    }
+  private String roleId;
 
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
-    }
-
-    public String getSysUserId() {
-        return sysUserId;
-    }
-
-    public void setSysUserId(String sysUserId) {
-        this.sysUserId = sysUserId == null ? null : sysUserId.trim();
-    }
-
-    public String getSysRoleId() {
-        return sysRoleId;
-    }
-
-    public void setSysRoleId(String sysRoleId) {
-        this.sysRoleId = sysRoleId == null ? null : sysRoleId.trim();
-    }
-
-	public TSysRoleUser() {
-		super();
-	}
-
-	public TSysRoleUser(String id, String sysUserId, String sysRoleId) {
-		super();
-		this.id = id;
-		this.sysUserId = sysUserId;
-		this.sysRoleId = sysRoleId;
-	}
-    
-    
 }

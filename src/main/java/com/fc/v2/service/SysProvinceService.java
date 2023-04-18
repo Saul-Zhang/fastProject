@@ -1,7 +1,7 @@
 package com.fc.v2.service;
 
 import com.fc.v2.common.support.ConvertUtil;
-import com.fc.v2.mapper.auto.SysProvinceMapper;
+import com.fc.v2.mapper.SysProvinceMapper;
 import com.fc.v2.model.auto.SysProvince;
 import com.fc.v2.model.auto.SysProvinceExample;
 import com.fc.v2.model.custom.Tablepar;

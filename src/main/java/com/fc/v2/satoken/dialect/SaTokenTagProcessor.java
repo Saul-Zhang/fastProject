@@ -37,7 +37,7 @@ public class SaTokenTagProcessor extends AbstractAttributeTagProcessor {
             final AttributeName attributeName, final String attributeValue,
             final IElementTagStructureHandler structureHandler) {
     	// 执行表达式返回值为false，则删除这个标签 
-    	if(this.fun.apply(attributeValue) == false) {
+    	if(!this.fun.apply(attributeValue)) {
     		structureHandler.removeElement();
     	};
     }

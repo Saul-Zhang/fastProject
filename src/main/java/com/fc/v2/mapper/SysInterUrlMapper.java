@@ -1,7 +1,8 @@
-package com.fc.v2.mapper.auto;
+package com.fc.v2.mapper;
 
 import com.fc.v2.model.auto.SysInterUrl;
 import com.fc.v2.model.auto.SysInterUrlExample;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
  * @email 115889198@qq.com
  * @date 2020-01-05 01:48:22
  */
+//@Mapper
 public interface SysInterUrlMapper {
       	   	      	      	      	      
     long countByExample(SysInterUrlExample example);

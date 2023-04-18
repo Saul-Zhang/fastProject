@@ -1,16 +1,11 @@
-package com.fc.v2.model.auto;
+package com.fc.v2.model.response;
 
-import com.baomidou.mybatisplus.annotation.TableName;
+
 import io.swagger.annotations.ApiModelProperty;
-import java.io.Serializable;
 import lombok.Data;
 
 @Data
-@TableName("def_user")
-public class User implements Serializable {
-
-  private static final long serialVersionUID = 1L;
-
+public class UserResponse {
   /**
    * 主键
    **/
@@ -44,20 +39,14 @@ public class User implements Serializable {
   /**
    * 岗位id
    **/
-  @ApiModelProperty(value = "岗位id")
   private String posId;
 
   /**
-   * 工号
-   */
-  private String employeeId;
-
-  private Integer status;
-
-  private String tel;
-
-  private String gender;
-
-  private String email;
-
+   * 部门名称
+   **/
+  private String depName;
+  /**
+   * 岗位名称
+   **/
+  private String posName;
 }

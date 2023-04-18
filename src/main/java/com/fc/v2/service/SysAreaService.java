@@ -2,12 +2,10 @@ package com.fc.v2.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fc.v2.common.support.ConvertUtil;
-import com.fc.v2.mapper.auto.SysAreaMapper;
+import com.fc.v2.mapper.SysAreaMapper;
 import com.fc.v2.model.auto.SysArea;
 import com.fc.v2.model.auto.SysAreaExample;
-import com.fc.v2.model.auto.Test;
 import com.fc.v2.model.custom.Tablepar;
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

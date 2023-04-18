@@ -78,9 +78,12 @@ spring:
   jackson:
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
+
+mybatis-plus:
+  mapper-locations: classpath:/mybatis/*Mapper.xml
 #mybatis:
 #  #配置mapper的扫描，找到所有的mapper.xml映射文件
-#  mapperLocations : classpath*:mybatis/*/*.xml
+#  mapperLocations : classpath*:mybatis/*.xml
 #  #mybatis提供三种sql执行器，分别是SIMPLE、REUSE、BATCH。
 #  executor-type : reuse
 #  #搜索指定包别名
@@ -89,6 +92,9 @@ spring:
 #  configuration :
 #    map-underscore-to-camel-case : true
 #pagehelper分页插件
+
+#mybatis:
+#  mapper-locations: classpath*:mybatis/*/*.xml
 pagehelper:
   helperDialect: mysql
   reasonable: true

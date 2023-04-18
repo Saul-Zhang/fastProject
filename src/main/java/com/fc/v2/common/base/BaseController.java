@@ -26,7 +26,7 @@ public class BaseController
 {
 	//系统用户
 	@Autowired
-	public SysUserService sysUserService; 
+	public UserService sysUserService;
 	
 	//系统角色
 	@Autowired
@@ -34,14 +34,14 @@ public class BaseController
 	
 	//权限
 	@Autowired
-	public SysPermissionService sysPermissionService;
+	public PermissionService permissionService;
 
 	//日志操作
 	@Autowired
 	public SysOperLogService sysOperLogService;
 	//公告
 	@Autowired
-	public SysNoticeService sysNoticeService;
+	public NoticeService noticeService;
 
     /**
      * 文件上传

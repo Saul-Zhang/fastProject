@@ -1,7 +1,7 @@
 package com.fc.v2.service;
 
 import com.fc.v2.common.support.ConvertUtil;
-import com.fc.v2.mapper.auto.SysCityMapper;
+import com.fc.v2.mapper.SysCityMapper;
 import com.fc.v2.model.auto.SysCity;
 import com.fc.v2.model.auto.SysCityExample;
 import com.fc.v2.model.custom.Tablepar;

@@ -2,8 +2,8 @@ package com.fc.v2.service;
 
 import com.fc.v2.common.base.BaseService;
 import com.fc.v2.common.support.ConvertUtil;
-import com.fc.v2.mapper.auto.SysNoticeUserMapper;
-import com.fc.v2.model.auto.SysNoticeUser;
+import com.fc.v2.mapper.RelationNoticeUserMapper;
+import com.fc.v2.model.auto.RelationNoticeUser;
 import com.fc.v2.model.auto.SysNoticeUserExample;
 import com.fc.v2.model.custom.Tablepar;
 import com.fc.v2.util.SnowflakeIdWorker;
@@ -23,9 +23,9 @@ import java.util.List;
  * @date 2019-09-08 02:12:54
  **/
 @Service
-public class SysNoticeUserService implements BaseService<SysNoticeUser, SysNoticeUserExample>{
+public class SysNoticeUserService implements BaseService<RelationNoticeUser, SysNoticeUserExample>{
 	@Autowired
-	private SysNoticeUserMapper sysNoticeUserMapper;
+	private RelationNoticeUserMapper relationNoticeUserMapper;
 	   	   	      	      	      	      	
 	/**
 	 * 分页查询
@@ -33,7 +33,7 @@ public class SysNoticeUserService implements BaseService<SysNoticeUser, SysNotic
 	 * @param pageSize
 	 * @return
 	 */
-	 public PageInfo<SysNoticeUser> list(Tablepar tablepar,String name){
+	 public PageInfo<RelationNoticeUser> list(Tablepar tablepar,String name){
 	        SysNoticeUserExample testExample=new SysNoticeUserExample();
 	        testExample.setOrderByClause("id ASC");
 	        if(name!=null&&!"".equals(name)){
@@ -41,8 +41,8 @@ public class SysNoticeUserService implements BaseService<SysNoticeUser, SysNotic
 	        }
 
 	        PageHelper.startPage(tablepar.getPage(), tablepar.getLimit());
-	        List<SysNoticeUser> list= sysNoticeUserMapper.selectByExample(testExample);
-	        PageInfo<SysNoticeUser> pageInfo = new PageInfo<SysNoticeUser>(list);
+	        List<RelationNoticeUser> list= relationNoticeUserMapper.selectByExample(testExample);
+	        PageInfo<RelationNoticeUser> pageInfo = new PageInfo<RelationNoticeUser>(list);
 	        return  pageInfo;
 	 }
 
@@ -51,75 +51,75 @@ public class SysNoticeUserService implements BaseService<SysNoticeUser, SysNotic
 		List<String> lista=ConvertUtil.toListStrArray(ids);
 		SysNoticeUserExample example=new SysNoticeUserExample();
 		example.createCriteria().andIdIn(lista);
-		return sysNoticeUserMapper.deleteByExample(example);
+		return relationNoticeUserMapper.deleteByExample(example);
 	}
 	
 	
 	@Override
-	public SysNoticeUser selectByPrimaryKey(String id) {
+	public RelationNoticeUser selectByPrimaryKey(String id) {
 		
-		return sysNoticeUserMapper.selectByPrimaryKey(id);
+		return relationNoticeUserMapper.selectByPrimaryKey(id);
 	}
 
 	
 	@Override
-	public int updateByPrimaryKeySelective(SysNoticeUser record) {
-		return sysNoticeUserMapper.updateByPrimaryKeySelective(record);
+	public int updateByPrimaryKeySelective(RelationNoticeUser record) {
+		return relationNoticeUserMapper.updateByPrimaryKeySelective(record);
 	}
 	
 	/**
 	 * 添加
 	 */
 	@Override
-	public int insertSelective(SysNoticeUser record) {
+	public int insertSelective(RelationNoticeUser record) {
 		//添加雪花主键id
 		record.setId(SnowflakeIdWorker.getUUID());
-		return sysNoticeUserMapper.insertSelective(record);
+		return relationNoticeUserMapper.insertSelective(record);
 	}
 	
 	
 	@Override
-	public int updateByExampleSelective(SysNoticeUser record, SysNoticeUserExample example) {
+	public int updateByExampleSelective(RelationNoticeUser record, SysNoticeUserExample example) {
 		
-		return sysNoticeUserMapper.updateByExampleSelective(record, example);
-	}
-
-	
-	@Override
-	public int updateByExample(SysNoticeUser record, SysNoticeUserExample example) {
-		
-		return sysNoticeUserMapper.updateByExample(record, example);
+		return relationNoticeUserMapper.updateByExampleSelective(record, example);
 	}
 
+	
 	@Override
-	public List<SysNoticeUser> selectByExample(SysNoticeUserExample example) {
+	public int updateByExample(RelationNoticeUser record, SysNoticeUserExample example) {
 		
-		return sysNoticeUserMapper.selectByExample(example);
+		return relationNoticeUserMapper.updateByExample(record, example);
+	}
+
+	@Override
+	public List<RelationNoticeUser> selectByExample(SysNoticeUserExample example) {
+		
+		return relationNoticeUserMapper.selectByExample(example);
 	}
 
 	
 	@Override
 	public long countByExample(SysNoticeUserExample example) {
 		
-		return sysNoticeUserMapper.countByExample(example);
+		return relationNoticeUserMapper.countByExample(example);
 	}
 
 	
 	@Override
 	public int deleteByExample(SysNoticeUserExample example) {
 		
-		return sysNoticeUserMapper.deleteByExample(example);
+		return relationNoticeUserMapper.deleteByExample(example);
 	}
 	
 	/**
 	 * 检查name
-	 * @param sysNoticeUser
+	 * @param relationNoticeUser
 	 * @return
 	 */
-	public int checkNameUnique(SysNoticeUser sysNoticeUser){
+	public int checkNameUnique(RelationNoticeUser relationNoticeUser){
 		SysNoticeUserExample example=new SysNoticeUserExample();
-		example.createCriteria().andUserIdEqualTo(sysNoticeUser.getUserId());
-		List<SysNoticeUser> list=sysNoticeUserMapper.selectByExample(example);
+		example.createCriteria().andUserIdEqualTo(relationNoticeUser.getUserId());
+		List<RelationNoticeUser> list= relationNoticeUserMapper.selectByExample(example);
 		return list.size();
 	}
 	

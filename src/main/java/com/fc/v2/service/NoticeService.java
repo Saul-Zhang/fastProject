@@ -1,6 +1,7 @@
 package com.fc.v2.service;
 
 import com.fc.v2.common.base.BaseService;
+import com.fc.v2.common.mybatis.LambdaQueryWrapperX;
 import com.fc.v2.common.support.ConvertUtil;
 import com.fc.v2.mapper.NoticeMapper;
 import com.fc.v2.mapper.RelationNoticeUserMapper;
@@ -19,24 +20,25 @@ import com.github.pagehelper.PageInfo;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * 公告 SysNoticeService
- **/
+
 @Service
-public class SysNoticeService implements BaseService<Notice, SysNoticeExample> {
+@RequiredArgsConstructor
+public class NoticeService implements BaseService<Notice, SysNoticeExample> {
 
   @Autowired
   private NoticeMapper noticeMapper;
   @Autowired
-  private SysUserService sysUserService;
+  private UserService userService;
   @Autowired
   private SysNoticeUserService sysNoticeUserService;
-  @Autowired
-  private RelationNoticeUserMapper relationNoticeUserMapper;
+
+  private final RelationNoticeUserMapper noticeUserMapper;
 
   /**
    * 分页查询
@@ -71,7 +73,7 @@ public class SysNoticeService implements BaseService<Notice, SysNoticeExample> {
     SysNoticeUserExample sysNoticeUserExample = new SysNoticeUserExample();
     Criteria criteria = sysNoticeUserExample.createCriteria();
     criteria.andUserIdEqualTo(user.getId());
-    List<RelationNoticeUser> noticeUsers = relationNoticeUserMapper.selectByExample(
+    List<RelationNoticeUser> noticeUsers = noticeUserMapper.selectByExample(
         sysNoticeUserExample);
     if (noticeUsers != null && noticeUsers.size() > 0) {
       //查询对应的公告列表
@@ -140,7 +142,7 @@ public class SysNoticeService implements BaseService<Notice, SysNoticeExample> {
     record.setCreateTime(new Date());
     noticeMapper.insertSelective(record);
     //给所有人添加公告状态
-    List<User> list = sysUserService.selectByExample(new TsysUserExample());
+    List<User> list = userService.selectByExample(new TsysUserExample());
     for (User user : list) {
       RelationNoticeUser noticeUser = new RelationNoticeUser(null, record.getId(), user.getId(), 0);
       sysNoticeUserService.insertSelective(noticeUser);
@@ -184,9 +186,6 @@ public class SysNoticeService implements BaseService<Notice, SysNoticeExample> {
 
   /**
    * 检查name
-   *
-   * @param notice
-   * @return
    */
   public int checkNameUnique(Notice notice) {
     SysNoticeExample example = new SysNoticeExample();
@@ -198,11 +197,7 @@ public class SysNoticeService implements BaseService<Notice, SysNoticeExample> {
   /**
    * 获取用户未阅读公告
    *
-   * @param user
    * @param state 阅读状态  0未阅读 1 阅读  -1全部
-   * @return
-   * @author fuce
-   * @Date 2019年9月8日 上午3:36:21
    */
   public List<Notice> getuserNoticeNotRead(User user, int state) {
     List<Notice> notices = new ArrayList<>();
@@ -213,7 +208,7 @@ public class SysNoticeService implements BaseService<Notice, SysNoticeExample> {
     if (-1 != state) {
       criteria.andStateEqualTo(state);
     }
-    List<RelationNoticeUser> noticeUsers = relationNoticeUserMapper.selectByExample(
+    List<RelationNoticeUser> noticeUsers = noticeUserMapper.selectByExample(
         sysNoticeUserExample);
     if (noticeUsers != null && noticeUsers.size() > 0) {
       //查询对应的公告列表
@@ -228,38 +223,65 @@ public class SysNoticeService implements BaseService<Notice, SysNoticeExample> {
     return notices;
   }
 
+  /**
+   * 获取用户未阅读公告
+   *
+   * @param state 阅读状态  0未阅读 1 阅读  -1全部
+   */
+  public List<Notice> getNotice(User user, Integer state) {
+    List<String> noticeList = noticeUserMapper.selectList(
+            new LambdaQueryWrapperX<RelationNoticeUser>()
+                .eq(RelationNoticeUser::getUserId, user.getId())
+                .eqIfPresent(RelationNoticeUser::getState, state))
+        .stream().map(RelationNoticeUser::getNoticeId)
+        .collect(Collectors.toList());
+
+//    List<Notice> notices = new ArrayList<>();
+//    //查询未阅读的公告用户外键
+//    SysNoticeUserExample sysNoticeUserExample = new SysNoticeUserExample();
+//    Criteria criteria = sysNoticeUserExample.createCriteria();
+//    criteria.andUserIdEqualTo(user.getId());
+//    if (-1 != state) {
+//      criteria.andStateEqualTo(state);
+//    }
+//    List<RelationNoticeUser> noticeUsers = noticeUserMapper.selectByExample(
+//        sysNoticeUserExample);
+//    if (noticeUsers != null && noticeUsers.size() > 0) {
+//      //查询对应的公告列表
+//      List<String> ids = new ArrayList<String>();
+//      for (RelationNoticeUser relationNoticeUser : noticeUsers) {
+//        ids.add(relationNoticeUser.getNoticeId());
+//      }
+//      SysNoticeExample noticeExample = new SysNoticeExample();
+//      noticeExample.createCriteria().andIdIn(ids);
+//      notices = noticeMapper.selectByExample(noticeExample);
+//    }
+    return noticeMapper.selectList(new LambdaQueryWrapperX<Notice>()
+        .inIfPresent(Notice::getId, noticeList));
+  }
+
 
   /**
    * 根据公告id把当前用户的公告置为以查看
-   *
-   * @param noticeid
-   * @author fuce
-   * @Date 2019年9月8日 下午7:14:19
    */
   public void editUserState(String noticeid) {
     //SysNoticeUser
     SysNoticeUserExample sysNoticeUserExample = new SysNoticeUserExample();
     sysNoticeUserExample.createCriteria().andNoticeIdEqualTo(noticeid)
         .andUserIdEqualTo(SaTokenUtil.getUserId());
-    List<RelationNoticeUser> noticeUsers = relationNoticeUserMapper.selectByExample(
+    List<RelationNoticeUser> noticeUsers = noticeUserMapper.selectByExample(
         sysNoticeUserExample);
     for (RelationNoticeUser relationNoticeUser : noticeUsers) {
       relationNoticeUser.setState(1);
-      relationNoticeUserMapper.updateByPrimaryKey(relationNoticeUser);
+      noticeUserMapper.updateByPrimaryKey(relationNoticeUser);
     }
   }
 
   /**
    * 获取最新8条公告
-   *
-   * @return
    */
   public List<Notice> getNEW() {
-    SysNoticeExample testExample = new SysNoticeExample();
-    testExample.setOrderByClause("id DESC");
-    PageHelper.startPage(1, 8);
-    List<Notice> list = noticeMapper.selectByExample(testExample);
-    return list;
+    return noticeMapper.selectList(new LambdaQueryWrapperX<Notice>().orderByDesc(Notice::getId).limitN(8));
   }
 
 

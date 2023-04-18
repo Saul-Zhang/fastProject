@@ -1,4 +1,4 @@
-package com.fc.v2.mapper.custom;
+package com.fc.v2.mapper;
 
 import com.fc.v2.model.custom.SQLAdapter;
 
@@ -13,7 +13,7 @@ import java.util.Map;
 * @date 2019-08-31 18:11
 *
  */
-public interface SysUtilDao {
+public interface SysUtilMapper {
 	
 	/**
 	 * 执行sql

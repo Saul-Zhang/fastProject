@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fc.v2.mapper.SysNoticeMapper">
-  <resultMap id="BaseResultMap" type="com.fc.v2.model.auto.SysNotice">
+<mapper namespace="com.fc.v2.mapper.NoticeMapper">
+  <resultMap id="BaseResultMap" type="com.fc.v2.model.auto.Notice">
     <result column="id" jdbcType="VARCHAR" property="id" />
     <result column="title" jdbcType="VARCHAR" property="title" />
     <result column="content" jdbcType="VARCHAR" property="content" />
@@ -109,7 +109,7 @@
     </if>
   </delete>
   
-  <insert id="insert" parameterType="com.fc.v2.model.auto.SysNotice">
+  <insert id="insert" parameterType="com.fc.v2.model.auto.Notice">
     insert into t_sys_notice (
       	  	       id,
        	  	       title,
@@ -130,7 +130,7 @@
        	    )
   </insert>
   
-  <insert id="insertSelective" parameterType="com.fc.v2.model.auto.SysNotice">
+  <insert id="insertSelective" parameterType="com.fc.v2.model.auto.Notice">
     insert into t_sys_notice
     <trim prefix="(" suffix=")" suffixOverrides=",">
           
@@ -249,7 +249,7 @@
   </update>
   
   
-      <update id="updateByPrimaryKeySelective" parameterType="com.fc.v2.model.auto.SysNotice">
+      <update id="updateByPrimaryKeySelective" parameterType="com.fc.v2.model.auto.Notice">
     update t_sys_notice
     <set>
                           <if test="title != null">
@@ -278,7 +278,7 @@
 
       	      	   	      	   	      	   	      	   	      	   	      	   	      	
 
-  <update id="updateByPrimaryKey" parameterType="com.fc.v2.model.auto.SysNotice">
+  <update id="updateByPrimaryKey" parameterType="com.fc.v2.model.auto.Notice">
     update t_sys_notice
     set 
              	        	    	 			title = #{title,jdbcType=VARCHAR},

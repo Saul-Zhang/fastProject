@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.fc.v2.common.base.BaseService;
 import com.fc.v2.common.support.ConvertUtil;
-import com.fc.v2.mapper.auto.TSysDictDataMapper;
-import com.fc.v2.mapper.auto.TSysDictTypeMapper;
+import com.fc.v2.mapper.TSysDictDataMapper;
+import com.fc.v2.mapper.TSysDictTypeMapper;
 import com.fc.v2.model.auto.TSysDictData;
 import com.fc.v2.model.auto.TSysDictDataExample;
 import com.fc.v2.model.auto.TSysDictType;

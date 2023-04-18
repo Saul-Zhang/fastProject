@@ -3,7 +3,7 @@ package com.fc.v2.controller.admin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.aizuda.monitor.OshiMonitor;
 import com.fc.v2.common.base.BaseController;
-import com.fc.v2.model.auto.SysNotice;
+import com.fc.v2.model.auto.Notice;
 import com.fc.v2.model.auto.TsysOperLog;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,24 +36,19 @@ public class ServiceController extends BaseController {
 
 	/**
 	 * 展示页面
-	 *
-	 * @param model
-	 * @return
-	 * @author fuce
-	 * @Date 2019年11月11日 下午4:04:03
 	 */
 	@ApiOperation(value = "展示页面", notes = "展示页面")
 	@GetMapping("/view")
 	@SaCheckPermission("system:service:view")
 	public String view(ModelMap model) {
-		List<SysNotice> sysNotices = sysNoticeService.getNEW();
+		List<Notice> notices = noticeService.getNEW();
 		List<TsysOperLog> sysOperLog = sysOperLogService.getNEW();
-		if (sysNotices == null || sysNotices.size() <= 0) {
-			SysNotice sysNotice = new SysNotice();
-			sysNotice.setId("0");
-			sysNotice.setTitle("暂无公告");
-			sysNotice.setCreateTime(new Date());
-			sysNotices.add(sysNotice);
+		if (notices == null || notices.size() <= 0) {
+			Notice notice = new Notice();
+			notice.setId("0");
+			notice.setTitle("暂无公告");
+			notice.setCreateTime(new Date());
+			notices.add(notice);
 		}
 
 		long nd = 1000 * 24 * 60 * 60;
@@ -72,7 +67,7 @@ public class ServiceController extends BaseController {
 
 		model.addAttribute("runtime", day + "天" + hour + "小时" + min + "分钟");
 		model.addAttribute("service", oshiMonitor);
-		model.addAttribute("sysNotices", sysNotices);
+		model.addAttribute("sysNotices", notices);
 		model.addAttribute("sysOperLog", sysOperLog);
 		return prefix + "/list";
 	}

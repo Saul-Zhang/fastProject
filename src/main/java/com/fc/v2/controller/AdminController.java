@@ -1,27 +1,20 @@
 package com.fc.v2.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
 import com.fc.v2.common.base.BaseController;
 import com.fc.v2.common.domain.AjaxResult;
-import com.fc.v2.mapper.custom.TsysUserDao;
-import com.fc.v2.model.auto.SysNotice;
-import com.fc.v2.model.auto.TsysUser;
-import com.fc.v2.model.custom.SysMenu;
+import com.fc.v2.mapper.GeneratorMapper.TsysUserMapper;
+import com.fc.v2.model.auto.Notice;
+import com.fc.v2.model.auto.User;
+import com.fc.v2.model.custom.Menu;
 import com.fc.v2.satoken.SaTokenUtil;
-import com.fc.v2.service.SysUserService;
-import com.fc.v2.util.ServletUtils;
-import com.fc.v2.util.StringUtils;
+import com.fc.v2.service.UserService;
 import io.swagger.annotations.ApiOperation;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -34,27 +27,26 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 /**
  * 后台方法
  *
- * @author fuce
- * @date 2019-10-21 00:10
+ * @author fastProject
  */
 @Controller
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 public class AdminController extends BaseController {
 
-  private final SysUserService userService;
+  private final UserService userService;
 
   private final String prefix = "admin";
 
   @Autowired
-  private TsysUserDao tsysUserDao;
+  private TsysUserMapper tsysUserMapper;
 
   @ApiOperation(value = "首页", notes = "首页")
   @GetMapping({"", "/index"})
   public String index(HttpServletRequest request) {
     request.getSession().setAttribute("sessionUserName", SaTokenUtil.getUser().getNickname());
     // 获取公告信息
-    List<SysNotice> notices = sysNoticeService.getuserNoticeNotRead(SaTokenUtil.getUser(), 0);
+    List<Notice> notices = noticeService.getNotice(SaTokenUtil.getUser(), null);
     request.getSession().setAttribute("notices", notices);
     return prefix + "/index";
   }
@@ -63,8 +55,8 @@ public class AdminController extends BaseController {
   @ApiOperation(value = "获取登录用户菜单栏", notes = "获取登录用户菜单栏")
   @GetMapping("/getUserMenu")
   @ResponseBody
-  public List<SysMenu> getUserMenu() {
-    return sysPermissionService.getSysMenus(SaTokenUtil.getUserId());
+  public List<Menu> getUserMenu() {
+    return permissionService.getMenus(SaTokenUtil.getUserId());
   }
 
 
@@ -88,7 +80,7 @@ public class AdminController extends BaseController {
   @ApiOperation(value = "用户登陆验证", notes = "用户登陆验证")
   @PostMapping("/login")
   @ResponseBody
-  public AjaxResult login(TsysUser user, String captcha, RedirectAttributes redirectAttributes,
+  public AjaxResult login(User user, String captcha, RedirectAttributes redirectAttributes,
       boolean rememberMe, HttpServletRequest request) {
     return userService.login(user, captcha, rememberMe, request);
   }

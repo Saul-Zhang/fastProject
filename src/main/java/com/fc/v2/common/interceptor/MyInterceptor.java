@@ -30,8 +30,8 @@ public class MyInterceptor  implements HandlerInterceptor {
 	 */
 	static {
 		//post
-		SysInterUrlExample example_post= new SysInterUrlExample();
-		posturllist=interUrlService.selectByExample(example_post);
+//		SysInterUrlExample example_post= new SysInterUrlExample();
+//		posturllist=interUrlService.selectByExample(example_post);
 		
 //		//用户POST请求
 //		posturllist.add("/UserController/add");

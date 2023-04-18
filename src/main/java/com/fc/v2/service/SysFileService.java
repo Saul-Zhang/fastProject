@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fc.v2.common.base.BaseService;
 import com.fc.v2.common.support.ConvertUtil;
-import com.fc.v2.mapper.auto.SysFileMapper;
+import com.fc.v2.mapper.SysFileMapper;
 import com.fc.v2.model.auto.SysFile;
 import com.fc.v2.model.auto.SysFileExample;
 import com.fc.v2.model.custom.Tablepar;

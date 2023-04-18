@@ -1,6 +1,6 @@
-package com.fc.v2.mapper.auto;
+package com.fc.v2.mapper;
 
-import com.fc.v2.model.auto.TsysPermission;
+import com.fc.v2.model.auto.Permission;
 import com.fc.v2.model.auto.TsysPermissionExample;
 import org.apache.ibatis.annotations.Param;
 
@@ -13,19 +13,19 @@ public interface TsysPermissionMapper {
 
     int deleteByPrimaryKey(String id);
 
-    int insert(TsysPermission record);
+    int insert(Permission record);
 
-    int insertSelective(TsysPermission record);
+    int insertSelective(Permission record);
 
-    List<TsysPermission> selectByExample(TsysPermissionExample example);
+    List<Permission> selectByExample(TsysPermissionExample example);
 
-    TsysPermission selectByPrimaryKey(String id);
+    Permission selectByPrimaryKey(String id);
 
-    int updateByExampleSelective(@Param("record") TsysPermission record, @Param("example") TsysPermissionExample example);
+    int updateByExampleSelective(@Param("record") Permission record, @Param("example") TsysPermissionExample example);
 
-    int updateByExample(@Param("record") TsysPermission record, @Param("example") TsysPermissionExample example);
+    int updateByExample(@Param("record") Permission record, @Param("example") TsysPermissionExample example);
 
-    int updateByPrimaryKeySelective(TsysPermission record);
+    int updateByPrimaryKeySelective(Permission record);
 
-    int updateByPrimaryKey(TsysPermission record);
+    int updateByPrimaryKey(Permission record);
 }

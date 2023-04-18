@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.fc.v2.common.base.BaseService;
 import com.fc.v2.common.support.ConvertUtil;
-import com.fc.v2.mapper.auto.TSysEmailMapper;
+import com.fc.v2.mapper.TSysEmailMapper;
 import com.fc.v2.model.auto.TSysEmail;
 import com.fc.v2.model.auto.TSysEmailExample;
 import com.fc.v2.model.custom.Tablepar;

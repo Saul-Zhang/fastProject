@@ -2,7 +2,6 @@ package com.fc.v2.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import java.util.List;
-import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.github.pagehelper.PageHelper;
@@ -10,12 +9,11 @@ import com.github.pagehelper.PageInfo;
 import cn.hutool.core.util.StrUtil;
 import com.fc.v2.common.base.BaseService;
 import com.fc.v2.common.support.ConvertUtil;
-import com.fc.v2.mapper.auto.TestMapper;
+import com.fc.v2.mapper.TestMapper;
 import com.fc.v2.model.auto.Test;
 import com.fc.v2.model.auto.TestExample;
 import com.fc.v2.model.custom.Tablepar;
 import com.fc.v2.util.SnowflakeIdWorker;
-import com.fc.v2.util.StringUtils;
 
 /**
  * 测试表 TestService

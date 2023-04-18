@@ -1,6 +1,6 @@
 package com.fc.v2.model.custom;
 
-import com.fc.v2.model.auto.TsysPermission;
+import com.fc.v2.model.auto.Permission;
 
 import java.util.List;
 
@@ -10,16 +10,16 @@ import java.util.List;
  * @date: 2018年9月8日 下午6:40:29
  */
 public class PermissionTreeModelVo {
-	private TsysPermission tsysPermission;
+	private Permission permission;
 	
 	List<PermissionTreeModelVo> childList;//子类
 
-	public TsysPermission getTsysPermission() {
-		return tsysPermission;
+	public Permission getTsysPermission() {
+		return permission;
 	}
 
-	public void setTsysPermission(TsysPermission tsysPermission) {
-		this.tsysPermission = tsysPermission;
+	public void setTsysPermission(Permission permission) {
+		this.permission = permission;
 	}
 
 	public List<PermissionTreeModelVo> getChildList() {
@@ -30,10 +30,10 @@ public class PermissionTreeModelVo {
 		this.childList = childList;
 	}
 
-	public PermissionTreeModelVo(TsysPermission tsysPermission,
+	public PermissionTreeModelVo(Permission permission,
 								 List<PermissionTreeModelVo> childList) {
 		super();
-		this.tsysPermission = tsysPermission;
+		this.permission = permission;
 		this.childList = childList;
 	}
 

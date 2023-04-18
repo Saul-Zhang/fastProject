@@ -27,39 +27,38 @@ import javax.sql.DataSource;
  * @author fuce
  * @date 2019-12-06 21:11
  */
-@Configuration
-@MapperScan(basePackages = "com.fc.v2.mapper")
+//@Configuration
+//@MapperScan(basePackages = "com.fc.v2.mapper")
 public class MybatisConfig {
 	
-	@Bean
-    @ConfigurationProperties("spring.datasource.druid.master")
-    public DruidDataSource masterDataSource()
-    {
-        return DruidDataSourceBuilder.create().build();
-    }
+//	@Bean
+//    @ConfigurationProperties("spring.datasource.druid.master")
+//    public DruidDataSource masterDataSource()
+//    {
+//        return DruidDataSourceBuilder.create().build();
+//    }
+//
+//    @Bean
+//    @ConfigurationProperties("spring.datasource.druid.slave")
+//    @ConditionalOnProperty(prefix = "spring.datasource.druid.slave", name = "enabled", havingValue = "true")
+//    public DataSource slaveDataSource()
+//    {
+//        return DruidDataSourceBuilder.create().build();
+//    }
 
-    @Bean
-    @ConfigurationProperties("spring.datasource.druid.slave")
-    @ConditionalOnProperty(prefix = "spring.datasource.druid.slave", name = "enabled", havingValue = "true")
-    public DataSource slaveDataSource()
-    {
-        return DruidDataSourceBuilder.create().build();
-    }
+//    @Bean(name = "dynamicDataSource")
+//    @Primary
+//    public DynamicDataSource dataSource(DataSource masterDataSource, DataSource slaveDataSource)
+//    {
+//        Map<Object, Object> targetDataSources = new HashMap<>();
+//        targetDataSources.put(DataSourceType.MASTER.name(), masterDataSource);
+//    	targetDataSources.put(DataSourceType.SLAVE.name(),slaveDataSource);
+//        return new DynamicDataSource(masterDataSource(), targetDataSources);
+//    }
 
-    @Bean(name = "dynamicDataSource")
-    @Primary
-    public DynamicDataSource dataSource(DataSource masterDataSource, DataSource slaveDataSource)
-    {
-        Map<Object, Object> targetDataSources = new HashMap<>();
-        targetDataSources.put(DataSourceType.MASTER.name(), masterDataSource);
-    	targetDataSources.put(DataSourceType.SLAVE.name(),slaveDataSource);
-        return new DynamicDataSource(masterDataSource(), targetDataSources);
-    }
-
-    @Bean
-    public SqlSessionFactory sqlSessionFactory(DynamicDataSource dynamicDataSource) throws Exception {
+//    @Bean
+    public SqlSessionFactory sqlSessionFactory() throws Exception {
         SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
-        factoryBean.setDataSource(dynamicDataSource);
 //        factoryBean.setTypeAliasesPackage();
         // 设置mapper.xml的位置路径
         Resource[] resources = new PathMatchingResourcePatternResolver().getResources("classpath*:mybatis/*/*.xml");
@@ -74,8 +73,8 @@ public class MybatisConfig {
      * @author fuce
      * @Date 2019年12月7日 上午11:31:33
      */
-    @Bean
-    public PlatformTransactionManager transactionManager(DynamicDataSource dynamicDataSource){
-        return new DataSourceTransactionManager(dynamicDataSource);
-    }
+//    @Bean
+//    public PlatformTransactionManager transactionManager(DynamicDataSource dynamicDataSource){
+//        return new DataSourceTransactionManager(dynamicDataSource);
+//    }
 }

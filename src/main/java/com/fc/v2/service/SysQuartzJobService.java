@@ -4,7 +4,7 @@ import com.fc.v2.common.base.BaseService;
 import com.fc.v2.common.quartz.QuartzSchedulerUtil;
 import com.fc.v2.common.quartz.ScheduleConstants;
 import com.fc.v2.common.support.ConvertUtil;
-import com.fc.v2.mapper.auto.SysQuartzJobMapper;
+import com.fc.v2.mapper.SysQuartzJobMapper;
 import com.fc.v2.model.auto.SysQuartzJob;
 import com.fc.v2.model.auto.SysQuartzJobExample;
 import com.fc.v2.model.custom.Tablepar;
@@ -211,7 +211,7 @@ public class SysQuartzJobService implements BaseService<SysQuartzJob, SysQuartzJ
 	 * 容器初始化时执行此方法
 	 * 也就是类初始化的时候
 	 */
-	@PostConstruct
+//	@PostConstruct
 	public void init() throws SchedulerException {
 
     	List<SysQuartzJob> quartzJobs=sysQuartzJobMapper.selectByExample(new SysQuartzJobExample());

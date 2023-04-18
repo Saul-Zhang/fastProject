@@ -21,7 +21,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.fc.v2.common.domain.AjaxResult;
 import com.fc.v2.model.auto.SysFile;
-import com.fc.v2.model.auto.TsysUser;
+import com.fc.v2.model.auto.User;
 import com.fc.v2.satoken.SaTokenUtil;
 import com.fc.v2.service.SysFileService;
 import com.fc.v2.util.SnowflakeIdWorker;
@@ -254,9 +254,9 @@ public class OssEndpoint {
 		String fileSuffixName=uuid+suffixName;
 		PutObjectResult putObjectResult=template.putObject(bucketName, fileSuffixName, file.getInputStream(), file.getSize(), file.getContentType());
 		if(putObjectResult!=null){
-			TsysUser tsysUser=SaTokenUtil.getUser();
+			User user =SaTokenUtil.getUser();
 			SysFile sysFile=null;
-			if(tsysUser!=null) {
+			if(user !=null) {
 				sysFile=new SysFile(uuid,  fileSuffixName,  bucketName, file.getSize(), file.getContentType(),SaTokenUtil.getUserId(), SaTokenUtil.getLoginName(), new Date(),null, null, null);
 			}else {
 				sysFile=new SysFile(uuid,  fileSuffixName,  bucketName, file.getSize(), file.getContentType(),"-", "-", new Date(),null, null, null);

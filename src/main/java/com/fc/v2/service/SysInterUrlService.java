@@ -2,7 +2,7 @@ package com.fc.v2.service;
 
 import com.fc.v2.common.base.BaseService;
 import com.fc.v2.common.support.ConvertUtil;
-import com.fc.v2.mapper.auto.SysInterUrlMapper;
+import com.fc.v2.mapper.SysInterUrlMapper;
 import com.fc.v2.model.auto.SysInterUrl;
 import com.fc.v2.model.auto.SysInterUrlExample;
 import com.fc.v2.model.custom.Tablepar;

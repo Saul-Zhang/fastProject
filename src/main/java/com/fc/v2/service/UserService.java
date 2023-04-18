@@ -2,20 +2,21 @@ package com.fc.v2.service;
 
 import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fc.v2.common.base.BaseService;
 import com.fc.v2.common.conf.FastProperties;
 import com.fc.v2.common.domain.AjaxResult;
 import com.fc.v2.common.support.ConvertUtil;
-import com.fc.v2.mapper.auto.TSysRoleUserMapper;
-import com.fc.v2.mapper.auto.TsysRoleMapper;
-import com.fc.v2.mapper.auto.TsysUserMapper;
-import com.fc.v2.mapper.custom.RoleDao;
-import com.fc.v2.mapper.custom.TsysUserDao;
-import com.fc.v2.model.auto.TSysRoleUser;
+import com.fc.v2.mapper.RelationRoleUserMapper;
+import com.fc.v2.mapper.TsysRoleMapper;
+import com.fc.v2.mapper.RoleMapper;
+import com.fc.v2.mapper.GeneratorMapper.TsysUserMapper;
+import com.fc.v2.mapper.UserMapper;
+import com.fc.v2.model.auto.RelationRoleUser;
 import com.fc.v2.model.auto.TSysRoleUserExample;
 import com.fc.v2.model.auto.TsysRole;
 import com.fc.v2.model.auto.TsysRoleExample;
-import com.fc.v2.model.auto.TsysUser;
+import com.fc.v2.model.auto.User;
 import com.fc.v2.model.auto.TsysUserExample;
 import com.fc.v2.model.custom.RoleVo;
 import com.fc.v2.model.custom.Tablepar;
@@ -39,20 +40,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SysUserService implements BaseService<TsysUser, TsysUserExample> {
+public class UserService implements BaseService<User, TsysUserExample> {
+
+  private final UserMapper userMapper;
 
   private final FastProperties properties;
   //生成的用户dao
   @Autowired
-  private TsysUserMapper tsysUserMapper;
+  private com.fc.v2.mapper.TsysUserMapper tsysUserMapper;
 
   //生成的角色用户dao
   @Autowired
-  private TSysRoleUserMapper tSysRoleUserMapper;
+  private RelationRoleUserMapper relationRoleUserMapper;
 
   //自定义角色dao
   @Autowired
-  private RoleDao roleDao;
+  private RoleMapper roleMapper;
 
   //自动生成的角色dao
   @Autowired
@@ -60,19 +63,15 @@ public class SysUserService implements BaseService<TsysUser, TsysUserExample> {
 
   //自定义用户dao
   @Autowired
-  private TsysUserDao userDao;
+  private TsysUserMapper userDao;
 
   /**
    * 分页查询
-   *
-   * @param pageNum
-   * @param pageSize
-   * @return
    */
-  public PageInfo<TsysUser> list(Tablepar tablepar) {
+  public PageInfo<User> list(Tablepar tablepar) {
     PageHelper.startPage(tablepar.getPage(), tablepar.getLimit());
-    List<TsysUser> list = userDao.queryUserInfo(tablepar.getSearchText());
-    PageInfo<TsysUser> pageInfo = new PageInfo<TsysUser>(list);
+    List<User> list = userDao.queryUserInfo(tablepar.getSearchText());
+    PageInfo<User> pageInfo = new PageInfo<>(list);
     return pageInfo;
   }
 
@@ -87,7 +86,7 @@ public class SysUserService implements BaseService<TsysUser, TsysUserExample> {
     if (i > 0) {
       TSysRoleUserExample tSysRoleUserExample = new TSysRoleUserExample();
       tSysRoleUserExample.createCriteria().andSysUserIdIn(lista);
-      tSysRoleUserMapper.deleteByExample(tSysRoleUserExample);
+      relationRoleUserMapper.deleteByExample(tSysRoleUserExample);
     }
     return i;
 
@@ -97,7 +96,7 @@ public class SysUserService implements BaseService<TsysUser, TsysUserExample> {
    * 添加用户
    */
   @Override
-  public int insertSelective(TsysUser record) {
+  public int insertSelective(User record) {
     return tsysUserMapper.insertSelective(record);
   }
 
@@ -109,14 +108,14 @@ public class SysUserService implements BaseService<TsysUser, TsysUserExample> {
    * @return
    */
   @Transactional
-  public int insertUserRoles(TsysUser record, String roles) {
+  public int insertUserRoles(User record, String roles) {
     String userid = SnowflakeIdWorker.getUUID();
     record.setId(userid);
     if (StringUtils.isNotEmpty(roles)) {
       List<String> list_roles = ConvertUtil.toListStrArray(roles);
       for (String rolesid : list_roles) {
-        TSysRoleUser roleUser = new TSysRoleUser(SnowflakeIdWorker.getUUID(), userid, rolesid);
-        tSysRoleUserMapper.insertSelective(roleUser);
+        RelationRoleUser roleUser = new RelationRoleUser(SnowflakeIdWorker.getUUID(), userid, rolesid);
+        relationRoleUserMapper.insertSelective(roleUser);
       }
     }
 
@@ -126,34 +125,34 @@ public class SysUserService implements BaseService<TsysUser, TsysUserExample> {
   }
 
   @Override
-  public TsysUser selectByPrimaryKey(String id) {
+  public User selectByPrimaryKey(String id) {
 
     return tsysUserMapper.selectByPrimaryKey(id);
   }
 
 
   @Override
-  public int updateByPrimaryKeySelective(TsysUser record) {
+  public int updateByPrimaryKeySelective(User record) {
     record.setPassword(MD5Util.encode(record.getPassword()));
     return tsysUserMapper.updateByPrimaryKeySelective(record);
   }
 
 
   @Override
-  public int updateByExampleSelective(TsysUser record, TsysUserExample example) {
+  public int updateByExampleSelective(User record, TsysUserExample example) {
 
     return tsysUserMapper.updateByExampleSelective(record, example);
   }
 
 
   @Override
-  public int updateByExample(TsysUser record, TsysUserExample example) {
+  public int updateByExample(User record, TsysUserExample example) {
 
     return tsysUserMapper.updateByExample(record, example);
   }
 
   @Override
-  public List<TsysUser> selectByExample(TsysUserExample example) {
+  public List<User> selectByExample(TsysUserExample example) {
 
     return tsysUserMapper.selectByExample(example);
   }
@@ -175,13 +174,13 @@ public class SysUserService implements BaseService<TsysUser, TsysUserExample> {
   /**
    * 检查用户name
    *
-   * @param tsysUser
+   * @param user
    * @return
    */
-  public int checkLoginNameUnique(TsysUser tsysUser) {
+  public int checkLoginNameUnique(User user) {
     TsysUserExample example = new TsysUserExample();
-    example.createCriteria().andUsernameEqualTo(tsysUser.getUsername());
-    List<TsysUser> list = tsysUserMapper.selectByExample(example);
+    example.createCriteria().andUsernameEqualTo(user.getUsername());
+    List<User> list = tsysUserMapper.selectByExample(example);
 
     return list.size();
   }
@@ -194,7 +193,7 @@ public class SysUserService implements BaseService<TsysUser, TsysUserExample> {
   public List<RoleVo> getUserIsRole(String userid) {
     List<RoleVo> list = new ArrayList<RoleVo>();
     //查询出我的权限
-    List<TsysRole> myRoles = roleDao.queryUserRole(userid);
+    List<TsysRole> myRoles = roleMapper.queryUserRole(userid);
     TsysRoleExample tsysRoleExample = new TsysRoleExample();
     //查询系统所有的角色
     List<TsysRole> tsysRoles = tsysRoleMapper.selectByExample(tsysRoleExample);
@@ -226,7 +225,7 @@ public class SysUserService implements BaseService<TsysUser, TsysUserExample> {
    * @param record
    * @return
    */
-  public int updateUserPassword(TsysUser record) {
+  public int updateUserPassword(User record) {
     record.setPassword(MD5Util.encode(record.getPassword()));
     //修改用户信息
     return tsysUserMapper.updateByPrimaryKeySelective(record);
@@ -241,18 +240,18 @@ public class SysUserService implements BaseService<TsysUser, TsysUserExample> {
    * @return
    */
   @Transactional
-  public int updateUserRoles(TsysUser record, String roleIds) {
+  public int updateUserRoles(User record, String roleIds) {
     //先删除这个用户的所有角色
     TSysRoleUserExample tSysRoleUserExample = new TSysRoleUserExample();
     tSysRoleUserExample.createCriteria().andSysUserIdEqualTo(record.getId());
-    tSysRoleUserMapper.deleteByExample(tSysRoleUserExample);
+    relationRoleUserMapper.deleteByExample(tSysRoleUserExample);
     if (StringUtils.isNotEmpty(roleIds)) {
       List<String> list_roles = ConvertUtil.toListStrArray(roleIds);
       //添加新的角色信息
       for (String role : list_roles) {
-        TSysRoleUser tSysRoleUser = new TSysRoleUser(SnowflakeIdWorker.getUUID(), record.getId(),
+        RelationRoleUser relationRoleUser = new RelationRoleUser(SnowflakeIdWorker.getUUID(), record.getId(),
             role);
-        tSysRoleUserMapper.insertSelective(tSysRoleUser);
+        relationRoleUserMapper.insertSelective(relationRoleUser);
       }
     }
     // 清除此用户角色信息缓存
@@ -263,7 +262,7 @@ public class SysUserService implements BaseService<TsysUser, TsysUserExample> {
   }
 
 
-  public AjaxResult login(TsysUser user, String captcha, boolean rememberMe,
+  public AjaxResult login(User user, String captcha, boolean rememberMe,
       HttpServletRequest request) {
     if (properties.getCaptchaEnabled()) {
       // 获取session中的验证码
@@ -278,7 +277,7 @@ public class SysUserService implements BaseService<TsysUser, TsysUserExample> {
     }
 
     String userName = user.getUsername();
-    TsysUser queryUser = userDao.queryUserName(userName);
+    User queryUser = userMapper.selectOne(new QueryWrapper<User>().lambda().eq(User::getUsername, userName));
     if (queryUser == null || !SaSecureUtil.md5(user.getPassword())
         .equals(queryUser.getPassword())) {
       return AjaxResult.error(500, "用户名或密码不正确");

@@ -1,31 +1,32 @@
 package com.fc.v2.mapper;
 
-import com.fc.v2.model.auto.TSysRoleUser;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.fc.v2.model.auto.RelationRoleUser;
 import com.fc.v2.model.auto.TSysRoleUserExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface TSysRoleUserMapper {
+public interface RelationRoleUserMapper extends BaseMapper<RelationRoleUser> {
     int countByExample(TSysRoleUserExample example);
 
     int deleteByExample(TSysRoleUserExample example);
 
     int deleteByPrimaryKey(String id);
 
-    int insert(TSysRoleUser record);
+    int insert(RelationRoleUser record);
 
-    int insertSelective(TSysRoleUser record);
+    int insertSelective(RelationRoleUser record);
 
-    List<TSysRoleUser> selectByExample(TSysRoleUserExample example);
+    List<RelationRoleUser> selectByExample(TSysRoleUserExample example);
 
-    TSysRoleUser selectByPrimaryKey(String id);
+    RelationRoleUser selectByPrimaryKey(String id);
 
-    int updateByExampleSelective(@Param("record") TSysRoleUser record, @Param("example") TSysRoleUserExample example);
+    int updateByExampleSelective(@Param("record") RelationRoleUser record, @Param("example") TSysRoleUserExample example);
 
-    int updateByExample(@Param("record") TSysRoleUser record, @Param("example") TSysRoleUserExample example);
+    int updateByExample(@Param("record") RelationRoleUser record, @Param("example") TSysRoleUserExample example);
 
-    int updateByPrimaryKeySelective(TSysRoleUser record);
+    int updateByPrimaryKeySelective(RelationRoleUser record);
 
-    int updateByPrimaryKey(TSysRoleUser record);
+    int updateByPrimaryKey(RelationRoleUser record);
 }

@@ -2,7 +2,7 @@ package com.fc.v2.service;
 
 import com.fc.v2.common.base.BaseService;
 import com.fc.v2.common.support.ConvertUtil;
-import com.fc.v2.mapper.auto.TsysOperLogMapper;
+import com.fc.v2.mapper.TsysOperLogMapper;
 import com.fc.v2.model.auto.TsysOperLog;
 import com.fc.v2.model.auto.TsysOperLogExample;
 import com.fc.v2.model.custom.Tablepar;

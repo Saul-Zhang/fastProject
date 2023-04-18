@@ -3,9 +3,9 @@ package com.fc.v2.service;
 import cn.hutool.core.util.RandomUtil;
 import com.fc.v2.common.base.BaseService;
 import com.fc.v2.common.support.ConvertUtil;
-import com.fc.v2.mapper.auto.TsysPermissionRoleMapper;
-import com.fc.v2.mapper.auto.TsysRoleMapper;
-import com.fc.v2.mapper.custom.RoleDao;
+import com.fc.v2.mapper.TsysPermissionRoleMapper;
+import com.fc.v2.mapper.TsysRoleMapper;
+import com.fc.v2.mapper.RoleMapper;
 import com.fc.v2.model.auto.TsysPermissionRole;
 import com.fc.v2.model.auto.TsysPermissionRoleExample;
 import com.fc.v2.model.auto.TsysRole;
@@ -27,7 +27,7 @@ public class SysRoleService implements BaseService<TsysRole, TsysRoleExample> {
 	private TsysRoleMapper tsysRoleMapper;
 	//自定义角色dao
 	@Autowired
-	private RoleDao roleDao;
+	private RoleMapper roleMapper;
 	//自动生成的权限角色映射mapper
 	@Autowired
 	private TsysPermissionRoleMapper tsysPermissionRoleMapper;
@@ -197,7 +197,7 @@ public class SysRoleService implements BaseService<TsysRole, TsysRoleExample> {
 	 * @return
 	 */
 	public List<TsysRole> queryUserRole(String userid){
-		return roleDao.queryUserRole(userid);
+		return roleMapper.queryUserRole(userid);
 	}
 	
 }

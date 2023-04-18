@@ -1,18 +1,15 @@
 package com.fc.v2.mapper;
 
-import com.fc.v2.model.auto.SysNotice;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.fasterxml.jackson.databind.ser.Serializers.Base;
+import com.fc.v2.model.auto.Notice;
 import com.fc.v2.model.auto.SysNoticeExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-/**
- * 公告 SysNoticeMapper
- * @author fuce_自动生成
- * @email 115889198@qq.com
- * @date 2019-09-08 01:38:44
- */
-public interface SysNoticeMapper {
+
+public interface NoticeMapper extends BaseMapper<Notice> {
       	      	   	      	   	      	   	      	   	      	   	      	   	      
     long countByExample(SysNoticeExample example);
 
@@ -20,20 +17,20 @@ public interface SysNoticeMapper {
 		
     int deleteByPrimaryKey(String id);
 		
-    int insert(SysNotice record);
+    int insert(Notice record);
 
-    int insertSelective(SysNotice record);
+    int insertSelective(Notice record);
 
-    List<SysNotice> selectByExample(SysNoticeExample example);
+    List<Notice> selectByExample(SysNoticeExample example);
 		
-    SysNotice selectByPrimaryKey(String id);
+    Notice selectByPrimaryKey(String id);
 		
-    int updateByExampleSelective(@Param("record") SysNotice record, @Param("example") SysNoticeExample example);
+    int updateByExampleSelective(@Param("record") Notice record, @Param("example") SysNoticeExample example);
 
-    int updateByExample(@Param("record") SysNotice record, @Param("example") SysNoticeExample example); 
+    int updateByExample(@Param("record") Notice record, @Param("example") SysNoticeExample example);
 		
-    int updateByPrimaryKeySelective(SysNotice record);
+    int updateByPrimaryKeySelective(Notice record);
 
-    int updateByPrimaryKey(SysNotice record);
+    int updateByPrimaryKey(Notice record);
   	  	
 }

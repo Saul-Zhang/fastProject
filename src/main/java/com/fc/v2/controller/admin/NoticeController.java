@@ -16,27 +16,21 @@ import com.fc.v2.common.domain.ResultTable;
 import com.fc.v2.model.auto.Notice;
 import com.fc.v2.model.custom.Tablepar;
 import com.fc.v2.satoken.SaTokenUtil;
-import com.fc.v2.service.SysNoticeService;
+import com.fc.v2.service.NoticeService;
 import com.github.pagehelper.PageInfo;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-/**
- * 公告Controller
- * @ClassName: SysNoticeController
- * @author fuce
- * @date 2019-11-20 22:31
- */
 @Api(value = "公告")
 @Controller
 @RequestMapping("/SysNoticeController")
-public class SysNoticeController extends BaseController{
+public class NoticeController extends BaseController{
 	
 	private final String prefix = "admin/sysNotice";
 	@Autowired
-	private SysNoticeService sysNoticeService;
+	private NoticeService noticeService;
 	
 	
 	/**
@@ -67,7 +61,7 @@ public class SysNoticeController extends BaseController{
 	@SaCheckPermission("gen:sysNotice:list")
 	@ResponseBody
 	public ResultTable list(Tablepar tablepar, String searchText){
-		PageInfo<Notice> page=sysNoticeService.list(tablepar,searchText) ;
+		PageInfo<Notice> page= noticeService.list(tablepar,searchText) ;
 		return pageTable(page.getList(),page.getTotal());
 	}
 	
@@ -96,7 +90,7 @@ public class SysNoticeController extends BaseController{
 	@ResponseBody
     public ResultTable viewUserlist(Tablepar tablepar,String searchText)
     {
-		PageInfo<Notice> page=sysNoticeService.list(SaTokenUtil.getUser(), tablepar, searchText);
+		PageInfo<Notice> page= noticeService.list(SaTokenUtil.getUser(), tablepar, searchText);
 		return pageTable(page.getList(),page.getTotal());
     }
 	
@@ -124,7 +118,7 @@ public class SysNoticeController extends BaseController{
 	@SaCheckPermission("gen:sysNotice:add")
 	@ResponseBody
 	public AjaxResult add(Notice notice){
-		int b=sysNoticeService.insertSelective(notice);
+		int b= noticeService.insertSelective(notice);
 		if(b>0){
 			return success();
 		}else{
@@ -143,7 +137,7 @@ public class SysNoticeController extends BaseController{
 	@SaCheckPermission("gen:sysNotice:remove")
 	@ResponseBody
 	public AjaxResult remove(String ids){
-		int b=sysNoticeService.deleteByPrimaryKey(ids);
+		int b= noticeService.deleteByPrimaryKey(ids);
 		if(b>0){
 			return success();
 		}else{
@@ -160,7 +154,7 @@ public class SysNoticeController extends BaseController{
 	@PostMapping("/checkNameUnique")
 	@ResponseBody
 	public int checkNameUnique(Notice notice){
-		int b=sysNoticeService.checkNameUnique(notice);
+		int b= noticeService.checkNameUnique(notice);
 		if(b>0){
 			return 1;
 		}else{
@@ -179,10 +173,10 @@ public class SysNoticeController extends BaseController{
 	@GetMapping("/viewinfo/{id}")
     public String viewinfo(@PathVariable("id") String id,ModelMap mmap)
     {
-		Notice notice= sysNoticeService.selectByPrimaryKey(id);
+		Notice notice= noticeService.selectByPrimaryKey(id);
 		mmap.addAttribute("notice", notice);
 		//把推送给该用户的公告设置为已读
-		sysNoticeService.editUserState(id);
+		noticeService.editUserState(id);
         return prefix + "/view";
     }
 	
@@ -197,7 +191,7 @@ public class SysNoticeController extends BaseController{
 	@GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") String id, ModelMap mmap)
     {
-        mmap.put("SysNotice", sysNoticeService.selectByPrimaryKey(id));
+        mmap.put("SysNotice", noticeService.selectByPrimaryKey(id));
 
         return prefix + "/edit";
     }
@@ -212,7 +206,7 @@ public class SysNoticeController extends BaseController{
     @ResponseBody
     public AjaxResult editSave(Notice record)
     {
-        return toAjax(sysNoticeService.updateByPrimaryKeySelective(record));
+        return toAjax(noticeService.updateByPrimaryKeySelective(record));
     }
 
     

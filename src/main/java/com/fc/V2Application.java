@@ -1,11 +1,11 @@
 package com.fc;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class}, scanBasePackages = "com.fc.v2")
+@SpringBootApplication(scanBasePackages = "com.fc.v2")
+@MapperScan(basePackages = "com.fc.v2.mapper")
 public class V2Application {
 
   public static void main(String[] args) {

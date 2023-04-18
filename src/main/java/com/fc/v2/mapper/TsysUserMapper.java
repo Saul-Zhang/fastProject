@@ -1,6 +1,6 @@
-package com.fc.v2.mapper.auto;
+package com.fc.v2.mapper;
 
-import com.fc.v2.model.auto.TsysUser;
+import com.fc.v2.model.auto.User;
 import com.fc.v2.model.auto.TsysUserExample;
 import org.apache.ibatis.annotations.Param;
 
@@ -13,19 +13,19 @@ public interface TsysUserMapper {
 
     int deleteByPrimaryKey(String id);
 
-    int insert(TsysUser record);
+    int insert(User record);
 
-    int insertSelective(TsysUser record);
+    int insertSelective(User record);
 
-    List<TsysUser> selectByExample(TsysUserExample example);
+    List<User> selectByExample(TsysUserExample example);
 
-    TsysUser selectByPrimaryKey(String id);
+    User selectByPrimaryKey(String id);
 
-    int updateByExampleSelective(@Param("record") TsysUser record, @Param("example") TsysUserExample example);
+    int updateByExampleSelective(@Param("record") User record, @Param("example") TsysUserExample example);
 
-    int updateByExample(@Param("record") TsysUser record, @Param("example") TsysUserExample example);
+    int updateByExample(@Param("record") User record, @Param("example") TsysUserExample example);
 
-    int updateByPrimaryKeySelective(TsysUser record);
+    int updateByPrimaryKeySelective(User record);
 
-    int updateByPrimaryKey(TsysUser record);
+    int updateByPrimaryKey(User record);
 }

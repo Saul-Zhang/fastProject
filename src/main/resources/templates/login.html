@@ -72,7 +72,6 @@
         })
 
         const captchaEnabled = [[${captchaEnabled}]];
-        console.log(captchaEnabled);
         if (captchaEnabled){
             setInterval(function(){
                 document.getElementById("captchaImage").src=rootPath+"/captcha/captchaImage?type=char&s="+Math.random();

@@ -3,7 +3,7 @@ package com.fc.v2.service;
 import cn.hutool.core.util.StrUtil;
 import com.fc.v2.common.base.BaseService;
 import com.fc.v2.common.support.ConvertUtil;
-import com.fc.v2.mapper.auto.SysPositionMapper;
+import com.fc.v2.mapper.SysPositionMapper;
 import com.fc.v2.model.auto.SysPosition;
 import com.fc.v2.model.auto.SysPositionExample;
 import com.fc.v2.model.custom.Tablepar;

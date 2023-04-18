@@ -1,11 +1,17 @@
 package com.fc.v2.model.auto;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.lang.Integer;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-public class SysNoticeUser implements Serializable {
+@AllArgsConstructor
+@NoArgsConstructor
+@TableName("rel_notice_user")
+public class RelationNoticeUser implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	

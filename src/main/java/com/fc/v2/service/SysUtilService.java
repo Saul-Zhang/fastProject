@@ -1,6 +1,6 @@
 package com.fc.v2.service;
 
-import com.fc.v2.mapper.custom.SysUtilDao;
+import com.fc.v2.mapper.SysUtilMapper;
 import com.fc.v2.model.custom.SQLAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import java.util.Map;
 @Service
 public class SysUtilService {
 	@Autowired
-	private SysUtilDao dao;
+	private SysUtilMapper dao;
 	
 	/**
 	 * 执行sql

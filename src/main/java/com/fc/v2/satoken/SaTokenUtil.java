@@ -1,6 +1,6 @@
 package com.fc.v2.satoken;
 
-import com.fc.v2.model.auto.TsysUser;
+import com.fc.v2.model.auto.User;
 import com.fc.v2.util.BeanUtils;
 
 import cn.dev33.satoken.stp.StpUtil;
@@ -16,13 +16,13 @@ public class SaTokenUtil {
 	/**
 	 * 获取登录用户model
 	 */
-	public static TsysUser getUser() {
+	public static User getUser() {
 
 		Object object = StpUtil.getSession().get("user");
 		if (object != null) {
-			TsysUser tsysUser = new TsysUser();
-			BeanUtils.copyBeanProp(tsysUser, object);
-			return tsysUser;
+			User user = new User();
+			BeanUtils.copyBeanProp(user, object);
+			return user;
 		}
 		return null;
 	}
@@ -30,7 +30,7 @@ public class SaTokenUtil {
 	/**
 	 * set用户
 	 */
-	public static void setUser(TsysUser user) {
+	public static void setUser(User user) {
 		StpUtil.getSession().set("user", user);
 	}
 
@@ -45,11 +45,11 @@ public class SaTokenUtil {
 	 * 获取登录用户name
 	 */
 	public static String getLoginName() {
-		TsysUser tsysUser = getUser();
-		if (tsysUser == null) {
+		User user = getUser();
+		if (user == null) {
 			throw new RuntimeException("用户不存在！");
 		}
-		return tsysUser.getUsername();
+		return user.getUsername();
 	}
 
 	/**

@@ -1,4 +1,4 @@
-package com.fc.v2.mapper.auto;
+package com.fc.v2.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.fc.v2.model.auto.Test;

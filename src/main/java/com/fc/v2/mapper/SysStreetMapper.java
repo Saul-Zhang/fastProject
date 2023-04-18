@@ -1,4 +1,4 @@
-package com.fc.v2.mapper.auto;
+package com.fc.v2.mapper;
 
 import com.fc.v2.model.auto.SysStreet;
 import com.fc.v2.model.auto.SysStreetExample;

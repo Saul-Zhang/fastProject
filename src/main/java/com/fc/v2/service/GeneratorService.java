@@ -1,7 +1,7 @@
 package com.fc.v2.service;
 
 import cn.hutool.json.JSONUtil;
-import com.fc.v2.mapper.auto.GeneratorMapper;
+import com.fc.v2.mapper.GeneratorMapper;
 import com.fc.v2.model.custom.Tablepar;
 import com.fc.v2.model.custom.TsysTables;
 import com.fc.v2.model.custom.autocode.BeanColumn;

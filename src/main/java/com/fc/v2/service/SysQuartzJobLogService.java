@@ -2,7 +2,7 @@ package com.fc.v2.service;
 
 import com.fc.v2.common.base.BaseService;
 import com.fc.v2.common.support.ConvertUtil;
-import com.fc.v2.mapper.auto.SysQuartzJobLogMapper;
+import com.fc.v2.mapper.SysQuartzJobLogMapper;
 import com.fc.v2.model.auto.SysQuartzJobLog;
 import com.fc.v2.model.auto.SysQuartzJobLogExample;
 import com.fc.v2.model.custom.Tablepar;
