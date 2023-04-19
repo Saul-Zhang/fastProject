@@ -112,20 +112,22 @@ public class UserService implements BaseService<User, TsysUserExample> {
    */
   @Transactional
   public int insertUserRoles(User record, String roles) {
-    String userid = SnowflakeIdWorker.getUUID();
-    record.setId(userid);
+//    String userid = SnowflakeIdWorker.getUUID();
+//    record.setId(userid);
+    //密码加密
+    record.setPassword(MD5Util.encode(record.getPassword()));
+    tsysUserMapper.insertSelective(record);
     if (StringUtils.isNotEmpty(roles)) {
       List<String> list_roles = ConvertUtil.toListStrArray(roles);
       for (String rolesid : list_roles) {
-        RelationRoleUser roleUser = new RelationRoleUser(SnowflakeIdWorker.getUUID(), userid,
-            rolesid);
-        relationRoleUserMapper.insertSelective(roleUser);
+//        RelationRoleUser roleUser = new RelationRoleUser(SnowflakeIdWorker.getUUID(), record.getId(),
+//            rolesid);
+//        relationRoleUserMapper.insertSelective(roleUser);
       }
     }
 
-    //密码加密
-    record.setPassword(MD5Util.encode(record.getPassword()));
-    return tsysUserMapper.insertSelective(record);
+
+    return 1;
   }
 
   @Override
@@ -247,16 +249,16 @@ public class UserService implements BaseService<User, TsysUserExample> {
   public int updateUserRoles(User record, String roleIds) {
     //先删除这个用户的所有角色
     TSysRoleUserExample tSysRoleUserExample = new TSysRoleUserExample();
-    tSysRoleUserExample.createCriteria().andSysUserIdEqualTo(record.getId());
+//    tSysRoleUserExample.createCriteria().andSysUserIdEqualTo(record.getId());
     relationRoleUserMapper.deleteByExample(tSysRoleUserExample);
     if (StringUtils.isNotEmpty(roleIds)) {
       List<String> list_roles = ConvertUtil.toListStrArray(roleIds);
       //添加新的角色信息
       for (String role : list_roles) {
-        RelationRoleUser relationRoleUser = new RelationRoleUser(SnowflakeIdWorker.getUUID(),
-            record.getId(),
-            role);
-        relationRoleUserMapper.insertSelective(relationRoleUser);
+//        RelationRoleUser relationRoleUser = new RelationRoleUser(SnowflakeIdWorker.getUUID(),
+//            record.getId(),
+//            role);
+//        relationRoleUserMapper.insertSelective(relationRoleUser);
       }
     }
     // 清除此用户角色信息缓存

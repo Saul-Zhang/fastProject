@@ -57,4 +57,8 @@ public class UserResponse {
   private String gender;
 
   private String email;
+
+  public String getStatus(){
+    return this.status+"qww";
+  }
 }

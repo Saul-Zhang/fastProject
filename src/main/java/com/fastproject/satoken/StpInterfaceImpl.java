@@ -55,8 +55,8 @@ public class StpInterfaceImpl implements StpInterface {
     SaSession session = StpUtil.getSessionByLoginId(loginId);
     return session.get("Role_List",
         () -> roleUserMapper.selectList(new QueryWrapper<RelationRoleUser>().lambda()
-                .eq(RelationRoleUser::getUserId, String.valueOf(loginId)))
-            .stream().map(RelationRoleUser::getRoleId).collect(Collectors.toList()));
+                .eq(RelationRoleUser::getUserId, loginId))
+            .stream().map(relationRoleUser -> String.valueOf(relationRoleUser.getRoleId())).collect(Collectors.toList()));
   }
 
 }

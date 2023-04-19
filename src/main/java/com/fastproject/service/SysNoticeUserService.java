@@ -118,7 +118,7 @@ public class SysNoticeUserService implements BaseService<RelationNoticeUser, Sys
 	 */
 	public int checkNameUnique(RelationNoticeUser relationNoticeUser){
 		SysNoticeUserExample example=new SysNoticeUserExample();
-		example.createCriteria().andUserIdEqualTo(relationNoticeUser.getUserId());
+//		example.createCriteria().andUserIdEqualTo(relationNoticeUser.getUserId());
 		List<RelationNoticeUser> list= relationNoticeUserMapper.selectByExample(example);
 		return list.size();
 	}

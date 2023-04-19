@@ -72,7 +72,7 @@ public class NoticeService implements BaseService<Notice, SysNoticeExample> {
     //查询未阅读的公告用户外键
     SysNoticeUserExample sysNoticeUserExample = new SysNoticeUserExample();
     Criteria criteria = sysNoticeUserExample.createCriteria();
-    criteria.andUserIdEqualTo(user.getId());
+//    criteria.andUserIdEqualTo(user.getId());
     List<RelationNoticeUser> noticeUsers = noticeUserMapper.selectByExample(
         sysNoticeUserExample);
     if (noticeUsers != null && noticeUsers.size() > 0) {
@@ -204,7 +204,7 @@ public class NoticeService implements BaseService<Notice, SysNoticeExample> {
     //查询未阅读的公告用户外键
     SysNoticeUserExample sysNoticeUserExample = new SysNoticeUserExample();
     Criteria criteria = sysNoticeUserExample.createCriteria();
-    criteria.andUserIdEqualTo(user.getId());
+//    criteria.andUserIdEqualTo(user.getId());
     if (-1 != state) {
       criteria.andStateEqualTo(state);
     }
@@ -267,8 +267,8 @@ public class NoticeService implements BaseService<Notice, SysNoticeExample> {
   public void editUserState(String noticeid) {
     //SysNoticeUser
     SysNoticeUserExample sysNoticeUserExample = new SysNoticeUserExample();
-    sysNoticeUserExample.createCriteria().andNoticeIdEqualTo(noticeid)
-        .andUserIdEqualTo(SaTokenUtil.getUserId());
+//    sysNoticeUserExample.createCriteria().andNoticeIdEqualTo(noticeid)
+//        .andUserIdEqualTo(SaTokenUtil.getUserId());
     List<RelationNoticeUser> noticeUsers = noticeUserMapper.selectByExample(
         sysNoticeUserExample);
     for (RelationNoticeUser relationNoticeUser : noticeUsers) {

@@ -121,7 +121,7 @@ public class OssEndpoint {
 				if(SaTokenUtil.isLogin()) {
 					sysFile=new SysFile(SnowflakeIdWorker.getUUID(),  fileSuffixName,  bucketName, object.getSize(), object.getContentType(),SaTokenUtil.getUserId(), SaTokenUtil.getLoginName(), new Date(),null, null, null);
 				}else {
-					sysFile=new SysFile(SnowflakeIdWorker.getUUID(),  fileSuffixName,  bucketName, object.getSize(), object.getContentType(),"-", "-", new Date(),null, null, null);
+					sysFile=new SysFile(SnowflakeIdWorker.getUUID(),  fileSuffixName,  bucketName, object.getSize(), object.getContentType(),null, null, new Date(),null, null, null);
 				}
 				int i=sysFileService.insertSelective(sysFile);
 				if(i>0){
@@ -239,10 +239,6 @@ public class OssEndpoint {
 	
 	/**
 	 * 富文本上传文件
-	 * @param object 文件流对象
-	 * @param bucketName 桶名
-	 * @return
-	 * @throws Exception
 	 */
 	@PostMapping("/createObjectLayedit/{bucketName}")
 	public Object createObjectLayedit(@RequestBody MultipartFile file, @PathVariable String bucketName) throws Exception {
@@ -259,7 +255,7 @@ public class OssEndpoint {
 			if(user !=null) {
 				sysFile=new SysFile(uuid,  fileSuffixName,  bucketName, file.getSize(), file.getContentType(),SaTokenUtil.getUserId(), SaTokenUtil.getLoginName(), new Date(),null, null, null);
 			}else {
-				sysFile=new SysFile(uuid,  fileSuffixName,  bucketName, file.getSize(), file.getContentType(),"-", "-", new Date(),null, null, null);
+				sysFile=new SysFile(uuid,  fileSuffixName,  bucketName, file.getSize(), file.getContentType(),null, null, new Date(),null, null, null);
 			}
 			int i=sysFileService.insertSelective(sysFile);
 			if(i>0){

@@ -36,7 +36,7 @@ public class Notice implements Serializable {
   /**
    * 创建人id
    **/
-  private String createId;
+  private Integer createId;
 
   /**
    * 创建人name

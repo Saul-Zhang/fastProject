@@ -8,7 +8,6 @@ public interface PermissionMapper extends BaseMapper<Permission> {
 
   /**
    * 查询全部权限
-   *
    */
   List<String> findAll();
 
@@ -18,7 +17,7 @@ public interface PermissionMapper extends BaseMapper<Permission> {
    * @param userId
    * @return
    */
-  List<Permission> findByAdminUserId(String userId);
+  List<Permission> findByAdminUserId(Integer userId);
 
   /**
    * 根据角色id查询权限

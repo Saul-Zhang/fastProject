@@ -237,8 +237,8 @@ public class PermissionService implements BaseService<Permission, TsysPermission
   /**
    * 根据用户id查询菜单栏
    */
-  public List<Menu> getMenus(String userid) {
-    List<Menu> collect = getPermissionByUserid(userid).stream()
+  public List<Menu> getMenus(Integer userId) {
+    List<Menu> collect = getPermissionByUserid(userId).stream()
         .map(permission -> new Menu(permission.getId(), permission.getPid(), permission.getName(),
             permission.getType(), permission.getIsBlank(), permission.getIcon(),
             permission.getUrl()))
@@ -326,14 +326,14 @@ public class PermissionService implements BaseService<Permission, TsysPermission
   /**
    * 根据用户id获取用户角色如果用户为null 获取所有权限
    */
-  public List<Permission> getPermissionByUserid(String userid) {
-    if (StringUtils.isEmpty(userid)) {
+  public List<Permission> getPermissionByUserid(Integer userId) {
+    if (userId == null) {
       TsysPermissionExample example = new TsysPermissionExample();
       example.createCriteria().andVisibleEqualTo(0);
       example.setOrderByClause("order_num  is null  ASC,order_num  ASC");
       return tsysPermissionMapper.selectByExample(example);
     }
-    return permissionMapper.findByAdminUserId(userid);
+    return permissionMapper.findByAdminUserId(userId);
   }
 
 

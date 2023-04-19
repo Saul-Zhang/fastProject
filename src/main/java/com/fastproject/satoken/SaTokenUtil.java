@@ -4,6 +4,7 @@ import com.fastproject.model.auto.User;
 import com.fastproject.util.BeanUtils;
 
 import cn.dev33.satoken.stp.StpUtil;
+import io.swagger.models.auth.In;
 
 /**
  * 封装 Sa-Token 常用操作
@@ -37,8 +38,8 @@ public class SaTokenUtil {
 	/**
 	 * 获取登录用户id
 	 */
-	public static String getUserId() {
-		return StpUtil.getLoginIdAsString();
+	public static Integer getUserId() {
+		return StpUtil.getLoginIdAsInt();
 	}
 
 	/**
@@ -54,10 +55,6 @@ public class SaTokenUtil {
 
 	/**
 	 * 获取登录用户ip
-	 * 
-	 * @return
-	 * @author fuce
-	 * @Date 2019年11月21日 上午9:58:26
 	 */
 	public static String getIp() {
 		return StpUtil.getTokenSession().getString("login_ip");
@@ -66,9 +63,6 @@ public class SaTokenUtil {
 	/**
 	 * 判断是否登录
 	 * 
-	 * @return
-	 * @author fuce
-	 * @Date 2019年11月21日 上午9:58:26
 	 */
 	public static boolean isLogin() {
 		return StpUtil.isLogin();
