@@ -135,19 +135,19 @@ DROP TABLE IF EXISTS `def_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `def_user` (
-  `id` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT '主键',
-  `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '用户账号',
-  `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '用户密码',
-  `nickname` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '昵称',
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `username` varchar(80) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '用户账号',
+  `password` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '用户密码',
+  `real_name` varchar(80) COLLATE utf8_bin DEFAULT NULL COMMENT '姓名',
   `dep_id` int DEFAULT NULL COMMENT '部门id',
   `pos_id` int DEFAULT NULL COMMENT '岗位id',
   `employee_id` varchar(25) COLLATE utf8_bin DEFAULT NULL,
-  `status` tinyint DEFAULT NULL,
+  `status` int DEFAULT NULL,
   `tel` varchar(100) COLLATE utf8_bin DEFAULT NULL,
-  `gender` int DEFAULT NULL,
+  `gender` varchar(5) COLLATE utf8_bin DEFAULT NULL,
   `email` varchar(40) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC COMMENT='用户表';
+) ENGINE=InnoDB AUTO_INCREMENT=433236479427350529 DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC COMMENT='用户表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -156,7 +156,7 @@ CREATE TABLE `def_user` (
 
 LOCK TABLES `def_user` WRITE;
 /*!40000 ALTER TABLE `def_user` DISABLE KEYS */;
-INSERT INTO `def_user` VALUES ('1','admin','21232f297a57a5a743894a0e4a801fc3','管理员',2,48,NULL,NULL,NULL,NULL,NULL),('433236479427350528','fuce','21232f297a57a5a743894a0e4a801fc3','付册',2,52,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `def_user` VALUES (1,'admin','21232f297a57a5a743894a0e4a801fc3','管理员',2,48,'t53',0,'158245345676',NULL,NULL),(2,'fuce','21232f297a57a5a743894a0e4a801fc3','付册',2,52,'125',1,'15245653454',NULL,NULL);
 /*!40000 ALTER TABLE `def_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -689,4 +689,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-04-18 18:53:30
+-- Dump completed on 2023-04-19 18:55:09

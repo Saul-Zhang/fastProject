@@ -58,7 +58,7 @@ spring:
 
 logging:
   level:
-    com.baomidou.example.mapper: debug
+    com.fastproject.mapper: debug
 
 #mysql 8.0
 

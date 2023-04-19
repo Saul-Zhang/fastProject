@@ -37,7 +37,7 @@
 			<property name="forceBigDecimals" value="false" />
 		</javaTypeResolver>
 		<!-- 生成模型的包名和位置 -->
-		<javaModelGenerator targetPackage="com.fc.test.model.auto"
+		<javaModelGenerator targetPackage="com.fastproject.test.model.auto"
 			targetProject="D:\Users\Administrator\git\SpringBoot_v2\src\main\java">
 			 <!-- 是否对model添加 构造函数 -->
             <property name="constructorBased" value="true"/>
@@ -51,7 +51,7 @@
 			<property name="enableSubPackages" value="true" />
 		</sqlMapGenerator>
 		<!-- 生成DAO的包名和位置 -->
-		<javaClientGenerator type="XMLMAPPER" targetPackage="com.fc.test.mapper.auto"
+		<javaClientGenerator type="XMLMAPPER" targetPackage="com.fastproject.test.mapper.auto"
 			targetProject="D:\Users\Administrator\git\SpringBoot_v2\src\main\java">
 			<property name="enableSubPackages" value="true" />
 		</javaClientGenerator>

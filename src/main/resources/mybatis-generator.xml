@@ -50,7 +50,7 @@
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
         <!-- 生成Model类存放位置 -->
-        <javaModelGenerator targetPackage="com.fc.test.model.auto" targetProject="src/main/java">
+        <javaModelGenerator targetPackage="com.fastproject.test.model.auto" targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
@@ -62,7 +62,7 @@
         <!-- 客户端代码，生成易于使用的针对Model对象和XML配置文件的代码
             type="ANNOTATEDMAPPER",生成Java Model 和基于注解的Mapper对象
             type="XMLMAPPER",生成SQLMap XML文件和独立的Mapper接口 -->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.fc.test.mapper.auto" targetProject="src/main/java">
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.fastproject.test.mapper.auto" targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
        

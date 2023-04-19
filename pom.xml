@@ -9,12 +9,10 @@
     <version>2.6.0</version>
     <relativePath/>
   </parent>
-  <groupId>com.fc</groupId>
-  <artifactId>v2</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>v2</name>
+  <groupId>com.fastproject</groupId>
+  <artifactId>fastProject</artifactId>
+  <version>0.1.0</version>
   <packaging>war</packaging>
-  <description>springboot-v2-pear</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -279,7 +277,7 @@
                              <artifactId>nothing</artifactId>
                          </include>
                          <include>
-                             <groupId>com.fc.V2Application</groupId>
+                             <groupId>com.fastproject.V2Application</groupId>
                              <artifactId>common</artifactId>
                          </include>
                      </includes>
