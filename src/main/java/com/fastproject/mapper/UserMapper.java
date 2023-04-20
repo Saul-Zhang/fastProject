@@ -16,11 +16,12 @@ import org.apache.ibatis.annotations.Select;
 public interface UserMapper extends BaseMapper<User> {
 
 
-  @Select("select u.*, r.name as roleName , p.name as posName \n"
+  @Select("select u.*, r.name as roleName , p.name as posName, d.name as deptName \n"
       + "from def_user u\n"
       + "         left join rel_role_user ru on u.id = ru.user_id\n"
       + "         left join def_role r on ru.role_id = r.id\n"
       + "         left join def_position p on u.pos_id = p.id "
+      + "         left join def_department d on u.dept_id = d.id "
       + " ${ew.customSqlSegment}")
   List<UserResponse> getUsers(@Param(Constants.WRAPPER) LambdaQueryWrapperX<User> queryWrapper);
 }

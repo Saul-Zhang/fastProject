@@ -3,7 +3,6 @@ package com.fastproject.service;
 import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fastproject.common.base.BaseService;
 import com.fastproject.common.conf.FastProperties;
@@ -76,15 +75,8 @@ public class UserService implements BaseService<User, TsysUserExample> {
   public PageInfo<UserResponse> list(UserQuery query) {
     PageHelper.startPage(query.getPage(), query.getLimit());
     LambdaQueryWrapperX<User> queryWrapperX = new LambdaQueryWrapperX<User>()
-        .eqIfPresent(User::getDepId, query.getDeptId())
+        .eqIfPresent(User::getDeptId, query.getDeptId())
         .eqIfPresent(User::getId, query.getId());
-    UserResponse userResponse = new UserResponse();
-    userResponse.setGender("1");
-    try {
-      System.out.println(objectMapper.writeValueAsString(userResponse));
-    } catch (JsonProcessingException e) {
-      e.printStackTrace();
-    }
     return new PageInfo<>(userMapper.getUsers(queryWrapperX));
   }
 

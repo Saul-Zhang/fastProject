@@ -67,7 +67,7 @@ public class SysDictTypeService implements BaseService<DictType, TSysDictTypeExa
 		List<String> datatypes=new ArrayList<String>();
 		for (DictType dictType : dictTypes) {
 			
-			datatypes.add(dictType.getDictType());
+			datatypes.add(dictType.getCode());
 		}
 		TSysDictDataExample  dictDataExample=new TSysDictDataExample();
 		dictDataExample.createCriteria().andDictTypeIn(datatypes);
@@ -147,7 +147,7 @@ public class SysDictTypeService implements BaseService<DictType, TSysDictTypeExa
 	 */
 	public int checkNameUnique(DictType dictType){
 		TSysDictTypeExample example=new TSysDictTypeExample();
-		example.createCriteria().andDictNameEqualTo(dictType.getDictName());
+		example.createCriteria().andDictNameEqualTo(dictType.getName());
 		List<DictType> list=tSysDictTypeMapper.selectByExample(example);
 		return list.size();
 	}

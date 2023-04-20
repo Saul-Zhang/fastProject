@@ -1,6 +1,6 @@
 package com.fastproject.mapper;
 
-import com.fastproject.model.auto.SysDepartment;
+import com.fastproject.model.auto.Department;
 import com.fastproject.model.auto.SysDepartmentExample;
 import org.apache.ibatis.annotations.Param;
 
@@ -20,20 +20,20 @@ public interface SysDepartmentMapper {
 		
     int deleteByPrimaryKey(Integer id);
 		
-    int insert(SysDepartment record);
+    int insert(Department record);
 
-    int insertSelective(SysDepartment record);
+    int insertSelective(Department record);
 
-    List<SysDepartment> selectByExample(SysDepartmentExample example);
+    List<Department> selectByExample(SysDepartmentExample example);
 		
-    SysDepartment selectByPrimaryKey(Integer id);
+    Department selectByPrimaryKey(Integer id);
 		
-    int updateByExampleSelective(@Param("record") SysDepartment record, @Param("example") SysDepartmentExample example);
+    int updateByExampleSelective(@Param("record") Department record, @Param("example") SysDepartmentExample example);
 
-    int updateByExample(@Param("record") SysDepartment record, @Param("example") SysDepartmentExample example); 
+    int updateByExample(@Param("record") Department record, @Param("example") SysDepartmentExample example);
 		
-    int updateByPrimaryKeySelective(SysDepartment record);
+    int updateByPrimaryKeySelective(Department record);
 
-    int updateByPrimaryKey(SysDepartment record);
+    int updateByPrimaryKey(Department record);
   	  	
 }

@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.fastproject.common.base.BaseService;
 import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.SysDepartmentMapper;
-import com.fastproject.model.auto.SysDepartment;
+import com.fastproject.model.auto.Department;
 import com.fastproject.model.auto.SysDepartmentExample;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.util.StringUtils;
@@ -24,7 +24,7 @@ import java.util.List;
  * @date 2020-04-17 13:12:58
  **/
 @Service
-public class SysDepartmentService implements BaseService<SysDepartment, SysDepartmentExample> {
+public class SysDepartmentService implements BaseService<Department, SysDepartmentExample> {
 	@Autowired
 	private SysDepartmentMapper sysDepartmentMapper;
 
@@ -35,7 +35,7 @@ public class SysDepartmentService implements BaseService<SysDepartment, SysDepar
 	 * @param pageSize
 	 * @return
 	 */
-	public PageInfo<SysDepartment> list(Tablepar tablepar, String name) {
+	public PageInfo<Department> list(Tablepar tablepar, String name) {
 		SysDepartmentExample testExample = new SysDepartmentExample();
 		testExample.setOrderByClause("id ASC");
 		if (name != null && !"".equals(name)) {
@@ -45,8 +45,8 @@ public class SysDepartmentService implements BaseService<SysDepartment, SysDepar
 			testExample.setOrderByClause(
 					StringUtils.toUnderScoreCase(tablepar.getOrderByColumn()) + " " + tablepar.getIsAsc());
 		}
-		List<SysDepartment> list = sysDepartmentMapper.selectByExample(testExample);
-		PageInfo<SysDepartment> pageInfo = new PageInfo<SysDepartment>(list);
+		List<Department> list = sysDepartmentMapper.selectByExample(testExample);
+		PageInfo<Department> pageInfo = new PageInfo<Department>(list);
 		return pageInfo;
 	}
 
@@ -62,7 +62,7 @@ public class SysDepartmentService implements BaseService<SysDepartment, SysDepar
 	}
 
 	@Override
-	public SysDepartment selectByPrimaryKey(String id) {
+	public Department selectByPrimaryKey(String id) {
 
 		Integer id1 = Integer.valueOf(id);
 		return sysDepartmentMapper.selectByPrimaryKey(id1);
@@ -70,7 +70,7 @@ public class SysDepartmentService implements BaseService<SysDepartment, SysDepar
 	}
 
 	@Override
-	public int updateByPrimaryKeySelective(SysDepartment record) {
+	public int updateByPrimaryKeySelective(Department record) {
 		return sysDepartmentMapper.updateByPrimaryKeySelective(record);
 	}
 
@@ -78,7 +78,7 @@ public class SysDepartmentService implements BaseService<SysDepartment, SysDepar
 	 * 添加
 	 */
 	@Override
-	public int insertSelective(SysDepartment record) {
+	public int insertSelective(Department record) {
 
 		record.setId(null);
 
@@ -86,19 +86,19 @@ public class SysDepartmentService implements BaseService<SysDepartment, SysDepar
 	}
 
 	@Override
-	public int updateByExampleSelective(SysDepartment record, SysDepartmentExample example) {
+	public int updateByExampleSelective(Department record, SysDepartmentExample example) {
 
 		return sysDepartmentMapper.updateByExampleSelective(record, example);
 	}
 
 	@Override
-	public int updateByExample(SysDepartment record, SysDepartmentExample example) {
+	public int updateByExample(Department record, SysDepartmentExample example) {
 
 		return sysDepartmentMapper.updateByExample(record, example);
 	}
 
 	@Override
-	public List<SysDepartment> selectByExample(SysDepartmentExample example) {
+	public List<Department> selectByExample(SysDepartmentExample example) {
 
 		return sysDepartmentMapper.selectByExample(example);
 	}
@@ -118,13 +118,13 @@ public class SysDepartmentService implements BaseService<SysDepartment, SysDepar
 	/**
 	 * 检查name
 	 * 
-	 * @param sysDepartment
+	 * @param department
 	 * @return
 	 */
-	public int checkNameUnique(SysDepartment sysDepartment) {
+	public int checkNameUnique(Department department) {
 		SysDepartmentExample example = new SysDepartmentExample();
-		example.createCriteria().andDeptNameEqualTo(sysDepartment.getDeptName());
-		List<SysDepartment> list = sysDepartmentMapper.selectByExample(example);
+		example.createCriteria().andDeptNameEqualTo(department.getName());
+		List<Department> list = sysDepartmentMapper.selectByExample(example);
 		return list.size();
 	}
 
@@ -133,7 +133,7 @@ public class SysDepartmentService implements BaseService<SysDepartment, SysDepar
 	 * @param record
 	 * @return
 	 */
-	public int updateVisible(SysDepartment record) {
+	public int updateVisible(Department record) {
 		return sysDepartmentMapper.updateByPrimaryKeySelective(record);
 	}
 	

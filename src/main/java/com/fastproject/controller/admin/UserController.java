@@ -5,7 +5,7 @@ import com.fastproject.common.base.BaseController;
 import com.fastproject.common.domain.AjaxResult;
 import com.fastproject.common.domain.ResultTable;
 import com.fastproject.common.log.Log;
-import com.fastproject.model.auto.SysDepartment;
+import com.fastproject.model.auto.Department;
 import com.fastproject.model.auto.SysDepartmentExample;
 import com.fastproject.model.auto.SysPosition;
 import com.fastproject.model.auto.SysPositionExample;
@@ -79,7 +79,7 @@ public class UserController extends BaseController {
     //添加角色列表
     List<TsysRole> tsysRoleList = sysRoleService.queryList();
     //部门列表
-    List<SysDepartment> departments = departmentService.selectByExample(new SysDepartmentExample());
+    List<Department> departments = departmentService.selectByExample(new SysDepartmentExample());
     //岗位列表
     List<SysPosition> sysPositions = positionService.selectByExample(new SysPositionExample());
     //角色

@@ -33,7 +33,7 @@ public class User implements Serializable {
   /**
    * 部门id
    **/
-  private String depId;
+  private String deptId;
 
   /**
    * 岗位id

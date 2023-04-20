@@ -1,7 +1,6 @@
 package com.fastproject.common.base;
 
 import cn.hutool.core.util.StrUtil;
-import com.fastproject.common.annotation.AB;
 import com.fastproject.common.conf.FastProperties;
 import com.fastproject.common.domain.AjaxResult;
 import com.fastproject.common.domain.ResultTable;

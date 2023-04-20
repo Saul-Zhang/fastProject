@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.fastproject.common.annotation.Dict;
+import com.fastproject.common.utils.SpringUtils;
+import com.fastproject.service.DictCacheService;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -21,7 +23,7 @@ public class DictSerializer extends StdSerializer<Object> implements ContextualS
 
   private String dictCode;
 
-  public DictSerializer(){
+  public DictSerializer() {
     super(Object.class);
   }
 
@@ -30,25 +32,14 @@ public class DictSerializer extends StdSerializer<Object> implements ContextualS
     this.dictCode = dictCode;
   }
 
-//  @Override
-//  public Class<Object> handledType() {
-//    return Object.class;
-//  }
-
   @Override
   public void serialize(Object o, JsonGenerator jsonGenerator,
       SerializerProvider serializerProvider) throws IOException {
-    // 字段自己的序列化操做，好比目前传入的是areaCode=10001，则先序列化areaCode：10001
-//    this.serialize(value, gen, serializers);
-    // 有自定义注解的type标识，咱们就增长一个对应的label，例：areaCode则 增长一个areaCodeVtTestLabel字段
     if (dictCode != null) {
-      // 原字段名 例：areaCode
-//      String fieldName = gen.getOutputContext().getCurrentName();
-      // 字段对应的label 如 高新园区
-//      String codeLabel = RedisUtils.dictCodeToLabel(type, value.toString());
-      // 写入
-      jsonGenerator.writeString("codeLabel");
-//      dictCode = null;
+      String obj = String.valueOf(o);
+      String str = Optional.ofNullable(
+          SpringUtils.getBean(DictCacheService.class).getData(dictCode, obj)).orElse(obj);
+      jsonGenerator.writeString(str);
     }
   }
 

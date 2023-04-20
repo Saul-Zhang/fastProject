@@ -84,7 +84,7 @@ public class DictDataController extends BaseController{
     @GetMapping("/add")
     public String add(ModelMap modelMap,String dictId)
     {
-		modelMap.addAttribute("dictType",sysDictTypeService.selectByPrimaryKey(dictId).getDictType());
+		modelMap.addAttribute("dictType",sysDictTypeService.selectByPrimaryKey(dictId).getCode());
         return prefix + "/add";
     }
 	

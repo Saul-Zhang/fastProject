@@ -151,13 +151,5 @@ public class SysDictDataService implements BaseService<DictData, TSysDictDataExa
     dictDataMapper.deleteByExample(example);
   }
 
-  public Map<String, Map<String, Object>> getAllDict(){
-  dictDataMapper.selectList(
-            new LambdaQueryWrapperX<DictData>().eq(DictData::getStatus, "0"))
-        .stream().collect(
-            Collectors.toMap(DictData::getCode,
-            Collectors.groupingBy(DictData::getValue));
-//    collect
-//        .collect(Collectors.toMap(DictData::getCode,  dictData ->{ return (dictData.getCode()) dictData.getValue().} ))
-  }
+
 }

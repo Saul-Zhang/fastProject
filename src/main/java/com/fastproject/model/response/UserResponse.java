@@ -34,7 +34,7 @@ public class UserResponse implements Serializable {
    * 部门id
    **/
   @ApiModelProperty(value = "部门id")
-  private Integer depId;
+  private Integer deptId;
 
   private String roleName;
 
@@ -46,7 +46,7 @@ public class UserResponse implements Serializable {
   /**
    * 部门名称
    **/
-  private String depName;
+  private String deptName;
   /**
    * 岗位名称
    **/
@@ -58,12 +58,8 @@ public class UserResponse implements Serializable {
 
   private String tel;
 
-  @Dict(dictCode = "111")
+  @Dict(dictCode = "gender")
   private String gender;
 
   private String email;
-
-  public String getStatus(){
-    return this.status+"qww";
-  }
 }

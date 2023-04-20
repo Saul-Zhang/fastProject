@@ -3,7 +3,7 @@ package com.fastproject.controller.admin;
 import com.fastproject.common.base.BaseController;
 import com.fastproject.common.domain.AjaxResult;
 import com.fastproject.common.domain.ResultTable;
-import com.fastproject.model.auto.SysDepartment;
+import com.fastproject.model.auto.Department;
 import com.fastproject.model.auto.SysDepartmentExample;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.service.SysDepartmentService;
@@ -56,7 +56,7 @@ public class SysDepartmentController extends BaseController{
 	@SaCheckPermission("gen:sysDepartment:list")
 	@ResponseBody
 	public ResultTable list(Tablepar tablepar, String searchText){
-		PageInfo<SysDepartment> page=sysDepartmentService.list(tablepar,searchText);
+		PageInfo<Department> page=sysDepartmentService.list(tablepar,searchText);
 		return treeTable(page.getList());
 	}
 
@@ -72,7 +72,7 @@ public class SysDepartmentController extends BaseController{
 	
     /**
      * 新增
-     * @param sysDepartment
+     * @param department
      * @return
      * @author fuce
      * @Date 2020年4月18日 下午11:47:51
@@ -82,8 +82,8 @@ public class SysDepartmentController extends BaseController{
 	@PostMapping("/add")
 	@SaCheckPermission("gen:sysDepartment:add")
 	@ResponseBody
-	public AjaxResult add(@RequestBody SysDepartment sysDepartment){
-		int b=sysDepartmentService.insertSelective(sysDepartment);
+	public AjaxResult add(@RequestBody Department department){
+		int b=sysDepartmentService.insertSelective(department);
 		if(b>0){
 			return success();
 		}else{
@@ -118,8 +118,8 @@ public class SysDepartmentController extends BaseController{
 	@ApiOperation(value = "检查Name唯一", notes = "检查Name唯一")
 	@PostMapping("/checkNameUnique")
 	@ResponseBody
-	public int checkNameUnique(SysDepartment sysDepartment){
-		int b=sysDepartmentService.checkNameUnique(sysDepartment);
+	public int checkNameUnique(Department department){
+		int b=sysDepartmentService.checkNameUnique(department);
 		if(b>0){
 			return 1;
 		}else{
@@ -139,7 +139,7 @@ public class SysDepartmentController extends BaseController{
     public String edit(@PathVariable("id") String id, ModelMap mmap)
     {
 		//获取自己的权限信息
-		SysDepartment mytsysPermission = sysDepartmentService.selectByPrimaryKey(id);
+		Department mytsysPermission = sysDepartmentService.selectByPrimaryKey(id);
 
         mmap.put("SysDepartment", mytsysPermission);
         return prefix + "/edit";
@@ -153,7 +153,7 @@ public class SysDepartmentController extends BaseController{
     @SaCheckPermission("gen:sysDepartment:edit")
     @PutMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave(@RequestBody SysDepartment record)
+    public AjaxResult editSave(@RequestBody Department record)
     {
         return toAjax(sysDepartmentService.updateByPrimaryKeySelective(record));
     }
@@ -162,7 +162,7 @@ public class SysDepartmentController extends BaseController{
     @GetMapping("/selectParent")
 	@ResponseBody
     public ResultTree selectParent(){
-        List<SysDepartment> list = sysDepartmentService.selectByExample(new SysDepartmentExample());
+        List<Department> list = sysDepartmentService.selectByExample(new SysDepartmentExample());
         return dataTree(list);
     }
 
@@ -176,7 +176,7 @@ public class SysDepartmentController extends BaseController{
    	 */
    	@PostMapping("/get/{id}")
    	@ApiOperation(value = "根据id查询唯一", notes = "根据id查询唯一")
-   	public SysDepartment edit(@PathVariable("id") String id) {
+   	public Department edit(@PathVariable("id") String id) {
    		return sysDepartmentService.selectByPrimaryKey(id);
    	}
     
@@ -187,7 +187,7 @@ public class SysDepartmentController extends BaseController{
 	@ApiOperation(value = "获取部门树状数据结构", notes = "获取部门树状数据结构")
 	@ResponseBody
     public ResultTree tree(){
-        List<SysDepartment> data = sysDepartmentService.selectByExample(new SysDepartmentExample());
+        List<Department> data = sysDepartmentService.selectByExample(new SysDepartmentExample());
         return dataTree(data);
     }
 
@@ -198,7 +198,7 @@ public class SysDepartmentController extends BaseController{
 	 */
     @PutMapping("/updateVisible")
 	@ResponseBody
-    public AjaxResult updateVisible(@RequestBody SysDepartment record){
+    public AjaxResult updateVisible(@RequestBody Department record){
 		int i=sysDepartmentService.updateVisible(record);
 		 return toAjax(i);
 	}

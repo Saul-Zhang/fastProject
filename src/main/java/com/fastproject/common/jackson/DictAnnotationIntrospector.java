@@ -18,7 +18,6 @@ public class DictAnnotationIntrospector extends NopAnnotationIntrospector {
 
     Dict annotation = am.getAnnotation(Dict.class);
     if (annotation != null) {
-      log.info("----当前序列化使用自定义敏感字段序列化器----");
       return DictSerializer.class;
     }
     return super.findSerializer(am);
