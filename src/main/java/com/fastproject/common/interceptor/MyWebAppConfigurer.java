@@ -9,10 +9,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * 拦截器
-* @ClassName: MyWebAppConfigurer
-* @author fuce
-* @date 2018年6月3日
-*
  */
 @Configuration
 public class MyWebAppConfigurer implements WebMvcConfigurer { 

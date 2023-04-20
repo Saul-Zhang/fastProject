@@ -2,7 +2,7 @@ package com.fastproject.service;
 
 import cn.hutool.core.util.StrUtil;
 import com.fastproject.common.base.BaseService;
-import com.fastproject.common.support.ConvertUtil;
+import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.SysDepartmentMapper;
 import com.fastproject.model.auto.SysDepartment;
 import com.fastproject.model.auto.SysDepartmentExample;

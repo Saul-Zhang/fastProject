@@ -2,7 +2,7 @@ package com.fastproject.common.quartz;
 
 import cn.hutool.core.exceptions.ExceptionUtil;
 
-import com.fastproject.common.spring.SpringUtils;
+import com.fastproject.common.utils.SpringUtils;
 import com.fastproject.model.auto.SysQuartzJob;
 import com.fastproject.model.auto.SysQuartzJobLog;
 import com.fastproject.service.SysQuartzJobLogService;

@@ -1,4 +1,4 @@
-package com.fastproject.common.support;
+package com.fastproject.common.utils;
 
 import cn.hutool.core.util.StrUtil;
 import com.fastproject.util.StringUtils;

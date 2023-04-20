@@ -1,7 +1,7 @@
 package com.fastproject.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.fastproject.common.support.ConvertUtil;
+import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.SysAreaMapper;
 import com.fastproject.model.auto.SysArea;
 import com.fastproject.model.auto.SysAreaExample;

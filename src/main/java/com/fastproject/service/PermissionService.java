@@ -1,7 +1,7 @@
 package com.fastproject.service;
 
 import com.fastproject.common.base.BaseService;
-import com.fastproject.common.support.ConvertUtil;
+import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.PermissionMapper;
 import com.fastproject.mapper.TsysPermissionMapper;
 import com.fastproject.mapper.TsysPermissionRoleMapper;
@@ -13,7 +13,6 @@ import com.fastproject.model.custom.Menu;
 import com.fastproject.model.custom.SysPower;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.util.SnowflakeIdWorker;
-import com.fastproject.util.StringUtils;
 import com.github.pagehelper.PageInfo;
 import java.util.ArrayList;
 import java.util.List;

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fastproject.common.base.BaseController;
 import com.fastproject.common.domain.AjaxResult;
-import com.fastproject.model.auto.TSysDictData;
+import com.fastproject.model.auto.DictData;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.service.SysDictDataService;
 import com.fastproject.service.SysDictTypeService;
@@ -70,7 +70,7 @@ public class DictDataController extends BaseController{
 	@SaCheckPermission("system:dictData:list")
 	@ResponseBody
 	public Object list(Tablepar tablepar,String searchText,String dictId){
-		PageInfo<TSysDictData> page=tSysDictDataService.list(tablepar,searchText,dictId) ;
+		PageInfo<DictData> page=tSysDictDataService.list(tablepar,searchText,dictId) ;
 		return pageTable(page.getList(),page.getTotal());
 	}
 	
@@ -90,7 +90,7 @@ public class DictDataController extends BaseController{
 	
     /**
      * 新增保存
-     * @param tSysDictData
+     * @param dictData
      * @param model
      * @return
      */
@@ -99,8 +99,8 @@ public class DictDataController extends BaseController{
 	@PostMapping("/add")
 	@SaCheckPermission("system:dictData:add")
 	@ResponseBody
-	public AjaxResult add(TSysDictData tSysDictData, Model model){
-		int b=tSysDictDataService.insertSelective(tSysDictData);
+	public AjaxResult add(DictData dictData, Model model){
+		int b=tSysDictDataService.insertSelective(dictData);
 		if(b>0){
 			return success();
 		}else{
@@ -135,8 +135,8 @@ public class DictDataController extends BaseController{
 	@ApiOperation(value = "检查Name唯一", notes = "检查Name唯一")
 	@PostMapping("/checkNameUnique")
 	@ResponseBody
-	public int checkNameUnique(TSysDictData tSysDictData){
-		int b=tSysDictDataService.checkNameUnique(tSysDictData);
+	public int checkNameUnique(DictData dictData){
+		int b=tSysDictDataService.checkNameUnique(dictData);
 		if(b>0){
 			return 1;
 		}else{
@@ -155,7 +155,7 @@ public class DictDataController extends BaseController{
 	@GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") String id, ModelMap mmap)
     {
-		TSysDictData sysDictData= tSysDictDataService.selectByPrimaryKey(id);
+		DictData sysDictData= tSysDictDataService.selectByPrimaryKey(id);
         mmap.put("TSysDictData", sysDictData);
         return prefix + "/edit";
     }
@@ -168,7 +168,7 @@ public class DictDataController extends BaseController{
 	@SaCheckPermission("system:dictData:edit")
     @PostMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave(TSysDictData record)
+    public AjaxResult editSave(DictData record)
     {
         return toAjax(tSysDictDataService.updateByPrimaryKeySelective(record));
     }
@@ -181,7 +181,7 @@ public class DictDataController extends BaseController{
 	 */
     @PutMapping("/updateDefault")
 	@ResponseBody
-    public AjaxResult updateDefault(@RequestBody TSysDictData record){
+    public AjaxResult updateDefault(@RequestBody DictData record){
 		int i=tSysDictDataService.updateByPrimaryKeySelective(record);
 		return toAjax(i);
 	}
@@ -193,7 +193,7 @@ public class DictDataController extends BaseController{
 	 */
     @PutMapping("/updateEnable")
 	@ResponseBody
-    public AjaxResult updateEnable(@RequestBody TSysDictData record){
+    public AjaxResult updateEnable(@RequestBody DictData record){
 		int i=tSysDictDataService.updateByPrimaryKeySelective(record);
 		return toAjax(i);
 	}

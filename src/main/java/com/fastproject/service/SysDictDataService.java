@@ -1,152 +1,163 @@
 package com.fastproject.service;
 
-import java.util.Date;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.fastproject.common.base.BaseService;
-import com.fastproject.common.support.ConvertUtil;
-import com.fastproject.mapper.TSysDictDataMapper;
+import com.fastproject.common.mybatis.LambdaQueryWrapperX;
+import com.fastproject.common.utils.ConvertUtil;
+import com.fastproject.mapper.DictDataMapper;
 import com.fastproject.mapper.TSysDictTypeMapper;
-import com.fastproject.model.auto.TSysDictData;
+import com.fastproject.model.auto.DictData;
+import com.fastproject.model.auto.DictType;
 import com.fastproject.model.auto.TSysDictDataExample;
-import com.fastproject.model.auto.TSysDictType;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.satoken.SaTokenUtil;
 import com.fastproject.util.SnowflakeIdWorker;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * 字典数据表Service
-* @Title: TSysDictDataService.java
-* @Package com.fc.v2.service
-* @author 一休
-* @email 438081243@qq.com
-* @date 2019-09-08 00:10:43
  */
 @Service
-public class SysDictDataService implements BaseService<TSysDictData, TSysDictDataExample>{
-	@Autowired
-	private TSysDictDataMapper tSysDictDataMapper;
-	@Autowired
-	private TSysDictTypeMapper tSysDictTypeMapper;
-	/**
-	 * 分页查询
-	 * @param pageNum
-	 * @param pageSize
-	 * @return
-	 */
-	 public PageInfo<TSysDictData> list(Tablepar tablepar,String name,String dictId){
-	        TSysDictDataExample testExample=new TSysDictDataExample();
-		    testExample.setOrderByClause("dict_sort ASC");
-		    if(dictId!=null&&!"".equals(dictId)){
-		    	TSysDictType dictType= tSysDictTypeMapper.selectByPrimaryKey(dictId);
-		    	if(dictType!=null) {
-		    		 testExample.createCriteria().andDictTypeEqualTo(dictType.getDictType());
-		    	}
-			}
-	        if(name!=null&&!"".equals(name)){
-	        	testExample.createCriteria().andDictValueLike("%"+name+"%");
-	        }
+public class SysDictDataService implements BaseService<DictData, TSysDictDataExample> {
 
-	        PageHelper.startPage(tablepar.getPage(), tablepar.getLimit());
-	        List<TSysDictData> list= tSysDictDataMapper.selectByExample(testExample);
-	        PageInfo<TSysDictData> pageInfo = new PageInfo<TSysDictData>(list);
-	        return  pageInfo;
-	 }
+  @Autowired
+  private DictDataMapper dictDataMapper;
+  @Autowired
+  private TSysDictTypeMapper tSysDictTypeMapper;
 
+  /**
+   * 分页查询
+   *
+   * @param pageNum
+   * @param pageSize
+   * @return
+   */
+  public PageInfo<DictData> list(Tablepar tablepar, String name, String dictId) {
+    TSysDictDataExample testExample = new TSysDictDataExample();
+    testExample.setOrderByClause("dict_sort ASC");
+    if (dictId != null && !"".equals(dictId)) {
+      DictType dictType = tSysDictTypeMapper.selectByPrimaryKey(dictId);
+      if (dictType != null) {
+        testExample.createCriteria().andDictTypeEqualTo(dictType.getCode());
+      }
+    }
+    if (name != null && !"".equals(name)) {
+      testExample.createCriteria().andDictValueLike("%" + name + "%");
+    }
 
-	@Override
-	public int deleteByPrimaryKey(String ids) {
-		List<String> lista= ConvertUtil.toListStrArray(ids);
-		TSysDictDataExample example=new TSysDictDataExample();
-		example.createCriteria().andIdIn(lista);
-		return tSysDictDataMapper.deleteByExample(example);
-	}
-
-	/**
-	 * 添加
-	 */
-	@Override
-	public int insertSelective(TSysDictData record) {
-		//添加雪花主键id
-		record.setId(SnowflakeIdWorker.getUUID());
-		record.setCreateTime(new Date());
-		record.setUpdateTime(new Date());
-		record.setCreateBy(SaTokenUtil.getUser().getUsername());
-		return tSysDictDataMapper.insertSelective(record);
-	}
-
-	@Override
-	public TSysDictData selectByPrimaryKey(String id) {
-		return tSysDictDataMapper.selectByPrimaryKey(id);
-	}
-
-	@Override
-	public int updateByPrimaryKeySelective(TSysDictData record) {
-		record.setUpdateTime(new Date());
-		record.setUpdateBy(SaTokenUtil.getUser().getUsername());
-		return tSysDictDataMapper.updateByPrimaryKeySelective(record);
-	}
+    PageHelper.startPage(tablepar.getPage(), tablepar.getLimit());
+    List<DictData> list = dictDataMapper.selectByExample(testExample);
+    PageInfo<DictData> pageInfo = new PageInfo<DictData>(list);
+    return pageInfo;
+  }
 
 
-	@Override
-	public int updateByExampleSelective(TSysDictData record, TSysDictDataExample example) {
-		
-		return tSysDictDataMapper.updateByExampleSelective(record, example);
-	}
+  @Override
+  public int deleteByPrimaryKey(String ids) {
+    List<String> lista = ConvertUtil.toListStrArray(ids);
+    TSysDictDataExample example = new TSysDictDataExample();
+    example.createCriteria().andIdIn(lista);
+    return dictDataMapper.deleteByExample(example);
+  }
 
-	
-	@Override
-	public int updateByExample(TSysDictData record, TSysDictDataExample example) {
-		
-		return tSysDictDataMapper.updateByExample(record, example);
-	}
+  /**
+   * 添加
+   */
+  @Override
+  public int insertSelective(DictData record) {
+    //添加雪花主键id
+    record.setId(SnowflakeIdWorker.getUUID());
+    record.setCreateTime(new Date());
+    record.setUpdateTime(new Date());
+    record.setCreateBy(SaTokenUtil.getUser().getUsername());
+    return dictDataMapper.insertSelective(record);
+  }
 
-	@Override
-	public List<TSysDictData> selectByExample(TSysDictDataExample example) {
-		
-		return tSysDictDataMapper.selectByExample(example);
-	}
+  @Override
+  public DictData selectByPrimaryKey(String id) {
+    return dictDataMapper.selectByPrimaryKey(id);
+  }
 
-	
-	@Override
-	public long countByExample(TSysDictDataExample example) {
-		
-		return tSysDictDataMapper.countByExample(example);
-	}
+  @Override
+  public int updateByPrimaryKeySelective(DictData record) {
+    record.setUpdateTime(new Date());
+    record.setUpdateBy(SaTokenUtil.getUser().getUsername());
+    return dictDataMapper.updateByPrimaryKeySelective(record);
+  }
 
-	
-	@Override
-	public int deleteByExample(TSysDictDataExample example) {
-		
-		return tSysDictDataMapper.deleteByExample(example);
-	}
-	
-	/**
-	 * 检查name
-	 * @param TSysDictData
-	 * @return
-	 */
-	public int checkNameUnique(TSysDictData tSysDictData){
-		TSysDictDataExample example=new TSysDictDataExample();
-		example.createCriteria().andDictValueEqualTo(tSysDictData.getDictValue());
-		List<TSysDictData> list=tSysDictDataMapper.selectByExample(example);
-		return list.size();
-	}
 
-	/**
-	 * 批量删除
-	 * @param dictIds
-	 * @author fuce
-	 * @Date 2019年9月9日 上午12:40:52
-	 */
-	public void deleteByPrimaryDictIds(List<String> dictIds) {
-		TSysDictDataExample example=new TSysDictDataExample();
-		example.createCriteria().andIdIn(dictIds);
-		tSysDictDataMapper.deleteByExample(example);
-	}
+  @Override
+  public int updateByExampleSelective(DictData record, TSysDictDataExample example) {
+
+    return dictDataMapper.updateByExampleSelective(record, example);
+  }
+
+
+  @Override
+  public int updateByExample(DictData record, TSysDictDataExample example) {
+
+    return dictDataMapper.updateByExample(record, example);
+  }
+
+  @Override
+  public List<DictData> selectByExample(TSysDictDataExample example) {
+
+    return dictDataMapper.selectByExample(example);
+  }
+
+
+  @Override
+  public long countByExample(TSysDictDataExample example) {
+
+    return dictDataMapper.countByExample(example);
+  }
+
+
+  @Override
+  public int deleteByExample(TSysDictDataExample example) {
+
+    return dictDataMapper.deleteByExample(example);
+  }
+
+  /**
+   * 检查name
+   *
+   * @param TSysDictData
+   * @return
+   */
+  public int checkNameUnique(DictData dictData) {
+    TSysDictDataExample example = new TSysDictDataExample();
+    example.createCriteria().andDictValueEqualTo(dictData.getValue());
+    List<DictData> list = dictDataMapper.selectByExample(example);
+    return list.size();
+  }
+
+  /**
+   * 批量删除
+   *
+   * @param dictIds
+   * @author fuce
+   * @Date 2019年9月9日 上午12:40:52
+   */
+  public void deleteByPrimaryDictIds(List<String> dictIds) {
+    TSysDictDataExample example = new TSysDictDataExample();
+    example.createCriteria().andIdIn(dictIds);
+    dictDataMapper.deleteByExample(example);
+  }
+
+  public Map<String, Map<String, Object>> getAllDict(){
+  dictDataMapper.selectList(
+            new LambdaQueryWrapperX<DictData>().eq(DictData::getStatus, "0"))
+        .stream().collect(
+            Collectors.toMap(DictData::getCode,
+            Collectors.groupingBy(DictData::getValue));
+//    collect
+//        .collect(Collectors.toMap(DictData::getCode,  dictData ->{ return (dictData.getCode()) dictData.getValue().} ))
+  }
 }

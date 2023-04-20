@@ -1,6 +1,6 @@
 package com.fastproject.mapper;
 
-import com.fastproject.model.auto.TSysDictType;
+import com.fastproject.model.auto.DictType;
 import com.fastproject.model.auto.TSysDictTypeExample;
 import org.apache.ibatis.annotations.Param;
 
@@ -20,19 +20,19 @@ public interface TSysDictTypeMapper {
 		
     int deleteByPrimaryKey(String id);
 		
-    int insert(TSysDictType record);
+    int insert(DictType record);
 
-    int insertSelective(TSysDictType record);
+    int insertSelective(DictType record);
 
-    List<TSysDictType> selectByExample(TSysDictTypeExample example);
+    List<DictType> selectByExample(TSysDictTypeExample example);
 		
-    TSysDictType selectByPrimaryKey(String id);
+    DictType selectByPrimaryKey(String id);
 		
-    int updateByExampleSelective(@Param("record") TSysDictType record, @Param("example") TSysDictTypeExample example);
+    int updateByExampleSelective(@Param("record") DictType record, @Param("example") TSysDictTypeExample example);
 
-    int updateByExample(@Param("record") TSysDictType record, @Param("example") TSysDictTypeExample example); 
+    int updateByExample(@Param("record") DictType record, @Param("example") TSysDictTypeExample example);
 		
-    int updateByPrimaryKeySelective(TSysDictType record);
+    int updateByPrimaryKeySelective(DictType record);
 
-    int updateByPrimaryKey(TSysDictType record);
+    int updateByPrimaryKey(DictType record);
 }

@@ -1,4 +1,4 @@
-package com.fastproject.common.file;
+package com.fastproject.common.utils;
 
 import java.io.File;
 import java.io.FileInputStream;

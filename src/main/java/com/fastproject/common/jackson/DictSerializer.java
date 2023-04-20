@@ -1,4 +1,4 @@
-package com.fastproject.jackson;
+package com.fastproject.common.jackson;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
@@ -6,25 +6,35 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
-import com.fastproject.annotation.Dict;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.fastproject.common.annotation.Dict;
 import java.io.IOException;
 import java.util.Optional;
-import lombok.Data;
-import org.springframework.stereotype.Component;
 
 /**
  * @author fastProject
  * @date 2023/4/20 0:11
  */
-public class DictSerializer extends JsonSerializer<Object> implements ContextualSerializer {
+public class DictSerializer extends StdSerializer<Object> implements ContextualSerializer {
+
+  private static final long serialVersionUID = -6157558261755426448L;
 
   private String dictCode;
-  private JsonSerializer<Object> defSerializer;
 
-  public DictSerializer(String dictCode, JsonSerializer<Object> defSerializer){
-    this.dictCode = dictCode;
-    this.defSerializer =defSerializer;
+  public DictSerializer(){
+    super(Object.class);
   }
+
+  public DictSerializer(String dictCode) {
+    super(Object.class);
+    this.dictCode = dictCode;
+  }
+
+//  @Override
+//  public Class<Object> handledType() {
+//    return Object.class;
+//  }
+
   @Override
   public void serialize(Object o, JsonGenerator jsonGenerator,
       SerializerProvider serializerProvider) throws IOException {
@@ -38,6 +48,7 @@ public class DictSerializer extends JsonSerializer<Object> implements Contextual
 //      String codeLabel = RedisUtils.dictCodeToLabel(type, value.toString());
       // 写入
       jsonGenerator.writeString("codeLabel");
+//      dictCode = null;
     }
   }
 
@@ -48,8 +59,9 @@ public class DictSerializer extends JsonSerializer<Object> implements Contextual
     Dict dict = Optional.ofNullable(beanProperty).map(b -> b.getAnnotation(Dict.class))
         .orElse(null);
     if (dict != null) {
-      return new DictSerializer(dict.dictCode(), defSerializer );
+      dictCode = dict.dictCode();
+      return new DictSerializer(dictCode);
     }
-    return defSerializer;
+    return serializerProvider.findNullValueSerializer(null);
   }
 }

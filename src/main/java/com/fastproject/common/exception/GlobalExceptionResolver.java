@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.alibaba.fastjson.JSON;
 import com.fastproject.common.conf.FastProperties;
 import com.fastproject.common.domain.AjaxResult;
 import com.fastproject.common.exception.demo.DemoModeException;
@@ -57,7 +56,8 @@ public class GlobalExceptionResolver{
         		for (String nourl : satoken_not_urls) {
         			 AntPathMatcher matcher = new AntPathMatcher();
 					if(matcher.match(nourl,request.getRequestURI())) {
-						 return JSON.toJSONString(AjaxResult.error(886,e.getMessage()));
+//						 return JSON.toJSONString(AjaxResult.error(886,e.getMessage()));
+						 return e.getMessage();
 					}
 				}
         		return new ModelAndView("/login");
@@ -68,7 +68,8 @@ public class GlobalExceptionResolver{
         		for (String nourl : satoken_not_urls) {
         			 AntPathMatcher matcher = new AntPathMatcher();
 					if(matcher.match(nourl,request.getRequestURI())) {
-						 return JSON.toJSONString(AjaxResult.error(403,e.getMessage()));
+//						 return JSON.toJSONString(AjaxResult.error(403,e.getMessage()));
+						 return e.getMessage();
 					}
 				}
         		return new ModelAndView("/error/403");

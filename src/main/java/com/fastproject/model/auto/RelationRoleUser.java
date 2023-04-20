@@ -14,10 +14,10 @@ public class RelationRoleUser implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private Integer id;
+  private String id;
 
-  private Integer userId;
+  private String userId;
 
-  private Integer roleId;
+  private String roleId;
 
 }

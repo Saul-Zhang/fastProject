@@ -60,16 +60,16 @@
       <version>3.0.3</version>
     </dependency>
     <!--GSON -->
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>com.google.code.gson</groupId>-->
+<!--      <artifactId>gson</artifactId>-->
+<!--    </dependency>-->
     <!-- JSON 解 析 工 具 -->
-    <dependency>
-      <groupId>com.alibaba</groupId>
-      <artifactId>fastjson</artifactId>
-      <version>1.2.68</version>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>com.alibaba</groupId>-->
+<!--      <artifactId>fastjson</artifactId>-->
+<!--      <version>1.2.68</version>-->
+<!--    </dependency>-->
     <!-- pageHelper -->
     <dependency>
       <groupId>com.github.pagehelper</groupId>

@@ -1,4 +1,4 @@
-package com.fastproject.common.spring;
+package com.fastproject.common.utils;
 
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.BeansException;

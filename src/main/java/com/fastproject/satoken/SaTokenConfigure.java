@@ -7,9 +7,8 @@ import cn.dev33.satoken.interceptor.SaAnnotationInterceptor;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.ArrayUtil;
-import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fastproject.common.conf.FastProperties;
-import com.fastproject.common.domain.AjaxResult;
 import com.fastproject.satoken.dialect.SaTokenDialect;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +24,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 public class SaTokenConfigure implements WebMvcConfigurer {
+  @Autowired
+  private ObjectMapper objectMapper;
+
 
   @Autowired
   private FastProperties fastProperties;
@@ -85,14 +87,16 @@ public class SaTokenConfigure implements WebMvcConfigurer {
           if (e instanceof NotLoginException) {
             for (String nourl : saTokenNotUrls) {
               if (nourl.contains(SaHolder.getRequest().getUrl())) {
-                return JSON.toJSONString(AjaxResult.error(886, e.getMessage()));
+//                  return objectMapper.writeValueAsString(AjaxResult.error(886, e.getMessage()));
+                return e.getMessage();
+
               }
             }
             //这儿如果是tomcat发布用内部跳转比较好
             //SaHolder.getResponse().redirect("/admin/login");
             SaHolder.getRequest().forward("/admin/login");
           }
-          return JSON.toJSONString(AjaxResult.error(e.getMessage()));
+          return e.getMessage();
         })
 
         // 前置函数：在每次认证函数之前执行

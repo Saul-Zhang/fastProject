@@ -1,11 +1,15 @@
 package com.fastproject.model.response;
 
 
+import com.fastproject.common.annotation.Dict;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public class UserResponse {
+public class UserResponse implements Serializable {
+
+  private static final long serialVersionUID = 1L;
 
   /**
    * 主键
@@ -54,6 +58,7 @@ public class UserResponse {
 
   private String tel;
 
+  @Dict(dictCode = "111")
   private String gender;
 
   private String email;

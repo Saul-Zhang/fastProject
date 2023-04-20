@@ -2,7 +2,7 @@ package com.fastproject.service;
 
 import cn.hutool.core.util.RandomUtil;
 import com.fastproject.common.base.BaseService;
-import com.fastproject.common.support.ConvertUtil;
+import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.TsysPermissionRoleMapper;
 import com.fastproject.mapper.TsysRoleMapper;
 import com.fastproject.mapper.RoleMapper;

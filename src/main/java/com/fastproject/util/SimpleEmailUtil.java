@@ -1,7 +1,7 @@
 package com.fastproject.util;
 
 import com.fastproject.common.conf.FastProperties;
-import com.fastproject.common.spring.SpringUtils;
+import com.fastproject.common.utils.SpringUtils;
 import com.fastproject.model.auto.TSysEmail;
 import com.fastproject.model.custom.email.MailSenderInfo;
 import com.fastproject.model.custom.email.MyAuthenticator;

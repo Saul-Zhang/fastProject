@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fastproject.common.base.BaseService;
-import com.fastproject.common.support.ConvertUtil;
-import com.fastproject.mapper.TSysDictDataMapper;
+import com.fastproject.common.utils.ConvertUtil;
+import com.fastproject.mapper.DictDataMapper;
 import com.fastproject.mapper.TSysDictTypeMapper;
 import com.fastproject.model.auto.TSysDictDataExample;
-import com.fastproject.model.auto.TSysDictType;
+import com.fastproject.model.auto.DictType;
 import com.fastproject.model.auto.TSysDictTypeExample;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.satoken.SaTokenUtil;
@@ -30,11 +30,11 @@ import com.github.pagehelper.PageInfo;
 * @date 2019-09-05 12:34:25
  */
 @Service
-public class SysDictTypeService implements BaseService<TSysDictType, TSysDictTypeExample>{
+public class SysDictTypeService implements BaseService<DictType, TSysDictTypeExample>{
 	@Autowired
 	private TSysDictTypeMapper tSysDictTypeMapper;
 	@Autowired
-	private TSysDictDataMapper tSysDictDataMapper;
+	private DictDataMapper dictDataMapper;
 	
 	/**
 	 * 分页查询
@@ -42,7 +42,7 @@ public class SysDictTypeService implements BaseService<TSysDictType, TSysDictTyp
 	 * @param pageSize
 	 * @return
 	 */
-	 public PageInfo<TSysDictType> list(Tablepar tablepar,String name){
+	 public PageInfo<DictType> list(Tablepar tablepar,String name){
 	        TSysDictTypeExample testExample=new TSysDictTypeExample();
 	        testExample.setOrderByClause("id+0 desc");
 	        if(name!=null&&!"".equals(name)){
@@ -50,8 +50,8 @@ public class SysDictTypeService implements BaseService<TSysDictType, TSysDictTyp
 	        }
 
 	        PageHelper.startPage(tablepar.getPage(), tablepar.getLimit());
-	        List<TSysDictType> list= tSysDictTypeMapper.selectByExample(testExample);
-	        PageInfo<TSysDictType> pageInfo = new PageInfo<TSysDictType>(list);
+	        List<DictType> list= tSysDictTypeMapper.selectByExample(testExample);
+	        PageInfo<DictType> pageInfo = new PageInfo<DictType>(list);
 	        return  pageInfo;
 	 }
 
@@ -62,16 +62,16 @@ public class SysDictTypeService implements BaseService<TSysDictType, TSysDictTyp
 		List<String> lista=ConvertUtil.toListStrArray(ids);
 		TSysDictTypeExample example=new TSysDictTypeExample();
 		example.createCriteria().andIdIn(lista);
-		List<TSysDictType> dictTypes=tSysDictTypeMapper.selectByExample(example);
+		List<DictType> dictTypes=tSysDictTypeMapper.selectByExample(example);
 		//在删除type下面得data数据
 		List<String> datatypes=new ArrayList<String>();
-		for (TSysDictType tSysDictType : dictTypes) {
+		for (DictType dictType : dictTypes) {
 			
-			datatypes.add(tSysDictType.getDictType());
+			datatypes.add(dictType.getDictType());
 		}
 		TSysDictDataExample  dictDataExample=new TSysDictDataExample();
 		dictDataExample.createCriteria().andDictTypeIn(datatypes);
-		tSysDictDataMapper.deleteByExample(dictDataExample);
+		dictDataMapper.deleteByExample(dictDataExample);
 		//在删除type数据
 		tSysDictTypeMapper.deleteByExample(example);
 		return 1;
@@ -79,14 +79,14 @@ public class SysDictTypeService implements BaseService<TSysDictType, TSysDictTyp
 	
 	
 	@Override
-	public TSysDictType selectByPrimaryKey(String id) {
+	public DictType selectByPrimaryKey(String id) {
 		
 		return tSysDictTypeMapper.selectByPrimaryKey(id);
 	}
 
 	
 	@Override
-	public int updateByPrimaryKeySelective(TSysDictType record) {
+	public int updateByPrimaryKeySelective(DictType record) {
 		record.setUpdateTime(new Date());
 		record.setUpdateBy(SaTokenUtil.getUser().getUsername());
 		return tSysDictTypeMapper.updateByPrimaryKeySelective(record);
@@ -96,7 +96,7 @@ public class SysDictTypeService implements BaseService<TSysDictType, TSysDictTyp
 	 * 添加
 	 */
 	@Override
-	public int insertSelective(TSysDictType record) {
+	public int insertSelective(DictType record) {
 		//添加雪花主键id
 		record.setId(SnowflakeIdWorker.getUUID());
 		record.setCreateTime(new Date());
@@ -108,20 +108,20 @@ public class SysDictTypeService implements BaseService<TSysDictType, TSysDictTyp
 
 	
 	@Override
-	public int updateByExampleSelective(TSysDictType record, TSysDictTypeExample example) {
+	public int updateByExampleSelective(DictType record, TSysDictTypeExample example) {
 		
 		return tSysDictTypeMapper.updateByExampleSelective(record, example);
 	}
 
 	
 	@Override
-	public int updateByExample(TSysDictType record, TSysDictTypeExample example) {
+	public int updateByExample(DictType record, TSysDictTypeExample example) {
 		
 		return tSysDictTypeMapper.updateByExample(record, example);
 	}
 
 	@Override
-	public List<TSysDictType> selectByExample(TSysDictTypeExample example) {
+	public List<DictType> selectByExample(TSysDictTypeExample example) {
 		
 		return tSysDictTypeMapper.selectByExample(example);
 	}
@@ -145,10 +145,10 @@ public class SysDictTypeService implements BaseService<TSysDictType, TSysDictTyp
 	 * @param TSysDictType
 	 * @return
 	 */
-	public int checkNameUnique(TSysDictType tSysDictType){
+	public int checkNameUnique(DictType dictType){
 		TSysDictTypeExample example=new TSysDictTypeExample();
-		example.createCriteria().andDictNameEqualTo(tSysDictType.getDictName());
-		List<TSysDictType> list=tSysDictTypeMapper.selectByExample(example);
+		example.createCriteria().andDictNameEqualTo(dictType.getDictName());
+		List<DictType> list=tSysDictTypeMapper.selectByExample(example);
 		return list.size();
 	}
 }

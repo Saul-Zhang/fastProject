@@ -1,6 +1,6 @@
 package com.fastproject.common.quartz;
 
-import com.fastproject.common.quartz.utils.JobInvokeUtil;
+import com.fastproject.common.utils.JobInvokeUtil;
 import com.fastproject.model.auto.SysQuartzJob;
 
 import org.quartz.JobExecutionContext;

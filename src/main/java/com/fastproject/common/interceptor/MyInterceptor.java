@@ -3,7 +3,7 @@ package com.fastproject.common.interceptor;
 import cn.hutool.core.util.StrUtil;
 import com.fastproject.common.conf.FastProperties;
 import com.fastproject.common.exception.demo.DemoModeException;
-import com.fastproject.common.spring.SpringUtils;
+import com.fastproject.common.utils.SpringUtils;
 import com.fastproject.model.auto.SysInterUrl;
 import com.fastproject.service.SysInterUrlService;
 import org.springframework.web.servlet.HandlerInterceptor;

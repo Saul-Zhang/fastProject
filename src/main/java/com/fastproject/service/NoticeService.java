@@ -2,7 +2,7 @@ package com.fastproject.service;
 
 import com.fastproject.common.base.BaseService;
 import com.fastproject.common.mybatis.LambdaQueryWrapperX;
-import com.fastproject.common.support.ConvertUtil;
+import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.NoticeMapper;
 import com.fastproject.mapper.RelationNoticeUserMapper;
 import com.fastproject.model.auto.Notice;

@@ -1,6 +1,6 @@
-package com.fastproject.common.quartz.utils;
+package com.fastproject.common.utils;
 
-import com.fastproject.common.spring.SpringUtils;
+import com.fastproject.common.utils.SpringUtils;
 import com.fastproject.model.auto.SysQuartzJob;
 import com.fastproject.util.StringUtils;
 

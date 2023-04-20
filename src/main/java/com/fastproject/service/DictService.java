@@ -1,10 +1,10 @@
 package com.fastproject.service;
 
-import com.fastproject.mapper.TSysDictDataMapper;
+import com.fastproject.mapper.DictDataMapper;
 import com.fastproject.mapper.TSysDictTypeMapper;
-import com.fastproject.model.auto.TSysDictData;
+import com.fastproject.model.auto.DictData;
 import com.fastproject.model.auto.TSysDictDataExample;
-import com.fastproject.model.auto.TSysDictType;
+import com.fastproject.model.auto.DictType;
 import com.fastproject.model.auto.TSysDictTypeExample;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import java.util.List;
 @Service("dict")
 public class DictService {
 	@Autowired
-	private TSysDictDataMapper tSysDictDataMapper;
+	private DictDataMapper dictDataMapper;
 	
 	@Autowired
 	private TSysDictTypeMapper dictTypeMapper;
@@ -27,13 +27,13 @@ public class DictService {
 	 * @param dictType 字典类型
 	 * @return 参数键值
 	 */
-	public List<TSysDictData> getType(String dictType) {
+	public List<DictData> getType(String dictType) {
 		TSysDictDataExample example=new TSysDictDataExample();
 		if(dictType!=null) {
 			example.createCriteria().andDictTypeEqualTo(dictType);
-			return tSysDictDataMapper.selectByExample(example);
+			return dictDataMapper.selectByExample(example);
 		}
-		 return new ArrayList<TSysDictData>();
+		 return new ArrayList<DictData>();
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class DictService {
 		TSysDictDataExample example=new TSysDictDataExample();
 		if(dictType!=null&&dictValue!=null) {
 			example.createCriteria().andDictTypeEqualTo(dictType).andDictValueEqualTo(dictValue);
-			List<TSysDictData> dictDatas=tSysDictDataMapper.selectByExample(example);
+			List<DictData> dictDatas= dictDataMapper.selectByExample(example);
 			if(dictDatas.size()>0) {
 				return dictDatas.get(0).getDictLabel();
 			}
@@ -61,12 +61,12 @@ public class DictService {
 	/**
 	 * 根字典类型查询字典
 	 */
-	public TSysDictType getSysDictType(String dictType) {
+	public DictType getSysDictType(String dictType) {
 		TSysDictTypeExample dictTypeExample=new TSysDictTypeExample();
 		 dictTypeExample.createCriteria().andDictTypeEqualTo(dictType);
-		 List<TSysDictType> tSysDictTypes=dictTypeMapper.selectByExample(dictTypeExample);
-		 if(tSysDictTypes!=null&&tSysDictTypes.size()>0) {
-			 return tSysDictTypes.get(0);
+		 List<DictType> dictTypes =dictTypeMapper.selectByExample(dictTypeExample);
+		 if(dictTypes !=null&& dictTypes.size()>0) {
+			 return dictTypes.get(0);
 		 }
 		 return null;
 		 

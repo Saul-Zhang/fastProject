@@ -13,7 +13,7 @@ public class User implements Serializable {
   /**
    * 主键
    **/
-  private Integer id;
+  private String id;
 
   /**
    * 用户账号
@@ -33,7 +33,7 @@ public class User implements Serializable {
   /**
    * 部门id
    **/
-  private Integer depId;
+  private String depId;
 
   /**
    * 岗位id

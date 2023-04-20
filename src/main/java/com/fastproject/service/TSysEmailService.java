@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fastproject.common.base.BaseService;
-import com.fastproject.common.support.ConvertUtil;
+import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.TSysEmailMapper;
 import com.fastproject.model.auto.TSysEmail;
 import com.fastproject.model.auto.TSysEmailExample;

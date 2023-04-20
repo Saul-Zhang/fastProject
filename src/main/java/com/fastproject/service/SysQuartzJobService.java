@@ -3,7 +3,7 @@ package com.fastproject.service;
 import com.fastproject.common.base.BaseService;
 import com.fastproject.common.quartz.QuartzSchedulerUtil;
 import com.fastproject.common.quartz.ScheduleConstants;
-import com.fastproject.common.support.ConvertUtil;
+import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.SysQuartzJobMapper;
 import com.fastproject.model.auto.SysQuartzJob;
 import com.fastproject.model.auto.SysQuartzJobExample;

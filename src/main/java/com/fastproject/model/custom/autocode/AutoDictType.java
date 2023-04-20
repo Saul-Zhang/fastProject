@@ -2,32 +2,32 @@ package com.fastproject.model.custom.autocode;
 
 import java.util.List;
 
-import com.fastproject.model.auto.TSysDictData;
-import com.fastproject.model.auto.TSysDictType;
+import com.fastproject.model.auto.DictData;
+import com.fastproject.model.auto.DictType;
 
 public class AutoDictType {
 	//字典表
-	private TSysDictType dictType;
+	private DictType dictType;
 	//字典表里面的数据
-	private List<TSysDictData> dictDatas;
+	private List<DictData> dictDatas;
 
-	public TSysDictType getDictType() {
+	public DictType getDictType() {
 		return dictType;
 	}
 
-	public void setDictType(TSysDictType dictType) {
+	public void setDictType(DictType dictType) {
 		this.dictType = dictType;
 	}
 
-	public List<TSysDictData> getDictDatas() {
+	public List<DictData> getDictDatas() {
 		return dictDatas;
 	}
 
-	public void setDictDatas(List<TSysDictData> dictDatas) {
+	public void setDictDatas(List<DictData> dictDatas) {
 		this.dictDatas = dictDatas;
 	}
 
-	public AutoDictType(TSysDictType dictType, List<TSysDictData> dictDatas) {
+	public AutoDictType(DictType dictType, List<DictData> dictDatas) {
 		super();
 		this.dictType = dictType;
 		this.dictDatas = dictDatas;

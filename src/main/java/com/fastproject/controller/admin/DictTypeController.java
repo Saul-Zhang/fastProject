@@ -3,7 +3,7 @@ package com.fastproject.controller.admin;
 import com.fastproject.common.base.BaseController;
 import com.fastproject.common.domain.AjaxResult;
 import com.fastproject.common.domain.ResultTable;
-import com.fastproject.model.auto.TSysDictType;
+import com.fastproject.model.auto.DictType;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.service.SysDictTypeService;
 import com.github.pagehelper.PageInfo;
@@ -57,7 +57,7 @@ public class DictTypeController extends BaseController{
 	@SaCheckPermission("system:dictType:list")
 	@ResponseBody
 	public ResultTable list(Tablepar tablepar, String searchText){
-		PageInfo<TSysDictType> page=tSysDictTypeService.list(tablepar,searchText) ; 
+		PageInfo<DictType> page=tSysDictTypeService.list(tablepar,searchText) ;
 		return pageTable(page.getList(),page.getTotal());
 	}
 	
@@ -75,7 +75,7 @@ public class DictTypeController extends BaseController{
 	
     /**
      * 新增保存
-     * @param tSysDictType 字段类型
+     * @param dictType 字段类型
      * @param model  model
      * @return AjaxResult 对象
      */
@@ -84,8 +84,8 @@ public class DictTypeController extends BaseController{
 	@PostMapping("/add")
 	@SaCheckPermission("system:dictType:add")
 	@ResponseBody
-	public AjaxResult add(TSysDictType tSysDictType,Model model){
-		int b=tSysDictTypeService.insertSelective(tSysDictType);
+	public AjaxResult add(DictType dictType,Model model){
+		int b=tSysDictTypeService.insertSelective(dictType);
 		if(b>0){
 			return success();
 		}else{
@@ -114,14 +114,14 @@ public class DictTypeController extends BaseController{
 	
 	/**
 	 * 检查字典类型名字相同
-	 * @param tSysDictType
+	 * @param dictType
 	 * @return
 	 */
 	@ApiOperation(value = "检查Name唯一", notes = "检查Name唯一")
 	@PostMapping("/checkNameUnique")
 	@ResponseBody
-	public int checkNameUnique(TSysDictType tSysDictType){
-		int b=tSysDictTypeService.checkNameUnique(tSysDictType);
+	public int checkNameUnique(DictType dictType){
+		int b=tSysDictTypeService.checkNameUnique(dictType);
 		if(b>0){
 			return 1;
 		}else{
@@ -152,7 +152,7 @@ public class DictTypeController extends BaseController{
     @SaCheckPermission("system:dictType:edit")
     @PostMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave(TSysDictType record)
+    public AjaxResult editSave(DictType record)
     {
         return toAjax(tSysDictTypeService.updateByPrimaryKeySelective(record));
     }
@@ -164,7 +164,7 @@ public class DictTypeController extends BaseController{
 	 */
     @PutMapping("/updateEnable")
 	@ResponseBody
-    public AjaxResult updateEnable(@RequestBody TSysDictType record){
+    public AjaxResult updateEnable(@RequestBody DictType record){
 		int i=tSysDictTypeService.updateByPrimaryKeySelective(record);
 		return toAjax(i);
 	}

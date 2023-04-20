@@ -3,17 +3,18 @@ package com.fastproject.service;
 import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fastproject.common.base.BaseService;
 import com.fastproject.common.conf.FastProperties;
 import com.fastproject.common.domain.AjaxResult;
 import com.fastproject.common.mybatis.LambdaQueryWrapperX;
-import com.fastproject.common.support.ConvertUtil;
+import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.GeneratorMapper.TsysUserMapper;
 import com.fastproject.mapper.RelationRoleUserMapper;
 import com.fastproject.mapper.RoleMapper;
 import com.fastproject.mapper.TsysRoleMapper;
 import com.fastproject.mapper.UserMapper;
-import com.fastproject.model.auto.RelationRoleUser;
 import com.fastproject.model.auto.TSysRoleUserExample;
 import com.fastproject.model.auto.TsysRole;
 import com.fastproject.model.auto.TsysRoleExample;
@@ -25,7 +26,6 @@ import com.fastproject.model.response.UserResponse;
 import com.fastproject.satoken.SaTokenUtil;
 import com.fastproject.util.MD5Util;
 import com.fastproject.util.ServletUtils;
-import com.fastproject.util.SnowflakeIdWorker;
 import com.fastproject.util.StringUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -67,6 +67,9 @@ public class UserService implements BaseService<User, TsysUserExample> {
   @Autowired
   private TsysUserMapper userDao;
 
+  @Autowired
+  private ObjectMapper objectMapper;
+
   /**
    * 分页查询
    */
@@ -75,6 +78,13 @@ public class UserService implements BaseService<User, TsysUserExample> {
     LambdaQueryWrapperX<User> queryWrapperX = new LambdaQueryWrapperX<User>()
         .eqIfPresent(User::getDepId, query.getDeptId())
         .eqIfPresent(User::getId, query.getId());
+    UserResponse userResponse = new UserResponse();
+    userResponse.setGender("1");
+    try {
+      System.out.println(objectMapper.writeValueAsString(userResponse));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
     return new PageInfo<>(userMapper.getUsers(queryWrapperX));
   }
 

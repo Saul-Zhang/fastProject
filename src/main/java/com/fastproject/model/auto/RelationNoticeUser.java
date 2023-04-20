@@ -23,7 +23,7 @@ public class RelationNoticeUser implements Serializable {
 	private String noticeId;
 		
 	/** 用户id **/
-	private Integer userId;
+	private String userId;
 		
 	/** 0未阅读 1 阅读 **/
 	private Integer state;
