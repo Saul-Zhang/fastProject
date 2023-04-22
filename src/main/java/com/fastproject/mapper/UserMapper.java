@@ -2,8 +2,8 @@ package com.fastproject.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.fastproject.common.mybatis.LambdaQueryWrapperX;
-import com.fastproject.model.auto.User;
+import com.fastproject.common.mybatis.QueryWrapperX;
+import com.fastproject.model.User;
 import com.fastproject.model.response.UserResponse;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
@@ -16,12 +16,12 @@ import org.apache.ibatis.annotations.Select;
 public interface UserMapper extends BaseMapper<User> {
 
 
-  @Select("select u.*, r.name as roleName , p.name as posName, d.name as deptName \n"
-      + "from def_user u\n"
-      + "         left join rel_role_user ru on u.id = ru.user_id\n"
-      + "         left join def_role r on ru.role_id = r.id\n"
-      + "         left join def_position p on u.pos_id = p.id "
-      + "         left join def_department d on u.dept_id = d.id "
+  @Select("SELECT u.*,\n"
+      + "       p.NAME AS posName,\n"
+      + "       d.NAME AS deptName\n"
+      + "FROM def_user u \n"
+      + "         LEFT JOIN def_position p ON u.pos_id = p.id\n"
+      + "         LEFT JOIN def_department d ON u.dept_id = d.id "
       + " ${ew.customSqlSegment}")
-  List<UserResponse> getUsers(@Param(Constants.WRAPPER) LambdaQueryWrapperX<User> queryWrapper);
+  List<UserResponse> getUsers(@Param(Constants.WRAPPER) QueryWrapperX<User> queryWrapper);
 }

@@ -2,8 +2,8 @@ package com.fastproject.model.custom.autocode;
 
 import java.util.List;
 
-import com.fastproject.model.auto.DictData;
-import com.fastproject.model.auto.DictType;
+import com.fastproject.model.DictData;
+import com.fastproject.model.DictType;
 
 public class AutoDictType {
 	//字典表

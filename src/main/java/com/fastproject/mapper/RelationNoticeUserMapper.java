@@ -1,7 +1,7 @@
 package com.fastproject.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.fastproject.model.auto.RelationNoticeUser;
+import com.fastproject.model.RelationNoticeUser;
 import com.fastproject.model.auto.SysNoticeUserExample;
 import org.apache.ibatis.annotations.Param;
 

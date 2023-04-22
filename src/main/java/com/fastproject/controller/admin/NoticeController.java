@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fastproject.common.base.BaseController;
 import com.fastproject.common.domain.AjaxResult;
 import com.fastproject.common.domain.ResultTable;
-import com.fastproject.model.auto.Notice;
+import com.fastproject.model.Notice;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.satoken.SaTokenUtil;
 import com.fastproject.service.NoticeService;

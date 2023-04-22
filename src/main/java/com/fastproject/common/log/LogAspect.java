@@ -3,7 +3,7 @@ package com.fastproject.common.log;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fastproject.model.auto.TsysOperLog;
-import com.fastproject.model.auto.User;
+import com.fastproject.model.User;
 import com.fastproject.satoken.SaTokenUtil;
 import com.fastproject.service.SysOperLogService;
 import com.fastproject.util.ServletUtils;

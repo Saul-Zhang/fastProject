@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fastproject.mapper.RoleMapper">
-  <resultMap id="BaseResultMap" type="com.fastproject.model.auto.TsysRole">
+  <resultMap id="BaseResultMap" type="com.fastproject.model.Role">
     <result column="id" jdbcType="VARCHAR" property="id"/>
     <result column="name" jdbcType="VARCHAR" property="name"/>
   </resultMap>
@@ -12,7 +12,7 @@
     , name
   </sql>
 
-  <select id="queryUserRole" parameterType="String" resultType="com.fastproject.model.auto.TsysRole">
+  <select id="queryUserRole" parameterType="String" resultType="com.fastproject.model.Role">
     select r.id, r.name
     from t_sys_role r
            LEFT JOIN t_sys_role_user ru ON r.id = ru.sys_role_id

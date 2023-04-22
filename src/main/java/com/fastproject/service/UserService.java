@@ -3,28 +3,25 @@ package com.fastproject.service;
 import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fastproject.common.base.BaseService;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.fastproject.common.conf.FastProperties;
 import com.fastproject.common.domain.AjaxResult;
 import com.fastproject.common.mybatis.LambdaQueryWrapperX;
+import com.fastproject.common.mybatis.QueryWrapperX;
 import com.fastproject.common.utils.ConvertUtil;
-import com.fastproject.mapper.GeneratorMapper.TsysUserMapper;
 import com.fastproject.mapper.RelationRoleUserMapper;
 import com.fastproject.mapper.RoleMapper;
-import com.fastproject.mapper.TsysRoleMapper;
 import com.fastproject.mapper.UserMapper;
-import com.fastproject.model.auto.TSysRoleUserExample;
-import com.fastproject.model.auto.TsysRole;
-import com.fastproject.model.auto.TsysRoleExample;
-import com.fastproject.model.auto.TsysUserExample;
-import com.fastproject.model.auto.User;
+import com.fastproject.model.RelationRoleUser;
+import com.fastproject.model.User;
+import com.fastproject.model.constant.Status;
 import com.fastproject.model.custom.RoleVo;
 import com.fastproject.model.request.query.UserQuery;
 import com.fastproject.model.response.UserResponse;
 import com.fastproject.satoken.SaTokenUtil;
 import com.fastproject.util.MD5Util;
 import com.fastproject.util.ServletUtils;
+import com.fastproject.util.SnowflakeIdWorker;
 import com.fastproject.util.StringUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -34,240 +31,156 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UserService implements BaseService<User, TsysUserExample> {
+public class UserService {
 
   private final UserMapper userMapper;
 
   private final FastProperties properties;
-  //生成的用户dao
-  @Autowired
-  private com.fastproject.mapper.TsysUserMapper tsysUserMapper;
 
-  //生成的角色用户dao
-  @Autowired
-  private RelationRoleUserMapper relationRoleUserMapper;
+  private final RelationRoleUserMapper roleUserMapper;
 
-  //自定义角色dao
-  @Autowired
-  private RoleMapper roleMapper;
-
-  //自动生成的角色dao
-  @Autowired
-  private TsysRoleMapper tsysRoleMapper;
-
-  //自定义用户dao
-  @Autowired
-  private TsysUserMapper userDao;
-
-  @Autowired
-  private ObjectMapper objectMapper;
+  private final RoleMapper roleMapper;
 
   /**
    * 分页查询
    */
   public PageInfo<UserResponse> list(UserQuery query) {
     PageHelper.startPage(query.getPage(), query.getLimit());
-    LambdaQueryWrapperX<User> queryWrapperX = new LambdaQueryWrapperX<User>()
-        .eqIfPresent(User::getDeptId, query.getDeptId())
-        .eqIfPresent(User::getId, query.getId());
+    QueryWrapperX<User> queryWrapperX = new QueryWrapperX<User>()
+        .likeIfPresent("employee_id", query.getEmployeeId())
+        .likeIfPresent("real_name", query.getRealName())
+        .eqIfPresent("u.status", query.getStatus());
     return new PageInfo<>(userMapper.getUsers(queryWrapperX));
   }
 
 
-  @Override
   @Transactional
-  public int deleteByPrimaryKey(String ids) {
-    List<String> lista = ConvertUtil.toListStrArray(ids);
-    TsysUserExample example = new TsysUserExample();
-    example.createCriteria().andIdIn(lista);
-    int i = tsysUserMapper.deleteByExample(example);
-    if (i > 0) {
-      TSysRoleUserExample tSysRoleUserExample = new TSysRoleUserExample();
-      tSysRoleUserExample.createCriteria().andSysUserIdIn(lista);
-      relationRoleUserMapper.deleteByExample(tSysRoleUserExample);
-    }
-    return i;
+  public AjaxResult deleteByIds(String ids) {
+    List<String> userIds = ConvertUtil.toListStrArray(ids);
+
+    userIds.forEach(id -> {
+          User user = new User();
+          user.setId(id);
+          user.setStatus(Status.DISABLE);
+          userMapper.updateById(user);
+        }
+    );
+      roleUserMapper.delete(
+          new LambdaQueryWrapperX<RelationRoleUser>().in(RelationRoleUser::getUserId, userIds));
+    return AjaxResult.success();
 
   }
 
-  /**
-   * 添加用户
-   */
-  @Override
-  public int insertSelective(User record) {
-    return tsysUserMapper.insertSelective(record);
+  @Transactional
+  public AjaxResult updateStatus(List<String> userIds, Integer status) {
+//    List<String> userIds = ConvertUtil.toListStrArray(ids);
+    userMapper.deleteBatchIds(userIds);
+//    if (i > 0) {
+//      roleUserMapper.delete(
+//          new LambdaQueryWrapperX<RelationRoleUser>().in(RelationRoleUser::getUserId, userIds));
+//    }
+    return AjaxResult.success();
+
   }
 
   /**
    * 添加用户跟角色信息
-   *
-   * @param record
-   * @param roles
-   * @return
    */
-  @Transactional
-  public int insertUserRoles(User record, String roles) {
-//    String userid = SnowflakeIdWorker.getUUID();
-//    record.setId(userid);
+  @Transactional(rollbackFor = Exception.class)
+  public AjaxResult add(User record, String roleIds) {
+    String userid = SnowflakeIdWorker.getUUID();
+    record.setId(userid);
     //密码加密
     record.setPassword(MD5Util.encode(record.getPassword()));
-    tsysUserMapper.insertSelective(record);
-    if (StringUtils.isNotEmpty(roles)) {
-      List<String> list_roles = ConvertUtil.toListStrArray(roles);
-      for (String rolesid : list_roles) {
-//        RelationRoleUser roleUser = new RelationRoleUser(SnowflakeIdWorker.getUUID(), record.getId(),
-//            rolesid);
-//        relationRoleUserMapper.insertSelective(roleUser);
+    userMapper.insert(record);
+    if (StringUtils.isNotEmpty(roleIds)) {
+      List<String> roleIdList = ConvertUtil.toListStrArray(roleIds);
+      for (String rolesId : roleIdList) {
+        RelationRoleUser roleUser = new RelationRoleUser(SnowflakeIdWorker.getUUID(),
+            record.getId(), rolesId);
+        roleUserMapper.insert(roleUser);
       }
     }
 
-
-    return 1;
+    return AjaxResult.success();
   }
 
-  @Override
-  public User selectByPrimaryKey(String id) {
-
-    return tsysUserMapper.selectByPrimaryKey(id);
-  }
-
-
-  @Override
-  public int updateByPrimaryKeySelective(User record) {
-    record.setPassword(MD5Util.encode(record.getPassword()));
-    return tsysUserMapper.updateByPrimaryKeySelective(record);
-  }
-
-
-  @Override
-  public int updateByExampleSelective(User record, TsysUserExample example) {
-
-    return tsysUserMapper.updateByExampleSelective(record, example);
-  }
-
-
-  @Override
-  public int updateByExample(User record, TsysUserExample example) {
-
-    return tsysUserMapper.updateByExample(record, example);
-  }
-
-  @Override
-  public List<User> selectByExample(TsysUserExample example) {
-
-    return tsysUserMapper.selectByExample(example);
-  }
-
-
-  @Override
-  public long countByExample(TsysUserExample example) {
-
-    return tsysUserMapper.countByExample(example);
-  }
-
-
-  @Override
-  public int deleteByExample(TsysUserExample example) {
-
-    return tsysUserMapper.deleteByExample(example);
+  public List<User> getAll() {
+    return userMapper.selectList(new LambdaQueryWrapperX<User>()
+        .eq(User::getStatus, Status.ENABLE));
   }
 
   /**
    * 检查用户name
-   *
-   * @param user
-   * @return
    */
-  public int checkLoginNameUnique(User user) {
-    TsysUserExample example = new TsysUserExample();
-    example.createCriteria().andUsernameEqualTo(user.getUsername());
-    List<User> list = tsysUserMapper.selectByExample(example);
+  public int checkLoginNameUnique(String username) {
 
-    return list.size();
+    return userMapper.selectOne(new LambdaQueryWrapperX<User>()
+        .eq(User::getUsername, username)) == null ? 0 : 1;
   }
 
   /**
    * 获取所有权限 并且增加是否有权限字段
-   *
-   * @return
    */
-  public List<RoleVo> getUserIsRole(String userid) {
-    List<RoleVo> list = new ArrayList<RoleVo>();
-    //查询出我的权限
-    List<TsysRole> myRoles = roleMapper.queryUserRole(userid);
-    TsysRoleExample tsysRoleExample = new TsysRoleExample();
-    //查询系统所有的角色
-    List<TsysRole> tsysRoles = tsysRoleMapper.selectByExample(tsysRoleExample);
-    if (StringUtils.isNotEmpty(tsysRoles)) {
-      for (TsysRole tsysRole : tsysRoles) {
-        Boolean isflag = false;
-        RoleVo roleVo = new RoleVo(tsysRole.getId(), tsysRole.getName(), isflag);
-        for (TsysRole myRole : myRoles) {
-          if (tsysRole.getId().equals(myRole.getId())) {
-            isflag = true;
-            break;
-          }
-        }
-        if (isflag) {
-          roleVo.setIscheck(true);
-          list.add(roleVo);
-        } else {
-          list.add(roleVo);
-        }
-      }
-    }
+  public List<RoleVo> getRolesByUserId(String userId) {
+    List<RoleVo> list = new ArrayList<>();
+    roleMapper.selectList(null).forEach(
+        role -> {
+          RelationRoleUser roleUser = roleUserMapper.selectOne(
+              new LambdaQueryWrapperX<RelationRoleUser>()
+                  .eq(RelationRoleUser::getUserId, userId)
+                  .eq(RelationRoleUser::getRoleId, role.getId()));
+          list.add(new RoleVo(role.getId(), role.getName(), roleUser != null));
+        });
+
     return list;
+  }
+
+  public User getUserById(String userId) {
+    return userMapper.selectById(userId);
   }
 
 
   /**
    * 修改用户密码
-   *
-   * @param record
-   * @return
    */
   public int updateUserPassword(User record) {
     record.setPassword(MD5Util.encode(record.getPassword()));
     //修改用户信息
-    return tsysUserMapper.updateByPrimaryKeySelective(record);
+    return userMapper.updateById(record);
   }
 
 
   /**
    * 修改用户信息以及角色信息
-   *
-   * @param record
-   * @param roles
-   * @return
    */
-  @Transactional
-  public int updateUserRoles(User record, String roleIds) {
+  @Transactional(rollbackFor = Exception.class)
+  public int updateUserRoles(User record, List<String> roleIds) {
     //先删除这个用户的所有角色
-    TSysRoleUserExample tSysRoleUserExample = new TSysRoleUserExample();
-//    tSysRoleUserExample.createCriteria().andSysUserIdEqualTo(record.getId());
-    relationRoleUserMapper.deleteByExample(tSysRoleUserExample);
-    if (StringUtils.isNotEmpty(roleIds)) {
-      List<String> list_roles = ConvertUtil.toListStrArray(roleIds);
-      //添加新的角色信息
-      for (String role : list_roles) {
-//        RelationRoleUser relationRoleUser = new RelationRoleUser(SnowflakeIdWorker.getUUID(),
-//            record.getId(),
-//            role);
-//        relationRoleUserMapper.insertSelective(relationRoleUser);
+    roleUserMapper.delete(new LambdaQueryWrapperX<RelationRoleUser>()
+        .inIfPresent(RelationRoleUser::getRoleId, roleIds)
+        .eq(RelationRoleUser::getUserId, record.getId()));
+    //添加新的角色信息
+    if (CollectionUtils.isNotEmpty(roleIds)) {
+      for (String roleId : roleIds) {
+        RelationRoleUser roleUser = new RelationRoleUser();
+        roleUser.setId(SnowflakeIdWorker.getUUID());
+        roleUser.setUserId(record.getId());
+        roleUser.setRoleId(roleId);
+        roleUserMapper.insert(roleUser);
       }
     }
     // 清除此用户角色信息缓存
     StpUtil.getSessionByLoginId(record.getId()).delete("Role_List");
 
     //修改用户信息
-    return tsysUserMapper.updateByPrimaryKeySelective(record);
+    return userMapper.updateById(record);
   }
 
 

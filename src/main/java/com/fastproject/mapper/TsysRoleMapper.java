@@ -1,6 +1,6 @@
 package com.fastproject.mapper;
 
-import com.fastproject.model.auto.TsysRole;
+import com.fastproject.model.Role;
 import com.fastproject.model.auto.TsysRoleExample;
 import org.apache.ibatis.annotations.Param;
 
@@ -13,19 +13,19 @@ public interface TsysRoleMapper {
 
     int deleteByPrimaryKey(String id);
 
-    int insert(TsysRole record);
+    int insert(Role record);
 
-    int insertSelective(TsysRole record);
+    int insertSelective(Role record);
 
-    List<TsysRole> selectByExample(TsysRoleExample example);
+    List<Role> selectByExample(TsysRoleExample example);
 
-    TsysRole selectByPrimaryKey(String id);
+    Role selectByPrimaryKey(String id);
 
-    int updateByExampleSelective(@Param("record") TsysRole record, @Param("example") TsysRoleExample example);
+    int updateByExampleSelective(@Param("record") Role record, @Param("example") TsysRoleExample example);
 
-    int updateByExample(@Param("record") TsysRole record, @Param("example") TsysRoleExample example);
+    int updateByExample(@Param("record") Role record, @Param("example") TsysRoleExample example);
 
-    int updateByPrimaryKeySelective(TsysRole record);
+    int updateByPrimaryKeySelective(Role record);
 
-    int updateByPrimaryKey(TsysRole record);
+    int updateByPrimaryKey(Role record);
 }

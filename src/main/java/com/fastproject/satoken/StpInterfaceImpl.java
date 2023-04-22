@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fastproject.mapper.PermissionMapper;
 import com.fastproject.mapper.RelationRoleUserMapper;
 import com.fastproject.mapper.RoleMapper;
-import com.fastproject.model.auto.RelationRoleUser;
+import com.fastproject.model.RelationRoleUser;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

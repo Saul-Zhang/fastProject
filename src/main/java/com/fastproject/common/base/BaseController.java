@@ -9,7 +9,7 @@ import com.fastproject.service.NoticeService;
 import com.fastproject.service.PermissionService;
 import com.fastproject.service.SysFileService;
 import com.fastproject.service.SysOperLogService;
-import com.fastproject.service.SysRoleService;
+import com.fastproject.service.RoleService;
 import com.fastproject.service.UserService;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,11 +31,11 @@ public class BaseController {
 
   //系统用户
   @Autowired
-  public UserService sysUserService;
+  public UserService userService;
 
   //系统角色
   @Autowired
-  public SysRoleService sysRoleService;
+  public RoleService roleService;
 
   //权限
   @Autowired

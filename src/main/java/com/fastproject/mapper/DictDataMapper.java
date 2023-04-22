@@ -1,7 +1,7 @@
 package com.fastproject.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.fastproject.model.auto.DictData;
+import com.fastproject.model.DictData;
 import com.fastproject.model.auto.TSysDictDataExample;
 import org.apache.ibatis.annotations.Param;
 

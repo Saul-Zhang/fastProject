@@ -6,6 +6,9 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import lombok.Data;
 
+/**
+ * @author fastProject
+ */
 @Data
 public class UserResponse implements Serializable {
 
@@ -15,7 +18,7 @@ public class UserResponse implements Serializable {
    * 主键
    **/
   @ApiModelProperty(value = "主键")
-  private Integer id;
+  private String id;
 
   /**
    * 用户账号
@@ -34,9 +37,9 @@ public class UserResponse implements Serializable {
    * 部门id
    **/
   @ApiModelProperty(value = "部门id")
-  private Integer deptId;
+  private String deptId;
 
-  private String roleName;
+//  private List<String> roleNames;
 
   /**
    * 岗位id
@@ -54,12 +57,12 @@ public class UserResponse implements Serializable {
 
   private String employeeId;
 
-  private String status;
+  private Integer status;
 
-  private String tel;
+  private String phone;
 
   @Dict(dictCode = "gender")
-  private String gender;
+  private Integer gender;
 
   private String email;
 }

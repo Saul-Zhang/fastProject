@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 @Data
 public class UserQuery extends AbstractPageQuery {
 
-  protected Long deptId;
-  protected Long id;
+  protected String realName;
+  protected String employeeId;
+  private Character status;
 }

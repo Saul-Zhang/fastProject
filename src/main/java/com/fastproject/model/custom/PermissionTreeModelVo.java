@@ -1,6 +1,6 @@
 package com.fastproject.model.custom;
 
-import com.fastproject.model.auto.Permission;
+import com.fastproject.model.Permission;
 
 import java.util.List;
 

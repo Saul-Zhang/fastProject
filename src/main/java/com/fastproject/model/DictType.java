@@ -1,5 +1,5 @@
 
-package com.fastproject.model.auto;
+package com.fastproject.model;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;

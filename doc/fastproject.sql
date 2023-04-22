@@ -11,7 +11,7 @@
  Target Server Version : 80026
  File Encoding         : 65001
 
- Date: 21/04/2023 00:19:48
+ Date: 22/04/2023 22:58:24
 */
 
 SET NAMES utf8mb4;
@@ -68,7 +68,7 @@ CREATE TABLE `def_dict_data`  (
 -- ----------------------------
 -- Records of def_dict_data
 -- ----------------------------
-INSERT INTO `def_dict_data` VALUES ('1', 0, '男', '2', 'gender', '', '', 'N', '0', '', NULL, '', NULL, '');
+INSERT INTO `def_dict_data` VALUES ('1', 0, '男', '1', 'gender', '', '', 'N', '0', '', NULL, '', NULL, '');
 INSERT INTO `def_dict_data` VALUES ('2', 0, '女', '0', 'gender', '', '', 'N', '0', '', NULL, '', NULL, '');
 INSERT INTO `def_dict_data` VALUES ('331043380933038080', 1, '一般', '1', 'sys_notice_type', '', 'info', 'Y', '0', 'admin', '2019-09-09 22:15:03', 'admin', '2019-09-09 22:15:43', '');
 INSERT INTO `def_dict_data` VALUES ('331043525137403904', 2, '重要', '2', 'sys_notice_type', '', 'important', 'N', '0', 'admin', '2019-09-09 22:15:37', 'admin', '2020-12-27 13:57:22', '');
@@ -109,13 +109,13 @@ CREATE TABLE `def_dict_type`  (
 -- ----------------------------
 -- Records of def_dict_type
 -- ----------------------------
-INSERT INTO `def_dict_type` VALUES ('1', '性别', 'gender', '0', '', NULL, '', NULL, '');
-INSERT INTO `def_dict_type` VALUES ('340079827459641344', '省份状态', 'sys_province_state', '0', 'admin', '2019-10-04 20:42:39', '', '2019-10-04 20:42:39', '省份状态');
-INSERT INTO `def_dict_type` VALUES ('373493952487231488', '拦截器类型', 'sys_inter_url_type', '0', 'admin', '2020-01-05 01:38:28', 'admin', '2020-03-29 23:23:43', '拦截器类型');
-INSERT INTO `def_dict_type` VALUES ('563746635880992768', '捐款类型', 'payment_type', '0', 'admin', '2021-06-12 17:34:42', '', '2021-06-12 17:34:42', '');
-INSERT INTO `def_dict_type` VALUES ('563747016396640256', '礼物类型', 'gift_type', '0', 'admin', '2021-06-12 17:36:13', '', '2021-06-12 17:36:13', '');
-INSERT INTO `def_dict_type` VALUES ('571365854613213184', '是与否', 'yes_or_no', '0', 'admin', '2021-07-03 18:10:45', '', '2021-07-03 18:10:45', '用于select');
-INSERT INTO `def_dict_type` VALUES ('6', '通知类型', 'sys_notice_type', '0', 'admin', '2018-03-16 11:33:00', 'admin', '2020-12-27 14:26:42', '通知类型列表');
+INSERT INTO `def_dict_type` VALUES ('1', '性别', 'gender', '1', '', NULL, '', NULL, '');
+INSERT INTO `def_dict_type` VALUES ('340079827459641344', '省份状态', 'sys_province_state', '1', 'admin', '2019-10-04 20:42:39', '', '2019-10-04 20:42:39', '省份状态');
+INSERT INTO `def_dict_type` VALUES ('373493952487231488', '拦截器类型', 'sys_inter_url_type', '1', 'admin', '2020-01-05 01:38:28', 'admin', '2020-03-29 23:23:43', '拦截器类型');
+INSERT INTO `def_dict_type` VALUES ('563746635880992768', '捐款类型', 'payment_type', '1', 'admin', '2021-06-12 17:34:42', '', '2021-06-12 17:34:42', '');
+INSERT INTO `def_dict_type` VALUES ('563747016396640256', '礼物类型', 'gift_type', '1', 'admin', '2021-06-12 17:36:13', '', '2021-06-12 17:36:13', '');
+INSERT INTO `def_dict_type` VALUES ('571365854613213184', '是与否', 'yes_or_no', '1', 'admin', '2021-07-03 18:10:45', '', '2021-07-03 18:10:45', '用于select');
+INSERT INTO `def_dict_type` VALUES ('6', '通知类型', 'sys_notice_type', '1', 'admin', '2018-03-16 11:33:00', 'admin', '2020-12-27 14:26:42', '通知类型列表');
 
 -- ----------------------------
 -- Table structure for def_notice
@@ -313,9 +313,9 @@ CREATE TABLE `def_user`  (
   `dept_id` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '部门id',
   `pos_id` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '岗位id',
   `employee_id` varchar(25) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-  `status` int(0) NULL DEFAULT NULL,
-  `tel` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-  `gender` varchar(5) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
+  `status` char(1) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
+  `phone` varchar(80) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
+  `gender` char(1) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
   `email` varchar(40) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_bin COMMENT = '用户表' ROW_FORMAT = Dynamic;
@@ -323,8 +323,9 @@ CREATE TABLE `def_user`  (
 -- ----------------------------
 -- Records of def_user
 -- ----------------------------
-INSERT INTO `def_user` VALUES ('1', 'admin', '21232f297a57a5a743894a0e4a801fc3', '管理员', '2', '48', 't53', 0, '158245345676', '1', '123@qq.com');
-INSERT INTO `def_user` VALUES ('2', 'fuce', '21232f297a57a5a743894a0e4a801fc3', '付册', '2', '52', '125', 1, '15245653454', '0', '222@qq.com');
+INSERT INTO `def_user` VALUES ('1', 'admin', '21232f297a57a5a743894a0e4a801fc3', '管理员', '2', '48', 't53', '1', '15824534567', '1', '123@qq.com');
+INSERT INTO `def_user` VALUES ('2', 'fuce', '21232f297a57a5a743894a0e4a801fc3', '付册', '2', '52', '125', '1', '15245653454', '0', '222@qq.com');
+INSERT INTO `def_user` VALUES ('809728789289504768', '123', '202cb962ac59075b964b07152d234b70', '123', '1', '48', '', '0', '', '0', '');
 
 -- ----------------------------
 -- Table structure for rel_notice_user
@@ -500,7 +501,10 @@ CREATE TABLE `rel_role_user`  (
 -- ----------------------------
 -- Records of rel_role_user
 -- ----------------------------
-INSERT INTO `rel_role_user` VALUES ('1', '1', '60');
+INSERT INTO `rel_role_user` VALUES ('809617611225698304', '2', '4');
+INSERT INTO `rel_role_user` VALUES ('809628583499796480', '1', '24');
+INSERT INTO `rel_role_user` VALUES ('809628583583682560', '1', '4');
+INSERT INTO `rel_role_user` VALUES ('809628583608848384', '1', '60');
 
 -- ----------------------------
 -- Table structure for t_sys_area
@@ -767,6 +771,11 @@ INSERT INTO `t_sys_oper_log` VALUES ('501787928188555264', '用户新增', 'com.
 INSERT INTO `t_sys_oper_log` VALUES ('501796773694672896', '用户新增', 'com.fc.v2.controller.admin.UserController.add()', 'admin', '/UserController/add', '{\"username\":[\"tttt\"],\"password\":[\"ttt\"],\"nickname\":[\"tttttt\"],\"depId\":[\"4\"],\"selectParent_select_input\":[\"开发一小组\"],\"posId\":[\"410792443127140352\"],\"roleIds\":[\"488243256161730560,488305788310257664\"]}', NULL, '2020-12-24');
 INSERT INTO `t_sys_oper_log` VALUES ('501985140440961024', '用户新增', 'com.fc.v2.controller.admin.UserController.add()', 'admin', '/UserController/add', '{\"username\":[\"admin\"],\"password\":[\"admin\"],\"nickname\":[\"11111111111\"],\"depId\":[\"1\"],\"selectParent_select_input\":[\"v2\"],\"posId\":[\"410792368778907648\"],\"roleIds\":[\"488289006124007424,488305788310257664\"]}', NULL, '2020-12-24');
 INSERT INTO `t_sys_oper_log` VALUES ('501986656363089920', '用户新增', 'com.fc.v2.controller.admin.UserController.add()', 'admin', '/UserController/add', '{\"username\":[\"admin\"],\"password\":[\"admin\"],\"nickname\":[\"admin\"],\"depId\":[\"1\"],\"selectParent_select_input\":[\"v2\"],\"posId\":[\"410792368778907648\"],\"roleIds\":[\"488289006124007424,488305788310257664\"]}', NULL, '2020-12-24');
+INSERT INTO `t_sys_oper_log` VALUES ('809628850983145472', '用户新增', 'com.fastproject.controller.admin.UserController.add()', 'admin', '/UserController/add', '{\"realName\":[\"11\"],\"username\":[\"11\"],\"password\":[\"\"],\"employeeId\":[\"\"],\"phone\":[\"11111111111\"],\"email\":[\"11111@qq.11\"],\"gender\":[\"0\"],\"deptId\":[\"1\"],\"selectParent_select_input\":[\"v2\"],\"posId\":[\"48\"],\"roleIds\":[\"\"]}', 'nested exception is org.apache.ibatis.reflection.ReflectionException: There is no getter for property named \'nickname\' in \'class com.fastproject.model.auto.User\'', '2023-04-22');
+INSERT INTO `t_sys_oper_log` VALUES ('809628874118926336', '用户新增', 'com.fastproject.controller.admin.UserController.add()', 'admin', '/UserController/add', '{\"realName\":[\"11\"],\"username\":[\"11\"],\"password\":[\"\"],\"employeeId\":[\"\"],\"phone\":[\"11111111111\"],\"email\":[\"11111@qq.11\"],\"gender\":[\"0\"],\"deptId\":[\"1\"],\"selectParent_select_input\":[\"v2\"],\"posId\":[\"48\"],\"roleIds\":[\"\"]}', 'nested exception is org.apache.ibatis.reflection.ReflectionException: There is no getter for property named \'nickname\' in \'class com.fastproject.model.auto.User\'', '2023-04-22');
+INSERT INTO `t_sys_oper_log` VALUES ('809629485040275456', '用户新增', 'com.fastproject.controller.admin.UserController.add()', 'admin', '/UserController/add', '{\"realName\":[\"11\"],\"username\":[\"11\"],\"password\":[\"\"],\"employeeId\":[\"\"],\"phone\":[\"11111111111\"],\"email\":[\"11111@qq.11\"],\"gender\":[\"0\"],\"deptId\":[\"1\"],\"selectParent_select_input\":[\"v2\"],\"posId\":[\"48\"],\"roleIds\":[\"4,60\"]}', 'nested exception is org.apache.ibatis.reflection.ReflectionException: There is no getter for property named \'nickname\' in \'class com.fastproject.model.auto.User\'', '2023-04-22');
+INSERT INTO `t_sys_oper_log` VALUES ('809716950983905280', '用户新增', 'com.fastproject.controller.admin.UserController.add()', 'admin', '/UserController/add', '{\"realName\":[\"姓名\"],\"username\":[\"登录名称\"],\"password\":[\"123456\"],\"employeeId\":[\"工号\"],\"phone\":[\"电话\"],\"email\":[\"邮箱\"],\"gender\":[\"1\"],\"deptId\":[\"5\"],\"selectParent_select_input\":[\"销售部门\"],\"posId\":[\"52\"],\"roleIds\":[\"24\"]}', 'nested exception is org.apache.ibatis.reflection.ReflectionException: There is no getter for property named \'nickname\' in \'class com.fastproject.model.auto.User\'', '2023-04-22');
+INSERT INTO `t_sys_oper_log` VALUES ('809728789989953536', '用户新增', 'com.fastproject.controller.admin.UserController.add()', 'admin', '/UserController/add', '{\"realName\":[\"123\"],\"username\":[\"123\"],\"password\":[\"\"],\"employeeId\":[\"\"],\"phone\":[\"\"],\"email\":[\"\"],\"gender\":[\"0\"],\"deptId\":[\"1\"],\"selectParent_select_input\":[\"v2\"],\"posId\":[\"48\"],\"roleIds\":[\"\"]}', NULL, '2023-04-22');
 
 -- ----------------------------
 -- Table structure for t_sys_province

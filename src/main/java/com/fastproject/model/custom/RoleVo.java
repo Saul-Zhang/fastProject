@@ -1,29 +1,25 @@
 package com.fastproject.model.custom;
 
-import com.fastproject.model.auto.TsysRole;
+import com.fastproject.model.Role;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * 角色自定义数据
- * @author fuce 
- * @date: 2018年9月8日 上午12:18:59
  */
-public class RoleVo extends TsysRole{
+@EqualsAndHashCode(callSuper = true)
+@Data
+@NoArgsConstructor
+public class RoleVo extends Role {
 	private static final long serialVersionUID = 1L;
-	private boolean ischeck;//判断是否又这个权限
-	
-	public boolean isIscheck() {
-		return ischeck;
-	}
-	public void setIscheck(boolean ischeck) {
-		this.ischeck = ischeck;
-	}
-	
-	public RoleVo() {
-		super();
-	}
-	public RoleVo(String id, String name,Boolean ischeck) {
+	/**
+	 * 判断是否有这个权限
+	 */
+	private boolean checked;
+
+	public RoleVo(String id, String name, boolean checked) {
 		super(id, name);
-		this.ischeck=ischeck;
+		this.checked = checked;
 	}
-	
 }

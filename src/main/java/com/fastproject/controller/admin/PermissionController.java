@@ -18,7 +18,7 @@ import com.fastproject.common.base.BaseController;
 import com.fastproject.common.domain.AjaxResult;
 import com.fastproject.common.domain.ResultTree;
 import com.fastproject.common.domain.ResultTable;
-import com.fastproject.model.auto.Permission;
+import com.fastproject.model.Permission;
 import com.fastproject.model.custom.Tablepar;
 import com.github.pagehelper.PageInfo;
 
@@ -248,7 +248,7 @@ public class PermissionController  extends BaseController{
     @ResponseBody
     public AjaxResult saveRolePower(String roleId,String powerIds)
     {
-    	int i=sysRoleService.updateRoleAndPrem(roleId,powerIds);
+    	int i= roleService.updateRoleAndPrem(roleId,powerIds);
     	if(i>0) {
     		//大于0刷新权限
     		SaSessionCustomUtil.getSessionById("role-" + roleId).delete("Permission_List");

@@ -1,4 +1,4 @@
-package com.fastproject.model.auto;
+package com.fastproject.model;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
@@ -45,11 +45,11 @@ public class User implements Serializable {
    */
   private String employeeId;
 
-  private Integer status;
+  private Character status;
 
-  private String tel;
+  private String phone;
 
-  private Integer gender;
+  private Character gender;
 
   private String email;
 

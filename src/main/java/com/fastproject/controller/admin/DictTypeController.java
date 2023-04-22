@@ -3,7 +3,7 @@ package com.fastproject.controller.admin;
 import com.fastproject.common.base.BaseController;
 import com.fastproject.common.domain.AjaxResult;
 import com.fastproject.common.domain.ResultTable;
-import com.fastproject.model.auto.DictType;
+import com.fastproject.model.DictType;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.service.SysDictTypeService;
 import com.github.pagehelper.PageInfo;

@@ -3,7 +3,7 @@ package com.fastproject.controller.admin;
 import com.fastproject.common.base.BaseController;
 import com.fastproject.common.domain.AjaxResult;
 import com.fastproject.common.domain.ResultTable;
-import com.fastproject.model.auto.TsysRole;
+import com.fastproject.model.Role;
 import com.fastproject.model.custom.Tablepar;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
@@ -53,7 +53,7 @@ public class RoleController extends BaseController{
 	@SaCheckPermission("system:role:list")
 	@ResponseBody
 	public ResultTable list(Tablepar tablepar){
-		PageInfo<TsysRole> page=sysRoleService.list(tablepar) ;
+		PageInfo<Role> page= roleService.list(tablepar) ;
 		return pageTable(page.getList(),page.getTotal());
 	}
 
@@ -78,8 +78,8 @@ public class RoleController extends BaseController{
 	@PostMapping("/add")
 	@SaCheckPermission("system:role:add")
 	@ResponseBody
-	public AjaxResult add(@RequestBody TsysRole role){
-		int b=sysRoleService.insertSelective(role);
+	public AjaxResult add(@RequestBody Role role){
+		int b= roleService.insertSelective(role);
 		if(b>0){
 			return success();
 		}else{
@@ -98,7 +98,7 @@ public class RoleController extends BaseController{
 	@SaCheckPermission("system:role:remove")
 	@ResponseBody
 	public AjaxResult remove(String ids){
-		int b=sysRoleService.deleteByPrimaryKey(ids);
+		int b= roleService.deleteByPrimaryKey(ids);
 		if(b>0){
 			return success();
 		}else{
@@ -114,8 +114,8 @@ public class RoleController extends BaseController{
 	@ApiOperation(value = "检查Name唯一", notes = "检查Name唯一")
 	@PostMapping("/checkNameUnique")
 	@ResponseBody
-	public int checkNameUnique(TsysRole tsysRole){
-		int b=sysRoleService.checkNameUnique(tsysRole);
+	public int checkNameUnique(Role role){
+		int b= roleService.checkNameUnique(role);
 		if(b>0){
 			return 1;
 		}else{
@@ -134,7 +134,7 @@ public class RoleController extends BaseController{
 	@GetMapping("/edit/{roleId}")
     public String edit(@PathVariable("roleId") String id, ModelMap mmap)
     {
-        mmap.put("sysRole", sysRoleService.selectByPrimaryKey(id));
+        mmap.put("sysRole", roleService.selectByPrimaryKey(id));
         return prefix + "/edit";
     }
 
@@ -148,9 +148,9 @@ public class RoleController extends BaseController{
     @SaCheckPermission("system:role:edit")
     @PutMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave(@RequestBody TsysRole tsysRole)
+    public AjaxResult editSave(@RequestBody Role role)
     {
-    	int i=sysRoleService.updateByPrimaryKeySelective(tsysRole);
+    	int i= roleService.updateByPrimaryKeySelective(role);
         return toAjax(i);
     }
 

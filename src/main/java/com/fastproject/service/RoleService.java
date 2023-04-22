@@ -6,14 +6,15 @@ import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.TsysPermissionRoleMapper;
 import com.fastproject.mapper.TsysRoleMapper;
 import com.fastproject.mapper.RoleMapper;
+import com.fastproject.model.Role;
 import com.fastproject.model.auto.TsysPermissionRole;
 import com.fastproject.model.auto.TsysPermissionRoleExample;
-import com.fastproject.model.auto.TsysRole;
 import com.fastproject.model.auto.TsysRoleExample;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.util.SnowflakeIdWorker;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,13 +22,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class SysRoleService implements BaseService<TsysRole, TsysRoleExample> {
+@RequiredArgsConstructor
+public class RoleService {
+
+private final RoleMapper roleMapper;
 	//角色mapper
 	@Autowired
 	private TsysRoleMapper tsysRoleMapper;
-	//自定义角色dao
-	@Autowired
-	private RoleMapper roleMapper;
 	//自动生成的权限角色映射mapper
 	@Autowired
 	private TsysPermissionRoleMapper tsysPermissionRoleMapper;
@@ -39,7 +40,7 @@ public class SysRoleService implements BaseService<TsysRole, TsysRoleExample> {
 	 * @param pageSize
 	 * @return
 	 */
-	 public PageInfo<TsysRole> list(Tablepar tablepar){
+	 public PageInfo<Role> list(Tablepar tablepar){
 	        TsysRoleExample testExample=new TsysRoleExample();
 	        testExample.setOrderByClause("id+0 DESC");
 	        if(tablepar.getSearchText()!=null&&!"".equals(tablepar.getSearchText())){
@@ -47,25 +48,23 @@ public class SysRoleService implements BaseService<TsysRole, TsysRoleExample> {
 	        }
 
 	        PageHelper.startPage(tablepar.getPage(), tablepar.getLimit());
-	        List<TsysRole> list= tsysRoleMapper.selectByExample(testExample);
-	        PageInfo<TsysRole> pageInfo = new PageInfo<TsysRole>(list);
+	        List<Role> list= tsysRoleMapper.selectByExample(testExample);
+	        PageInfo<Role> pageInfo = new PageInfo<Role>(list);
 	        return  pageInfo;
 	 }
 	 
 	 /**
 	  * 查询全部角色集合
-	  * @return
 	  */
-	 public List<TsysRole> queryList(){
-		 TsysRoleExample tsysRoleExample=new TsysRoleExample();
-		 return tsysRoleMapper.selectByExample(tsysRoleExample);
+	 public List<Role> getAll(){
+		 return roleMapper.selectList(null);
 	 }
 
 	
 	 /**
 	  * 
 	  */	
-	@Override
+	
 	@Transactional
 	public int deleteByPrimaryKey(String ids) {
 		List<String> lista=ConvertUtil.toListStrArray(ids);
@@ -81,8 +80,8 @@ public class SysRoleService implements BaseService<TsysRole, TsysRoleExample> {
 
 
 	
-	@Override
-	public int insertSelective(TsysRole record) {
+	
+	public int insertSelective(Role record) {
 		//添加雪花主键id
 		record.setId(SnowflakeIdWorker.getUUID());
 		return tsysRoleMapper.insertSelective(record);
@@ -95,7 +94,7 @@ public class SysRoleService implements BaseService<TsysRole, TsysRoleExample> {
 	 * @return
 	 */
 	@Transactional
-	public int insertRoleAndPrem(TsysRole record,String prem) {
+	public int insertRoleAndPrem(Role record,String prem) {
 		//添加雪花主键id
 		String roleid=SnowflakeIdWorker.getUUID();
 		record.setId(roleid);
@@ -108,15 +107,15 @@ public class SysRoleService implements BaseService<TsysRole, TsysRoleExample> {
 		return tsysRoleMapper.insertSelective(record);
 	}
 
-	@Override
-	public TsysRole selectByPrimaryKey(String id) {
+	
+	public Role selectByPrimaryKey(String id) {
 		
 		return tsysRoleMapper.selectByPrimaryKey(id);
 	}
 
 	
-	@Override
-	public int updateByPrimaryKeySelective(TsysRole record) {
+	
+	public int updateByPrimaryKeySelective(Role record) {
 		return tsysRoleMapper.updateByPrimaryKeySelective(record);
 	}
 	
@@ -145,48 +144,28 @@ public class SysRoleService implements BaseService<TsysRole, TsysRoleExample> {
 	
 
 	
-	@Override
-	public int updateByExampleSelective(TsysRole record, TsysRoleExample example) {
-		
-		return tsysRoleMapper.updateByExampleSelective(record, example);
-	}
-
 	
-	@Override
-	public int updateByExample(TsysRole record, TsysRoleExample example) {
+	public int updateByExample(Role record, TsysRoleExample example) {
 		
 		return tsysRoleMapper.updateByExample(record, example);
 	}
 
-	@Override
-	public List<TsysRole> selectByExample(TsysRoleExample example) {
+	
+	public List<Role> selectByExample(TsysRoleExample example) {
 		
 		return tsysRoleMapper.selectByExample(example);
 	}
 
-	
-	@Override
-	public long countByExample(TsysRoleExample example) {
-		
-		return tsysRoleMapper.countByExample(example);
-	}
-
-	
-	@Override
-	public int deleteByExample(TsysRoleExample example) {
-		
-		return tsysRoleMapper.deleteByExample(example);
-	}
 	
 	/**
 	 * 检查角色name
 	 * @param tsysUser
 	 * @return
 	 */
-	public int checkNameUnique(TsysRole tsysRole){
+	public int checkNameUnique(Role role){
 		TsysRoleExample example=new TsysRoleExample();
-		example.createCriteria().andNameEqualTo(tsysRole.getName());
-		List<TsysRole> list=tsysRoleMapper.selectByExample(example);
+		example.createCriteria().andNameEqualTo(role.getName());
+		List<Role> list=tsysRoleMapper.selectByExample(example);
 		return list.size();
 	}
 	
@@ -196,8 +175,8 @@ public class SysRoleService implements BaseService<TsysRole, TsysRoleExample> {
 	 * @param userid
 	 * @return
 	 */
-	public List<TsysRole> queryUserRole(String userid){
-		return roleMapper.queryUserRole(userid);
-	}
+//	public List<Role> queryUserRole(String userid){
+////		return roleMapper.queryUserRole(userid);
+//	}
 	
 }

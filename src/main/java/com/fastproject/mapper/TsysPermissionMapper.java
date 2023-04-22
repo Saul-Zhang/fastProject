@@ -1,6 +1,6 @@
 package com.fastproject.mapper;
 
-import com.fastproject.model.auto.Permission;
+import com.fastproject.model.Permission;
 import com.fastproject.model.auto.TsysPermissionExample;
 import org.apache.ibatis.annotations.Param;
 

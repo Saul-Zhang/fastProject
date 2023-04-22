@@ -1,18 +1,16 @@
 package com.fastproject.mapper;
 
-import com.fastproject.model.auto.Department;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.fastproject.model.Department;
 import com.fastproject.model.auto.SysDepartmentExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 /**
- * 部门表 SysDepartmentMapper
- * @author fuce_自动生成
- * @email 115889198@qq.com
- * @date 2020-04-17 13:12:58
+ * 部门表
  */
-public interface SysDepartmentMapper {
+public interface DepartmentMapper extends BaseMapper<Department> {
       	   	      	      	      	      	      	      	      	      
     long countByExample(SysDepartmentExample example);
 

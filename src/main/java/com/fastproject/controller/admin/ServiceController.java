@@ -3,7 +3,7 @@ package com.fastproject.controller.admin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.aizuda.monitor.OshiMonitor;
 import com.fastproject.common.base.BaseController;
-import com.fastproject.model.auto.Notice;
+import com.fastproject.model.Notice;
 import com.fastproject.model.auto.TsysOperLog;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

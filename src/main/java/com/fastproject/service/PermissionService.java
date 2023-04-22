@@ -5,7 +5,7 @@ import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.PermissionMapper;
 import com.fastproject.mapper.TsysPermissionMapper;
 import com.fastproject.mapper.TsysPermissionRoleMapper;
-import com.fastproject.model.auto.Permission;
+import com.fastproject.model.Permission;
 import com.fastproject.model.auto.TsysPermissionExample;
 import com.fastproject.model.auto.TsysPermissionRole;
 import com.fastproject.model.auto.TsysPermissionRoleExample;

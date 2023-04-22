@@ -1,6 +1,6 @@
 package com.fastproject.mapper;
 
-import com.fastproject.model.auto.User;
+import com.fastproject.model.User;
 import com.fastproject.model.custom.TsysTables;
 import com.fastproject.model.custom.autocode.BeanColumn;
 

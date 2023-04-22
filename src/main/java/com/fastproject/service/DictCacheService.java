@@ -2,12 +2,13 @@ package com.fastproject.service;
 
 import com.fastproject.common.mybatis.LambdaQueryWrapperX;
 import com.fastproject.mapper.DictDataMapper;
-import com.fastproject.model.auto.DictData;
+import com.fastproject.model.DictData;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,10 +16,10 @@ import org.springframework.stereotype.Service;
  * @date 2023/4/20 23:00
  */
 @Service
+@RequiredArgsConstructor
 public class DictCacheService {
 
-  @Autowired
-  private DictDataMapper dictDataMapper;
+  private final DictDataMapper dictDataMapper;
 
   private final Map<String, Map<String, String>> LOCAL_CACHE = new ConcurrentHashMap<>();
 
@@ -48,6 +49,11 @@ public class DictCacheService {
   public String getData(String code, String value) {
     loadLocalCache();
     return Optional.ofNullable(LOCAL_CACHE.get(code)).map(m ->m.get(value)).orElse(null);
+  }
+
+  public Map<String,String> getDict(String code) {
+    loadLocalCache();
+    return Optional.ofNullable(LOCAL_CACHE.get(code)).orElse(new HashMap<>());
   }
 
 }

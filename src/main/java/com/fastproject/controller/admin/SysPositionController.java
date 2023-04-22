@@ -3,9 +3,9 @@ package com.fastproject.controller.admin;
 import com.fastproject.common.base.BaseController;
 import com.fastproject.common.domain.AjaxResult;
 import com.fastproject.common.domain.ResultTable;
-import com.fastproject.model.auto.SysPosition;
+import com.fastproject.model.Position;
 import com.fastproject.model.custom.Tablepar;
-import com.fastproject.service.SysPositionService;
+import com.fastproject.service.PositionService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,7 +22,7 @@ public class SysPositionController extends BaseController{
 	
 	private final String prefix = "admin/sysPosition";
 	@Autowired
-	private SysPositionService sysPositionService;
+	private PositionService positionService;
 	
 	/**
 	 * list展示
@@ -44,7 +44,7 @@ public class SysPositionController extends BaseController{
 	@SaCheckPermission("gen:sysPosition:list")
 	@ResponseBody
 	public ResultTable list(Tablepar tablepar, String searchText){
-		PageInfo<SysPosition> page=sysPositionService.list(tablepar,searchText) ; 
+		PageInfo<Position> page= positionService.list(tablepar,searchText) ;
 		return pageTable(page.getList(),page.getTotal());
 	}
 	
@@ -66,8 +66,8 @@ public class SysPositionController extends BaseController{
 	@PostMapping("add")
 	@SaCheckPermission("gen:sysPosition:add")
 	@ResponseBody
-	public AjaxResult add(SysPosition sysPosition){
-		int b=sysPositionService.insertSelective(sysPosition);
+	public AjaxResult add(Position position){
+		int b= positionService.insertSelective(position);
 		if(b>0){
 			return success();
 		}else{
@@ -86,7 +86,7 @@ public class SysPositionController extends BaseController{
 	@SaCheckPermission("gen:sysPosition:remove")
 	@ResponseBody
 	public AjaxResult remove(String ids){
-		int b=sysPositionService.deleteByPrimaryKey(ids);
+		int b= positionService.deleteByPrimaryKey(ids);
 		if(b>0){
 			return success();
 		}else{
@@ -102,8 +102,8 @@ public class SysPositionController extends BaseController{
 	@ApiOperation(value = "检查Name唯一", notes = "检查Name唯一")
 	@PostMapping("/checkNameUnique")
 	@ResponseBody
-	public int checkNameUnique(SysPosition sysPosition){
-		int b=sysPositionService.checkNameUnique(sysPosition);
+	public int checkNameUnique(Position position){
+		int b= positionService.checkNameUnique(position);
 		if(b>0){
 			return 1;
 		}else{
@@ -122,7 +122,7 @@ public class SysPositionController extends BaseController{
 	@GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") String id, ModelMap mmap)
     {
-        mmap.put("SysPosition", sysPositionService.selectByPrimaryKey(id));
+        mmap.put("SysPosition", positionService.selectByPrimaryKey(id));
 
         return prefix + "/edit";
     }
@@ -135,9 +135,9 @@ public class SysPositionController extends BaseController{
     @SaCheckPermission("gen:sysPosition:edit")
     @PostMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave(SysPosition record)
+    public AjaxResult editSave(Position record)
     {
-        return toAjax(sysPositionService.updateByPrimaryKeySelective(record));
+        return toAjax(positionService.updateByPrimaryKeySelective(record));
     }
 
     
@@ -150,8 +150,8 @@ public class SysPositionController extends BaseController{
    	 */
    	@PostMapping("/get/{id}")
    	@ApiOperation(value = "根据id查询唯一", notes = "根据id查询唯一")
-   	public SysPosition edit(@PathVariable("id") String id) {
-   		return sysPositionService.selectByPrimaryKey(id);
+   	public Position edit(@PathVariable("id") String id) {
+   		return positionService.selectByPrimaryKey(id);
    	}
 
 
@@ -162,8 +162,8 @@ public class SysPositionController extends BaseController{
 	 */
     @PutMapping("/updateVisible")
 	@ResponseBody
-    public AjaxResult updateVisible(@RequestBody SysPosition record){
-		int i=sysPositionService.updateVisible(record);
+    public AjaxResult updateVisible(@RequestBody Position record){
+		int i= positionService.updateVisible(record);
 		 return toAjax(i);
 	}
 

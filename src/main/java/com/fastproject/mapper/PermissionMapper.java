@@ -1,7 +1,7 @@
 package com.fastproject.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.fastproject.model.auto.Permission;
+import com.fastproject.model.Permission;
 import java.util.List;
 
 public interface PermissionMapper extends BaseMapper<Permission> {

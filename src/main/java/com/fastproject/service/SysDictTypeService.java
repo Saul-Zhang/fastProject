@@ -13,7 +13,7 @@ import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.DictDataMapper;
 import com.fastproject.mapper.TSysDictTypeMapper;
 import com.fastproject.model.auto.TSysDictDataExample;
-import com.fastproject.model.auto.DictType;
+import com.fastproject.model.DictType;
 import com.fastproject.model.auto.TSysDictTypeExample;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.satoken.SaTokenUtil;

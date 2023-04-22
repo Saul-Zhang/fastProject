@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fastproject.mapper.PermissionMapper">
-  <resultMap id="BaseResultMap" type="com.fastproject.model.auto.Permission">
+  <resultMap id="BaseResultMap" type="com.fastproject.model.Permission">
     <id column="id" jdbcType="VARCHAR" property="id"/>
     <result column="name" jdbcType="VARCHAR" property="name"/>
     <result column="description" jdbcType="VARCHAR" property="description"/>

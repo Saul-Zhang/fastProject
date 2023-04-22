@@ -21,7 +21,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.fastproject.common.domain.AjaxResult;
 import com.fastproject.model.auto.SysFile;
-import com.fastproject.model.auto.User;
+import com.fastproject.model.User;
 import com.fastproject.satoken.SaTokenUtil;
 import com.fastproject.service.SysFileService;
 import com.fastproject.util.SnowflakeIdWorker;

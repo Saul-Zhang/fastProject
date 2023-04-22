@@ -2,9 +2,9 @@ package com.fastproject.service;
 
 import com.fastproject.mapper.DictDataMapper;
 import com.fastproject.mapper.TSysDictTypeMapper;
-import com.fastproject.model.auto.DictData;
+import com.fastproject.model.DictData;
 import com.fastproject.model.auto.TSysDictDataExample;
-import com.fastproject.model.auto.DictType;
+import com.fastproject.model.DictType;
 import com.fastproject.model.auto.TSysDictTypeExample;
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -5,13 +5,12 @@ import com.fastproject.common.mybatis.LambdaQueryWrapperX;
 import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.NoticeMapper;
 import com.fastproject.mapper.RelationNoticeUserMapper;
-import com.fastproject.model.auto.Notice;
-import com.fastproject.model.auto.RelationNoticeUser;
+import com.fastproject.model.Notice;
+import com.fastproject.model.RelationNoticeUser;
 import com.fastproject.model.auto.SysNoticeExample;
 import com.fastproject.model.auto.SysNoticeUserExample;
 import com.fastproject.model.auto.SysNoticeUserExample.Criteria;
-import com.fastproject.model.auto.TsysUserExample;
-import com.fastproject.model.auto.User;
+import com.fastproject.model.User;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.satoken.SaTokenUtil;
 import com.fastproject.util.SnowflakeIdWorker;
@@ -142,7 +141,7 @@ public class NoticeService implements BaseService<Notice, SysNoticeExample> {
     record.setCreateTime(new Date());
     noticeMapper.insertSelective(record);
     //给所有人添加公告状态
-    List<User> list = userService.selectByExample(new TsysUserExample());
+    List<User> list = userService.getAll();
     for (User user : list) {
       RelationNoticeUser noticeUser = new RelationNoticeUser(null, record.getId(), user.getId(), 0);
       sysNoticeUserService.insertSelective(noticeUser);

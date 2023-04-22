@@ -1,12 +1,11 @@
 package com.fastproject.service;
 
 import com.fastproject.common.base.BaseService;
-import com.fastproject.common.mybatis.LambdaQueryWrapperX;
 import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.DictDataMapper;
 import com.fastproject.mapper.TSysDictTypeMapper;
-import com.fastproject.model.auto.DictData;
-import com.fastproject.model.auto.DictType;
+import com.fastproject.model.DictData;
+import com.fastproject.model.DictType;
 import com.fastproject.model.auto.TSysDictDataExample;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.satoken.SaTokenUtil;
@@ -15,8 +14,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

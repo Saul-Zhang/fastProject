@@ -4,7 +4,7 @@
     <th:block th:include="include :: header('用户修改')"/>
 </head>
 <body>
-<form class="layui-form" action=""  th:object="${TsysUser}">
+<form class="layui-form" action=""  th:object="${user}">
     <div class="mainBox">
         <div class="main-container">
             <div class="main-container">
@@ -12,13 +12,13 @@
                     <label class="layui-form-label">编号</label>
                     <div class="layui-input-block">
                         <input type="text" th:value="*{id}" name="id" lay-verify="title"
-                               autocomplete="off" placeholder="请输入标题" class="layui-input">
+                               autocomplete="off"  class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">登录密码</label>
                     <div class="layui-input-block">
-                        <input type="password" name="password" lay-verify="password" autocomplete="off" placeholder="请输入昵称" class="layui-input">
+                        <input type="password" name="password" lay-verify="password" autocomplete="off" placeholder="请输入新密码" class="layui-input">
                     </div>
                 </div>
 
@@ -58,7 +58,7 @@
             confirm: function(value){
                 let pwd=$("input[name='password']").val();
                 let confirm=$("input[name='confirm']").val();
-                if(pwd!=confirm){
+                if(pwd!==confirm){
                     return '两次密码输入不一致';
                 }
 
@@ -73,7 +73,7 @@
                 contentType: 'application/x-www-form-urlencoded',
                 type: 'post',
                 success: function (result) {
-                    if (result.code==200) {
+                    if (result.code===200) {
                         layer.msg(result.msg, {icon: 1, time: 1000}, function () {
                             parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页
                             parent.layui.table.reload("user-table");

@@ -8,10 +8,19 @@
     <div class="mainBox">
         <div class="main-container">
             <div class="main-container">
+
                 <div class="layui-form-item">
-                    <label class="layui-form-label">登录名称</label>
+                    <label class="layui-form-label">姓名</label>
                     <div class="layui-input-block">
-                        <input type="text" name="username" lay-verify="username" autocomplete="off" placeholder="登录名称" class="layui-input">
+                        <input  type="text" name="realName" lay-verify="realName"
+                               autocomplete="off" placeholder="请输入姓名" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">账号</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="username" lay-verify="username" autocomplete="off" placeholder="账号" class="layui-input">
                     </div>
 
                 </div>
@@ -22,9 +31,36 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">昵称</label>
+                    <label class="layui-form-label">工号</label>
                     <div class="layui-input-block">
-                        <input type="text" name="nickname" lay-verify="nickname" autocomplete="off" placeholder="请输入昵称" class="layui-input">
+                        <input   type="text" name="employeeId" lay-verify="employeeId"
+                               autocomplete="off" placeholder="工号" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">电话</label>
+                    <div class="layui-input-block">
+                        <input  type="text" name="phone"
+                               autocomplete="off" placeholder="电话" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">邮箱</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="email"
+                               autocomplete="off" placeholder="邮箱" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">性别</label>
+                    <div class="layui-input-block">
+                        <select id="gender" name="gender">
+                            <option th:each="gender : ${genders}" th:text="${gender.value}"
+                                    th:value="${gender.key}"></option>
+                        </select>
                     </div>
                 </div>
 
@@ -38,14 +74,14 @@
                     <label class="layui-form-label">岗位</label>
                     <div class="layui-input-block">
                         <select id="positionId" name="posId">
-                            <option th:each="list : ${sysPositionsList}" th:text="${list.postName}" th:value="${list.id}"></option>
+                            <option th:each="position : ${positions}" th:text="${position.name}" th:value="${position.id}"></option>
                         </select>
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">角色</label>
                     <div class="layui-input-block">
-                        <input th:each="sysRole:${tsysRoleList}" th:value="${sysRole.id}" th:title="${sysRole.name}"
+                        <input th:each="role:${roles}" th:value="${role.id}" th:title="${role.name}"
                                type="checkbox"  lay-skin="primary">
                     </div>
                 </div>
@@ -73,16 +109,16 @@
         let $ = layui.jquery;
         let dtree = layui.dtree;
         let MODULE_PATH = rootPath+"/UserController";
-        let DEPAR_PATH=rootPath+"/SysDepartmentController";
+        let DEPAR_PATH=rootPath+"/DepartmentController";
         //部门树
         dtree.renderSelect({
             elem: "#selectParent",
             url: DEPAR_PATH+"/tree",
             method: 'get',
-            selectInputName: {nodeId: "depId"},
+            selectInputName: {nodeId: "deptId"},
             skin: "layui",
             dataFormat: "list",
-            response: {treeId: "id", parentId: "parentId", title: "deptName"},
+            response: {treeId: "id", parentId: "parentId", title: "name"},
             selectInitVal: "1"
         });
 

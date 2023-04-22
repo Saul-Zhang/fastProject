@@ -1,10 +1,9 @@
 package com.fastproject.satoken;
 
-import com.fastproject.model.auto.User;
+import com.fastproject.model.User;
 import com.fastproject.util.BeanUtils;
 
 import cn.dev33.satoken.stp.StpUtil;
-import io.swagger.models.auth.In;
 
 /**
  * 封装 Sa-Token 常用操作

@@ -1,6 +1,6 @@
 package com.fastproject.mapper;
 
-import com.fastproject.model.auto.DictType;
+import com.fastproject.model.DictType;
 import com.fastproject.model.auto.TSysDictTypeExample;
 import org.apache.ibatis.annotations.Param;
 

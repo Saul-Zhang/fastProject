@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fastproject.mapper.TSysDictTypeMapper">
-  <resultMap id="BaseResultMap" type="com.fastproject.model.auto.DictType">
+  <resultMap id="BaseResultMap" type="com.fastproject.model.DictType">
     <result column="id" jdbcType="VARCHAR" property="id" />
     <result column="dict_name" jdbcType="VARCHAR" property="dictName" />
     <result column="dict_type" jdbcType="VARCHAR" property="dictType" />
@@ -113,7 +113,7 @@
     </if>
   </delete>
   
-  <insert id="insert" parameterType="com.fastproject.model.auto.DictType">
+  <insert id="insert" parameterType="com.fastproject.model.DictType">
     insert into t_sys_dict_type (
       	  	       id,
        	  	       dict_name,
@@ -138,7 +138,7 @@
        	    )
   </insert>
   
-  <insert id="insertSelective" parameterType="com.fastproject.model.auto.DictType">
+  <insert id="insertSelective" parameterType="com.fastproject.model.DictType">
     insert into t_sys_dict_type
     <trim prefix="(" suffix=")" suffixOverrides=",">
           
@@ -281,7 +281,7 @@
   </update>
   
   
-      <update id="updateByPrimaryKeySelective" parameterType="com.fastproject.model.auto.DictType">
+      <update id="updateByPrimaryKeySelective" parameterType="com.fastproject.model.DictType">
     update t_sys_dict_type
     <set>
                           <if test="dictName != null">
@@ -316,7 +316,7 @@
 
       	      	   	      	   	      	   	      	   	      	   	      	   	      	   	      	   	      	
 
-  <update id="updateByPrimaryKey" parameterType="com.fastproject.model.auto.DictType">
+  <update id="updateByPrimaryKey" parameterType="com.fastproject.model.DictType">
     update t_sys_dict_type
     set 
              	        	    	 			dict_name = #{dictName,jdbcType=VARCHAR},
