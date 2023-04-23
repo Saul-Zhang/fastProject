@@ -20,8 +20,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -122,7 +124,10 @@ public class UserController extends BaseController {
   @PutMapping("/status")
   @SaCheckPermission("system:user:remove")
   @ResponseBody
-  public AjaxResult updateStatus(List<String> userIds, Integer status) {
+  public AjaxResult updateStatus(List<String> userIds, Character status) {
+    if (CollectionUtils.isEmpty(userIds)) {
+      return AjaxResult.error("至少选择一个用户");
+    }
     return userService.updateStatus(userIds, status);
   }
 

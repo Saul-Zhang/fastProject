@@ -78,9 +78,15 @@ public class UserService {
   }
 
   @Transactional
-  public AjaxResult updateStatus(List<String> userIds, Integer status) {
+  public AjaxResult updateStatus(List<String> userIds, Character status) {
+    userIds.forEach(id -> {
+      User entity = new User();
+      entity.setStatus(status);
+      entity.setId(id);
+      userMapper.updateById(entity);
+    });
 //    List<String> userIds = ConvertUtil.toListStrArray(ids);
-    userMapper.deleteBatchIds(userIds);
+//    userMapper.deleteBatchIds(userIds);
 //    if (i > 0) {
 //      roleUserMapper.delete(
 //          new LambdaQueryWrapperX<RelationRoleUser>().in(RelationRoleUser::getUserId, userIds));

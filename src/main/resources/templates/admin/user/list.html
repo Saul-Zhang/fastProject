@@ -53,7 +53,7 @@
   <button sa:hasPermission="system:user:remove" class="pear-btn pear-btn-danger pear-btn-md"
           lay-event="batchRemove">
     <i class="layui-icon layui-icon-delete"></i>
-    删除
+    停用
   </button>
 </script>
 
@@ -63,9 +63,9 @@
           lay-event="edit"><i class="layui-icon layui-icon-edit"></i>
   </button>
 
-  <button sa:hasPermission="system:user:remove" class="pear-btn pear-btn-danger pear-btn-sm"
-          lay-event="remove"><i class="layui-icon layui-icon-delete"></i>
-  </button>
+<!--  <button sa:hasPermission="system:user:remove" class="pear-btn pear-btn-danger pear-btn-sm"-->
+<!--          lay-event="remove"><i class="layui-icon layui-icon-delete"></i>-->
+<!--  </button>-->
 
 
   <button sa:hasPermission="system:user:editPwd" class="pear-btn pear-btn-warming pear-btn-md"
@@ -76,8 +76,8 @@
 </script>
 
 <script type="text/html" id="user_status">
-  <input type="checkbox" name="enable" value="{{d.status}}" lay-skin="switch" lay-text="启用|停用"
-         lay-filter="user_status" {{d.status == '1' ? 'checked' : '' }} >
+  <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-filter="user_status" lay-text="启用|停用"
+          {{d.status == '1' ? 'checked' : '' }} >
 </script>
 
 <!--<script type="text/html" id="user_status">-->
@@ -108,6 +108,7 @@
         {title: '邮箱', field: 'email', align: 'center'},
         {title: '性别', field: 'gender', align: 'center'},
         {title: '状态', field: 'status', align: 'center',templet: '#user_status'},
+        // {title: '状态', field: 'status', align: 'center',toolbar: '#user_status'},
         {title: '操作', toolbar: '#user-bar', align: 'center'}
       ]
     ]
@@ -136,6 +137,9 @@
         window.edit(obj);
       } else if (obj.event === 'editPwd') {
         window.editPwd(obj);
+      }else if (obj.event === 'updateStatus'){
+        console.log("updateStatus")
+        window.updateStatus(obj);
       }
     });
 
@@ -191,16 +195,20 @@
     //删除
     form.on('switch(user_status)', function(obj){
       layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+      let context = '';
+      let status = 1;
       if (obj.elem.checked){
-
+        context = '启用';
+        status = 1;
       }else{
-
+        context = '停用';
+        status = 0;
       }
-      layer.confirm('确定要停用该用户', {icon: 3, title: '提示'}, function (index) {
+      layer.confirm('确定要'+context+'该用户', {icon: 3, title: '提示'}, function (index) {
         layer.close(index);
         let loading = layer.load();
         $.ajax({
-          url: MODULE_PATH + "/remove?ids=" + obj.data['id'],
+          url: MODULE_PATH + "/status?userIds=" + obj.data['id']+"&status=" + status,
           dataType: 'json',
           type: 'PUT',
           success: function (result) {
@@ -215,7 +223,38 @@
           }
         })
       });
-    });
+    })
+    window.updateStatus= function(obj){
+      layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+      var text = '';
+      var status = 1;
+      if (obj.elem.checked){
+        text = '启用';
+        status = 1;
+      }else{
+        text = '停用';
+        status = 0;
+      }
+      layer.confirm('确定要'+text+'该用户', {icon: 3, title: '提示'}, function (index) {
+        layer.close(index);
+        let loading = layer.load();
+        $.ajax({
+          url: MODULE_PATH + "/status?userIds=" + obj.data['id']+"&status=" + status,
+          dataType: 'json',
+          type: 'PUT',
+          success: function (result) {
+            layer.close(loading);
+            if (result.code === 200) {
+              layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                obj.del();
+              });
+            } else {
+              layer.msg(result.msg, {icon: 2, time: 1000});
+            }
+          }
+        })
+      });
+    };
 
     window.remove = function (obj) {
       layer.confirm('确定要删除该用户', {icon: 3, title: '提示'}, function (index) {
@@ -252,16 +291,16 @@
         ids.push(data[i].id);
       }
       // ids = ids.substr(0, ids.length - 1);
-      layer.confirm('确定要删除这些用户', {icon: 3, title: '提示'}, function (index) {
+      layer.confirm('确定要停用这些用户', {icon: 3, title: '提示'}, function (index) {
         layer.close(index);
         let loading = layer.load();
         $.ajax({
-          url: MODULE_PATH + "/remove?ids=" + ids,
+          url: MODULE_PATH + "/status?userIds=" + ids +"&status=0",
           dataType: 'json',
-          type: 'delete',
+          type: 'PUT',
           success: function (result) {
             layer.close(loading);
-            if (result.code == 200) {
+            if (result.code === 200) {
               layer.msg(result.msg, {icon: 1, time: 1000}, function () {
                 table.reload('user-table');
               });
