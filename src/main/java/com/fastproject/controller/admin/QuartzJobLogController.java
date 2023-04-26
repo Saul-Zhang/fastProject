@@ -2,7 +2,7 @@ package com.fastproject.controller.admin;
 
 import com.fastproject.common.base.BaseController;
 import com.fastproject.common.domain.AjaxResult;
-import com.fastproject.common.domain.ResultTable;
+import com.fastproject.common.domain.PageResult;
 import com.fastproject.model.auto.SysQuartzJobLog;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.service.SysQuartzJobLogService;
@@ -58,7 +58,7 @@ public class QuartzJobLogController extends BaseController{
 	@GetMapping("/list")
 	@SaCheckPermission("gen:sysQuartzJobLog:list")
 	@ResponseBody
-	public ResultTable list(Tablepar tablepar, String searchText){
+	public PageResult list(Tablepar tablepar, String searchText){
 		PageInfo<SysQuartzJobLog> page=sysQuartzJobLogService.list(tablepar,searchText) ; 
 		return pageTable(page.getList(),page.getTotal());
 	}

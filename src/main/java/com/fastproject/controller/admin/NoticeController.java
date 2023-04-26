@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fastproject.common.base.BaseController;
 import com.fastproject.common.domain.AjaxResult;
-import com.fastproject.common.domain.ResultTable;
+import com.fastproject.common.domain.PageResult;
 import com.fastproject.model.Notice;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.satoken.SaTokenUtil;
@@ -60,7 +60,7 @@ public class NoticeController extends BaseController{
 	@GetMapping("/list")
 	@SaCheckPermission("gen:sysNotice:list")
 	@ResponseBody
-	public ResultTable list(Tablepar tablepar, String searchText){
+	public PageResult list(Tablepar tablepar, String searchText){
 		PageInfo<Notice> page= noticeService.list(tablepar,searchText) ;
 		return pageTable(page.getList(),page.getTotal());
 	}
@@ -88,7 +88,7 @@ public class NoticeController extends BaseController{
 	@ApiOperation(value = "table根据公告id查询跳转到公告详情页面", notes = "table根据公告id查询跳转到公告详情页面")
 	@PostMapping("/viewUserlist")
 	@ResponseBody
-    public ResultTable viewUserlist(Tablepar tablepar,String searchText)
+    public PageResult viewUserlist(Tablepar tablepar,String searchText)
     {
 		PageInfo<Notice> page= noticeService.list(SaTokenUtil.getUser(), tablepar, searchText);
 		return pageTable(page.getList(),page.getTotal());

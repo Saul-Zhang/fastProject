@@ -3,7 +3,7 @@ package com.fastproject.controller.gen;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fastproject.common.base.BaseController;
 import com.fastproject.common.domain.AjaxResult;
-import com.fastproject.common.domain.ResultTable;
+import com.fastproject.common.domain.PageResult;
 import com.fastproject.model.auto.Test;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.service.TestService;
@@ -65,7 +65,7 @@ public class TestController extends BaseController {
   @GetMapping("/list")
   @SaCheckPermission("gen:test:list")
   @ResponseBody
-  public ResultTable list(Tablepar tablepar, Test test) {
+  public PageResult list(Tablepar tablepar, Test test) {
     PageInfo<Test> page = testService.list(tablepar, test);
     return pageTable(page.getList(), page.getTotal());
   }

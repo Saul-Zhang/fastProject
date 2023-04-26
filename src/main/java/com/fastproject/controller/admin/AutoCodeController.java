@@ -3,8 +3,8 @@ package com.fastproject.controller.admin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fastproject.common.base.BaseController;
 import com.fastproject.common.domain.AjaxResult;
-import com.fastproject.common.domain.ResultTable;
-import com.fastproject.common.domain.ResultTree;
+import com.fastproject.common.domain.PageResult;
+import com.fastproject.common.domain.TreeResult;
 import com.fastproject.model.custom.TsysTables;
 import com.fastproject.model.custom.TsysTablesVo;
 import com.fastproject.model.custom.autocode.AutoCodeConfig;
@@ -84,7 +84,7 @@ public class AutoCodeController extends BaseController {
    */
   @GetMapping("/selectTables")
   @ResponseBody
-  public ResultTree selectTables() {
+  public TreeResult selectTables() {
     List<TsysTables> list = generatorService.queryList(null);
     List<TsysTablesVo> TreeList = new ArrayList<TsysTablesVo>();
     for (int i = 0; i < list.size(); i++) {
@@ -115,7 +115,7 @@ public class AutoCodeController extends BaseController {
   @ApiOperation(value = "根据表查询表字段详情", notes = "根据表查询表字段详情")
   @GetMapping("/queryTableInfo")
   @ResponseBody
-  public ResultTable queryTableInfo(String tableName) {
+  public PageResult queryTableInfo(String tableName) {
     List<BeanColumn> list = generatorService.queryColumns2(tableName);
     return pageTable(list, list.size());
   }

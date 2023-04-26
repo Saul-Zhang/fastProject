@@ -2,7 +2,7 @@ package com.fastproject.controller.admin;
 
 import com.fastproject.common.base.BaseController;
 import com.fastproject.common.domain.AjaxResult;
-import com.fastproject.common.domain.ResultTable;
+import com.fastproject.common.domain.PageResult;
 import com.fastproject.model.Position;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.service.PositionService;
@@ -43,7 +43,7 @@ public class SysPositionController extends BaseController{
 	@PostMapping("/list")
 	@SaCheckPermission("gen:sysPosition:list")
 	@ResponseBody
-	public ResultTable list(Tablepar tablepar, String searchText){
+	public PageResult list(Tablepar tablepar, String searchText){
 		PageInfo<Position> page= positionService.list(tablepar,searchText) ;
 		return pageTable(page.getList(),page.getTotal());
 	}

@@ -1,6 +1,6 @@
 package com.fastproject.controller.admin;
 
-import com.fastproject.common.domain.ResultTable;
+import com.fastproject.common.domain.PageResult;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -52,7 +52,7 @@ public class SysInterUrlController extends BaseController{
 	@GetMapping("/list")
 	@SaCheckPermission("gen:sysInterUrl:list")
 	@ResponseBody
-	public ResultTable list(Tablepar tablepar, String searchText){
+	public PageResult list(Tablepar tablepar, String searchText){
 		PageInfo<SysInterUrl> page=sysInterUrlService.list(tablepar,searchText) ; 
 		return pageTable(page.getList(),page.getTotal());
 	}

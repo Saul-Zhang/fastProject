@@ -80,14 +80,6 @@
           {{d.status == '1' ? 'checked' : '' }} >
 </script>
 
-<!--<script type="text/html" id="user_status">-->
-<!--  {{#if (d.status == '1') { }}-->
-<!--  <span class="layui-badge layui-bg-orange">启用</span>-->
-<!--  {{# }else if(d.status == 0){ }}-->
-<!--  <span class="layui-badge layui-bg-blue">停用</span>-->
-<!--  {{# } }}-->
-<!--</script>-->
-
 <th:block th:include="include :: footer"/>
 <script>
   layui.use(['table', 'form', 'jquery'], function () {
@@ -194,67 +186,49 @@
 
     //删除
     form.on('switch(user_status)', function(obj){
-      layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
-      let context = '';
-      let status = 1;
+      let context = '停用';
+      let status = 0;
+      console.log(obj.elem.checked)
+      let checked = obj.elem.checked;
       if (obj.elem.checked){
         context = '启用';
         status = 1;
-      }else{
-        context = '停用';
-        status = 0;
       }
+
+      let id = this.value;
       layer.confirm('确定要'+context+'该用户', {icon: 3, title: '提示'}, function (index) {
+        // 用户点击了确认按钮
         layer.close(index);
+
         let loading = layer.load();
         $.ajax({
-          url: MODULE_PATH + "/status?userIds=" + obj.data['id']+"&status=" + status,
+          url: MODULE_PATH + "/status?userIds=" + id+"&status=" + status,
           dataType: 'json',
           type: 'PUT',
           success: function (result) {
             layer.close(loading);
             if (result.code === 200) {
+              obj.elem.checked =!checked
               layer.msg(result.msg, {icon: 1, time: 1000}, function () {
-                obj.del();
+                // obj.del();
+                table.reload('user-table');
               });
             } else {
               layer.msg(result.msg, {icon: 2, time: 1000});
             }
+            form.render('checkbox');
           }
         })
+      },function (index) {
+        console.log("取消");
+        // 用户点击了取消按钮
+        layer.close(index);
+        // 恢复Switch的状态
+        // obj.elem.checked =checked
+        // form.render('checkbox');
+        table.reload('user-table');
       });
     })
-    window.updateStatus= function(obj){
-      layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
-      var text = '';
-      var status = 1;
-      if (obj.elem.checked){
-        text = '启用';
-        status = 1;
-      }else{
-        text = '停用';
-        status = 0;
-      }
-      layer.confirm('确定要'+text+'该用户', {icon: 3, title: '提示'}, function (index) {
-        layer.close(index);
-        let loading = layer.load();
-        $.ajax({
-          url: MODULE_PATH + "/status?userIds=" + obj.data['id']+"&status=" + status,
-          dataType: 'json',
-          type: 'PUT',
-          success: function (result) {
-            layer.close(loading);
-            if (result.code === 200) {
-              layer.msg(result.msg, {icon: 1, time: 1000}, function () {
-                obj.del();
-              });
-            } else {
-              layer.msg(result.msg, {icon: 2, time: 1000});
-            }
-          }
-        })
-      });
-    };
 
     window.remove = function (obj) {
       layer.confirm('确定要删除该用户', {icon: 3, title: '提示'}, function (index) {

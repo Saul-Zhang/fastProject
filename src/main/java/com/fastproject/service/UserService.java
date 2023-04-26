@@ -61,23 +61,6 @@ public class UserService {
 
 
   @Transactional
-  public AjaxResult deleteByIds(String ids) {
-    List<String> userIds = ConvertUtil.toListStrArray(ids);
-
-    userIds.forEach(id -> {
-          User user = new User();
-          user.setId(id);
-          user.setStatus(Status.DISABLE);
-          userMapper.updateById(user);
-        }
-    );
-      roleUserMapper.delete(
-          new LambdaQueryWrapperX<RelationRoleUser>().in(RelationRoleUser::getUserId, userIds));
-    return AjaxResult.success();
-
-  }
-
-  @Transactional
   public AjaxResult updateStatus(List<String> userIds, Character status) {
     userIds.forEach(id -> {
       User entity = new User();
@@ -85,14 +68,7 @@ public class UserService {
       entity.setId(id);
       userMapper.updateById(entity);
     });
-//    List<String> userIds = ConvertUtil.toListStrArray(ids);
-//    userMapper.deleteBatchIds(userIds);
-//    if (i > 0) {
-//      roleUserMapper.delete(
-//          new LambdaQueryWrapperX<RelationRoleUser>().in(RelationRoleUser::getUserId, userIds));
-//    }
     return AjaxResult.success();
-
   }
 
   /**
@@ -104,6 +80,7 @@ public class UserService {
     record.setId(userid);
     //密码加密
     record.setPassword(MD5Util.encode(record.getPassword()));
+    record.setStatus(Status.ENABLE);
     userMapper.insert(record);
     if (StringUtils.isNotEmpty(roleIds)) {
       List<String> roleIdList = ConvertUtil.toListStrArray(roleIds);
@@ -156,10 +133,11 @@ public class UserService {
   /**
    * 修改用户密码
    */
-  public int updateUserPassword(User record) {
+  public AjaxResult updateUserPassword(User record) {
     record.setPassword(MD5Util.encode(record.getPassword()));
     //修改用户信息
-    return userMapper.updateById(record);
+    userMapper.updateById(record);
+    return AjaxResult.success();
   }
 
 
@@ -167,7 +145,7 @@ public class UserService {
    * 修改用户信息以及角色信息
    */
   @Transactional(rollbackFor = Exception.class)
-  public int updateUserRoles(User record, List<String> roleIds) {
+  public AjaxResult updateUserRoles(User record, List<String> roleIds) {
     //先删除这个用户的所有角色
     roleUserMapper.delete(new LambdaQueryWrapperX<RelationRoleUser>()
         .inIfPresent(RelationRoleUser::getRoleId, roleIds)
@@ -186,7 +164,8 @@ public class UserService {
     StpUtil.getSessionByLoginId(record.getId()).delete("Role_List");
 
     //修改用户信息
-    return userMapper.updateById(record);
+     userMapper.updateById(record);
+    return AjaxResult.success();
   }
 
 
@@ -210,6 +189,9 @@ public class UserService {
     if (queryUser == null || !SaSecureUtil.md5(user.getPassword())
         .equals(queryUser.getPassword())) {
       return AjaxResult.error(500, "用户名或密码不正确");
+    }
+    if (queryUser.getStatus().equals(Status.DISABLE)) {
+      return AjaxResult.error(500, "当前用户不存在");
     }
 
     // 校验通过，开始登录

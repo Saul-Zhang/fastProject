@@ -3,8 +3,8 @@ package com.fastproject.controller.admin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fastproject.common.base.BaseController;
 import com.fastproject.common.domain.AjaxResult;
-import com.fastproject.common.domain.ResultTable;
-import com.fastproject.common.domain.ResultTree;
+import com.fastproject.common.domain.PageResult;
+import com.fastproject.common.domain.TreeResult;
 import com.fastproject.model.Department;
 import com.fastproject.model.auto.SysDepartmentExample;
 import com.fastproject.model.custom.Tablepar;
@@ -63,7 +63,7 @@ public class DepartmentController extends BaseController {
   @GetMapping("/list")
   @SaCheckPermission("gen:sysDepartment:list")
   @ResponseBody
-  public ResultTable list(Tablepar tablepar, String searchText) {
+  public PageResult list(Tablepar tablepar, String searchText) {
     PageInfo<Department> page = departmentService.list(tablepar, searchText);
     return treeTable(page.getList());
   }
@@ -170,7 +170,7 @@ public class DepartmentController extends BaseController {
 
   @GetMapping("/selectParent")
   @ResponseBody
-  public ResultTree selectParent() {
+  public TreeResult selectParent() {
     List<Department> list = departmentService.selectByExample(new SysDepartmentExample());
     return dataTree(list);
   }
@@ -195,7 +195,7 @@ public class DepartmentController extends BaseController {
   @GetMapping("tree")
   @ApiOperation(value = "获取部门树状数据结构", notes = "获取部门树状数据结构")
   @ResponseBody
-  public ResultTree tree() {
+  public TreeResult tree() {
     return dataTree(departmentService.getAll());
   }
 

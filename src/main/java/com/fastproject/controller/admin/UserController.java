@@ -1,9 +1,8 @@
 package com.fastproject.controller.admin;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.fastproject.common.base.BaseController;
 import com.fastproject.common.domain.AjaxResult;
-import com.fastproject.common.domain.ResultTable;
+import com.fastproject.common.domain.PageResult;
 import com.fastproject.common.log.Log;
 import com.fastproject.model.Department;
 import com.fastproject.model.Position;
@@ -15,12 +14,13 @@ import com.fastproject.model.response.UserResponse;
 import com.fastproject.service.DepartmentService;
 import com.fastproject.service.DictCacheService;
 import com.fastproject.service.PositionService;
+import com.fastproject.service.RoleService;
+import com.fastproject.service.UserService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.CollectionUtils;
@@ -35,18 +35,22 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 用户Controller
+ *
  * @author fastProject
  */
 @Api(value = "用户数据")
 @Controller
 @RequestMapping("/UserController")
 @RequiredArgsConstructor
-public class UserController extends BaseController {
+public class UserController {
 
   private final String prefix = "admin/user";
+
   private final DepartmentService departmentService;
   private final PositionService positionService;
   private final DictCacheService dictCacheService;
+  private final UserService userService;
+  private final RoleService roleService;
 
   /**
    * 展示跳转页面
@@ -66,9 +70,9 @@ public class UserController extends BaseController {
   @GetMapping("/list")
   @SaCheckPermission("system:user:list")
   @ResponseBody
-  public ResultTable list(UserQuery query) {
+  public PageResult list(UserQuery query) {
     PageInfo<UserResponse> page = userService.list(query);
-    return pageTable(page.getList(), page.getTotal());
+    return PageResult.page(page.getList(), page.getTotal());
   }
 
   /**
@@ -106,25 +110,12 @@ public class UserController extends BaseController {
     return userService.add(user, roleIds);
   }
 
-  /**
-   * 删除用户
-   *
-   * @param ids
-   * @return
-   */
-  //@Log(title = "删除用户", action = "1")
-  @ApiOperation(value = "删除", notes = "删除")
-  @DeleteMapping("/remove")
-  @SaCheckPermission("system:user:remove")
-  @ResponseBody
-  public AjaxResult remove(String ids) {
-    return userService.deleteByIds(ids);
-  }
 
   @PutMapping("/status")
   @SaCheckPermission("system:user:remove")
   @ResponseBody
-  public AjaxResult updateStatus(List<String> userIds, Character status) {
+  public AjaxResult updateStatus(@RequestParam List<String> userIds,
+      @RequestParam Character status) {
     if (CollectionUtils.isEmpty(userIds)) {
       return AjaxResult.error("至少选择一个用户");
     }
@@ -168,7 +159,7 @@ public class UserController extends BaseController {
   @ResponseBody
   public AjaxResult editSave(User user,
       @RequestParam(value = "roleIds[]", required = false) List<String> roleIds) {
-    return toAjax(userService.updateUserRoles(user, roleIds));
+    return userService.updateUserRoles(user, roleIds);
   }
 
 
@@ -192,7 +183,7 @@ public class UserController extends BaseController {
   @PostMapping("/editPwd")
   @ResponseBody
   public AjaxResult editPwdSave(User user) {
-    return toAjax(userService.updateUserPassword(user));
+    return userService.updateUserPassword(user);
   }
 
 

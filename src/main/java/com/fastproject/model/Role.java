@@ -15,4 +15,6 @@ public class Role {
 
   private String name;
 
+  private Character status;
+
 }

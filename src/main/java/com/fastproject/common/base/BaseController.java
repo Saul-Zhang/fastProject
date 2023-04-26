@@ -3,8 +3,8 @@ package com.fastproject.common.base;
 import cn.hutool.core.util.StrUtil;
 import com.fastproject.common.conf.FastProperties;
 import com.fastproject.common.domain.AjaxResult;
-import com.fastproject.common.domain.ResultTable;
-import com.fastproject.common.domain.ResultTree;
+import com.fastproject.common.domain.PageResult;
+import com.fastproject.common.domain.TreeResult;
 import com.fastproject.service.NoticeService;
 import com.fastproject.service.PermissionService;
 import com.fastproject.service.SysFileService;
@@ -132,31 +132,31 @@ public class BaseController {
   /**
    * Describe: 返回 Tree 数据 Param data Return Tree数据
    */
-  protected static ResultTree dataTree(Object data) {
-    ResultTree resultTree = new ResultTree();
-    resultTree.setData(data);
-    return resultTree;
+  protected static TreeResult dataTree(Object data) {
+    TreeResult treeResult = new TreeResult();
+    treeResult.setData(data);
+    return treeResult;
   }
 
   /**
    * Describe: 返回数据表格数据 分页 Param data Return 表格分页数据
    */
-  protected static ResultTable pageTable(Object data, long count) {
-    return ResultTable.pageTable(count, data);
+  protected static PageResult pageTable(Object data, long count) {
+    return PageResult.page(data, count);
   }
 
   /**
    * Describe: 返回数据表格数据 Param data Return 表格分页数据
    */
-  protected static ResultTable dataTable(Object data) {
-    return ResultTable.dataTable(data);
+  protected static PageResult dataTable(Object data) {
+    return PageResult.page(data);
   }
 
   /**
    * Describe: 返回树状表格数据 分页 Param data Return 表格分页数据
    */
-  protected static ResultTable treeTable(Object data) {
-    return ResultTable.dataTable(data);
+  protected static PageResult treeTable(Object data) {
+    return PageResult.page(data);
   }
 
 

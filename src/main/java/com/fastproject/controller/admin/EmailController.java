@@ -3,7 +3,7 @@ package com.fastproject.controller.admin;
 import com.fastproject.common.base.BaseController;
 import com.fastproject.common.conf.oss.OssTemplate;
 import com.fastproject.common.domain.AjaxResult;
-import com.fastproject.common.domain.ResultTable;
+import com.fastproject.common.domain.PageResult;
 import com.fastproject.model.auto.TSysEmail;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.service.TSysEmailService;
@@ -61,7 +61,7 @@ public class EmailController extends BaseController{
 	@GetMapping("/list")
 	@SaCheckPermission("system:email:list")
 	@ResponseBody
-	public ResultTable list(Tablepar tablepar, String searchText){
+	public PageResult list(Tablepar tablepar, String searchText){
 		PageInfo<TSysEmail> page=tSysEmailService.list(tablepar,searchText) ; 
 		return pageTable(page.getList(),page.getTotal());
 	}

@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fastproject.common.base.BaseController;
 import com.fastproject.common.domain.AjaxResult;
-import com.fastproject.common.domain.ResultTree;
-import com.fastproject.common.domain.ResultTable;
+import com.fastproject.common.domain.TreeResult;
+import com.fastproject.common.domain.PageResult;
 import com.fastproject.model.Permission;
 import com.fastproject.model.custom.Tablepar;
 import com.github.pagehelper.PageInfo;
@@ -65,7 +65,7 @@ public class PermissionController  extends BaseController{
 	@PostMapping("/list")
 	@SaCheckPermission("system:permission:list")
 	@ResponseBody
-	public ResultTable list(Tablepar tablepar,String searchText){
+	public PageResult list(Tablepar tablepar,String searchText){
 		PageInfo<Permission> page= permissionService.list(tablepar, searchText) ;
 
 		return  treeTable(page.getList());
@@ -218,7 +218,7 @@ public class PermissionController  extends BaseController{
 	@ApiOperation(value = "根据角色id获取所有打勾权限", notes = "根据角色id获取 所有打勾权限")
     @GetMapping("/getCheckPrem")
     @ResponseBody
-    public ResultTree getCheckPrem(String roleId){
+    public TreeResult getCheckPrem(String roleId){
 
     	return dataTree(permissionService.getRolePower(roleId));
     }
@@ -260,7 +260,7 @@ public class PermissionController  extends BaseController{
 
     @GetMapping("/selectParent")
 	@ResponseBody
-    public ResultTree selectParent(){
+    public TreeResult selectParent(){
         List<Permission> list = permissionService.getPermissionByUserid(null);
         Permission basePower = new Permission();
         basePower.setName("顶级权限");
