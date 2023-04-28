@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fastproject.mapper.TSysEmailMapper">
-  <resultMap id="BaseResultMap" type="com.fastproject.model.auto.TSysEmail">
+  <resultMap id="BaseResultMap" type="com.fastproject.model.TSysEmail">
     <constructor>
       <idArg column="id" javaType="java.lang.String" jdbcType="VARCHAR" />
       <arg column="receivers_email" javaType="java.lang.String" jdbcType="VARCHAR" />
@@ -103,7 +103,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.fastproject.model.auto.TSysEmail">
+  <insert id="insert" parameterType="com.fastproject.model.TSysEmail">
     insert into t_sys_email (id, receivers_email, title, 
       content, send_user_id, send_user_name, 
       create_time)
@@ -111,7 +111,7 @@
       #{content,jdbcType=VARCHAR}, #{sendUserId,jdbcType=VARCHAR}, #{sendUserName,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.fastproject.model.auto.TSysEmail">
+  <insert id="insertSelective" parameterType="com.fastproject.model.TSysEmail">
     insert into t_sys_email
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -208,7 +208,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.fastproject.model.auto.TSysEmail">
+  <update id="updateByPrimaryKeySelective" parameterType="com.fastproject.model.TSysEmail">
     update t_sys_email
     <set>
       <if test="receiversEmail != null">
@@ -232,7 +232,7 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.fastproject.model.auto.TSysEmail">
+  <update id="updateByPrimaryKey" parameterType="com.fastproject.model.TSysEmail">
     update t_sys_email
     set receivers_email = #{receiversEmail,jdbcType=VARCHAR},
       title = #{title,jdbcType=VARCHAR},

@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fastproject.common.base.BaseService;
 import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.SysFileMapper;
-import com.fastproject.model.auto.SysFile;
+import com.fastproject.model.SysFile;
 import com.fastproject.model.auto.SysFileExample;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.satoken.SaTokenUtil;

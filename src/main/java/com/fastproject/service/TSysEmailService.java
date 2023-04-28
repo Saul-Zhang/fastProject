@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.fastproject.common.base.BaseService;
 import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.TSysEmailMapper;
-import com.fastproject.model.auto.TSysEmail;
+import com.fastproject.model.TSysEmail;
 import com.fastproject.model.auto.TSysEmailExample;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.satoken.SaTokenUtil;

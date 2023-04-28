@@ -1,6 +1,6 @@
 package com.fastproject.mapper;
 
-import com.fastproject.model.auto.TSysEmail;
+import com.fastproject.model.TSysEmail;
 import com.fastproject.model.auto.TSysEmailExample;
 import org.apache.ibatis.annotations.Param;
 

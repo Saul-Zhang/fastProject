@@ -3,7 +3,7 @@ package com.fastproject.controller;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.stp.StpUtil;
 import com.fastproject.common.base.BaseController;
-import com.fastproject.common.domain.AjaxResult;
+import com.fastproject.model.response.AjaxResult;
 import com.fastproject.mapper.GeneratorMapper.TsysUserMapper;
 import com.fastproject.model.Notice;
 import com.fastproject.model.User;

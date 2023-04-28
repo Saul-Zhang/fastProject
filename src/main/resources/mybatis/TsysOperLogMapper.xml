@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.fastproject.mapper.TsysOperLogMapper" >
-  <resultMap id="BaseResultMap" type="com.fastproject.model.auto.TsysOperLog" >
+  <resultMap id="BaseResultMap" type="com.fastproject.model.TsysOperLog" >
     <id column="id" property="id" jdbcType="VARCHAR" />
     <result column="title" property="title" jdbcType="VARCHAR" />
     <result column="method" property="method" jdbcType="VARCHAR" />
@@ -102,7 +102,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.fastproject.model.auto.TsysOperLog" >
+  <insert id="insert" parameterType="com.fastproject.model.TsysOperLog" >
     insert into t_sys_oper_log (id, title, method, 
       oper_name, oper_url, oper_param, 
       error_msg, oper_time)
@@ -110,7 +110,7 @@
       #{operName,jdbcType=VARCHAR}, #{operUrl,jdbcType=VARCHAR}, #{operParam,jdbcType=VARCHAR}, 
       #{errorMsg,jdbcType=VARCHAR}, #{operTime,jdbcType=DATE})
   </insert>
-  <insert id="insertSelective" parameterType="com.fastproject.model.auto.TsysOperLog" >
+  <insert id="insertSelective" parameterType="com.fastproject.model.TsysOperLog" >
     insert into t_sys_oper_log
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -217,7 +217,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.fastproject.model.auto.TsysOperLog" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.fastproject.model.TsysOperLog" >
     update t_sys_oper_log
     <set >
       <if test="title != null" >
@@ -244,7 +244,7 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.fastproject.model.auto.TsysOperLog" >
+  <update id="updateByPrimaryKey" parameterType="com.fastproject.model.TsysOperLog" >
     update t_sys_oper_log
     set title = #{title,jdbcType=VARCHAR},
       method = #{method,jdbcType=VARCHAR},

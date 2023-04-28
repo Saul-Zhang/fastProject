@@ -148,8 +148,7 @@ public class SnowflakeIdWorker {
         System.out.println((System.nanoTime()-startTime)/1000000+"ms");
     }
     
-    public static String getUUID() {
-    	long id = idWorker.nextId();
-    	return String.valueOf(id);
+    public static long getUUID() {
+    	return idWorker.nextId();
     }
 }

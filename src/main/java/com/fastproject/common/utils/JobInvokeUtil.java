@@ -1,7 +1,6 @@
 package com.fastproject.common.utils;
 
-import com.fastproject.common.utils.SpringUtils;
-import com.fastproject.model.auto.SysQuartzJob;
+import com.fastproject.model.SysQuartzJob;
 import com.fastproject.util.StringUtils;
 
 import java.lang.reflect.InvocationTargetException;

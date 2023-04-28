@@ -1,15 +1,15 @@
 package com.fastproject.controller.admin;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.fastproject.common.domain.AjaxResult;
-import com.fastproject.common.domain.PageResult;
-import com.fastproject.common.log.Log;
+import com.fastproject.common.annotation.Log;
 import com.fastproject.model.Department;
 import com.fastproject.model.Position;
 import com.fastproject.model.Role;
 import com.fastproject.model.User;
 import com.fastproject.model.custom.RoleVo;
 import com.fastproject.model.request.query.UserQuery;
+import com.fastproject.model.response.AjaxResult;
+import com.fastproject.model.response.PageResult;
 import com.fastproject.model.response.UserResponse;
 import com.fastproject.service.DepartmentService;
 import com.fastproject.service.DictCacheService;
@@ -24,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -114,7 +113,7 @@ public class UserController {
   @PutMapping("/status")
   @SaCheckPermission("system:user:remove")
   @ResponseBody
-  public AjaxResult updateStatus(@RequestParam List<String> userIds,
+  public AjaxResult updateStatus(@RequestParam List<Long> userIds,
       @RequestParam Character status) {
     if (CollectionUtils.isEmpty(userIds)) {
       return AjaxResult.error("至少选择一个用户");
@@ -138,14 +137,14 @@ public class UserController {
    */
   @ApiOperation(value = "修改跳转", notes = "修改跳转")
   @GetMapping("/edit/{id}")
-  public String edit(@PathVariable("id") String userId, ModelMap mmap) {
+  public String edit(@PathVariable("id") String userId, ModelMap modelMap) {
     List<RoleVo> roleVos = userService.getRolesByUserId(userId);
 
-    mmap.put("roleVos", roleVos);
-    mmap.put("user", userService.getUserById(userId));
+    modelMap.put("roleVos", roleVos);
+    modelMap.put("user", userService.getUserById(userId));
     //岗位
-    mmap.put("positions", positionService.getAll());
-    mmap.put("genders", dictCacheService.getDict("gender"));
+    modelMap.put("positions", positionService.getAll());
+    modelMap.put("genders", dictCacheService.getDict("gender"));
     return prefix + "/edit";
   }
 
@@ -158,7 +157,7 @@ public class UserController {
   @PostMapping("/edit")
   @ResponseBody
   public AjaxResult editSave(User user,
-      @RequestParam(value = "roleIds[]", required = false) List<String> roleIds) {
+      @RequestParam(value = "roleIds[]", required = false) List<Long> roleIds) {
     return userService.updateUserRoles(user, roleIds);
   }
 
@@ -185,6 +184,4 @@ public class UserController {
   public AjaxResult editPwdSave(User user) {
     return userService.updateUserPassword(user);
   }
-
-
 }

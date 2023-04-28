@@ -3,7 +3,7 @@ package com.fastproject.service;
 import com.fastproject.common.base.BaseService;
 import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.SysInterUrlMapper;
-import com.fastproject.model.auto.SysInterUrl;
+import com.fastproject.model.SysInterUrl;
 import com.fastproject.model.auto.SysInterUrlExample;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.util.SnowflakeIdWorker;

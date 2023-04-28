@@ -2,7 +2,7 @@ package com.fastproject.controller.admin;
 
 import com.fastproject.common.base.BaseController;
 import com.fastproject.common.conf.FastProperties;
-import com.fastproject.common.domain.AjaxResult;
+import com.fastproject.model.response.AjaxResult;
 import com.wf.captcha.GifCaptcha;
 import com.wf.captcha.SpecCaptcha;
 import com.wf.captcha.base.Captcha;

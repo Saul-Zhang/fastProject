@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fastproject.common.base.BaseController;
-import com.fastproject.common.domain.AjaxResult;
-import com.fastproject.common.domain.PageResult;
+import com.fastproject.model.response.AjaxResult;
+import com.fastproject.model.response.PageResult;
 import com.fastproject.model.Notice;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.satoken.SaTokenUtil;

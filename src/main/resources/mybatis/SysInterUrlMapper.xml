@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fastproject.mapper.SysInterUrlMapper">
-  <resultMap id="BaseResultMap" type="com.fastproject.model.auto.SysInterUrl">
+  <resultMap id="BaseResultMap" type="com.fastproject.model.SysInterUrl">
     <result column="id" jdbcType="VARCHAR" property="id" />
     <result column="inter_name" jdbcType="VARCHAR" property="interName" />
     <result column="url" jdbcType="VARCHAR" property="url" />
@@ -103,7 +103,7 @@
     </if>
   </delete>
   
-  <insert id="insert" parameterType="com.fastproject.model.auto.SysInterUrl">
+  <insert id="insert" parameterType="com.fastproject.model.SysInterUrl">
     insert into t_sys_inter_url (
       	  	       id,
        	  	       inter_name,
@@ -118,7 +118,7 @@
        	    )
   </insert>
   
-  <insert id="insertSelective" parameterType="com.fastproject.model.auto.SysInterUrl">
+  <insert id="insertSelective" parameterType="com.fastproject.model.SysInterUrl">
     insert into t_sys_inter_url
     <trim prefix="(" suffix=")" suffixOverrides=",">
           
@@ -201,7 +201,7 @@
   </update>
   
   
-      <update id="updateByPrimaryKeySelective" parameterType="com.fastproject.model.auto.SysInterUrl">
+      <update id="updateByPrimaryKeySelective" parameterType="com.fastproject.model.SysInterUrl">
     update t_sys_inter_url
     <set>
                           <if test="interName != null">
@@ -221,7 +221,7 @@
 
       	      	   	      	   	      	   	      	
 
-  <update id="updateByPrimaryKey" parameterType="com.fastproject.model.auto.SysInterUrl">
+  <update id="updateByPrimaryKey" parameterType="com.fastproject.model.SysInterUrl">
     update t_sys_inter_url
     set 
              	        	    	 			inter_name = #{interName,jdbcType=VARCHAR},

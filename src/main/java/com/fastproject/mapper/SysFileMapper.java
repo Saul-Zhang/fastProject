@@ -1,6 +1,6 @@
 package com.fastproject.mapper;
 
-import com.fastproject.model.auto.SysFile;
+import com.fastproject.model.SysFile;
 import com.fastproject.model.auto.SysFileExample;
 import org.apache.ibatis.annotations.Param;
 

@@ -1,8 +1,8 @@
 package com.fastproject.controller.admin;
 
 import com.fastproject.common.conf.oss.OssTemplate;
-import com.fastproject.common.domain.AjaxResult;
-import com.fastproject.model.auto.SysFile;
+import com.fastproject.model.response.AjaxResult;
+import com.fastproject.model.SysFile;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import cn.dev33.satoken.annotation.SaCheckPermission;

@@ -2,9 +2,9 @@ package com.fastproject.controller.admin;
 
 import com.fastproject.common.base.BaseController;
 import com.fastproject.common.conf.oss.OssTemplate;
-import com.fastproject.common.domain.AjaxResult;
-import com.fastproject.common.domain.PageResult;
-import com.fastproject.model.auto.TSysEmail;
+import com.fastproject.model.response.AjaxResult;
+import com.fastproject.model.response.PageResult;
+import com.fastproject.model.TSysEmail;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.service.TSysEmailService;
 import com.fastproject.util.SimpleEmailUtil;

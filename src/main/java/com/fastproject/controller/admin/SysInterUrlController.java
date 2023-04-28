@@ -1,6 +1,6 @@
 package com.fastproject.controller.admin;
 
-import com.fastproject.common.domain.PageResult;
+import com.fastproject.model.response.PageResult;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,8 +8,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import com.github.pagehelper.PageInfo;
 import com.fastproject.common.base.BaseController;
-import com.fastproject.common.domain.AjaxResult;
-import com.fastproject.model.auto.SysInterUrl;
+import com.fastproject.model.response.AjaxResult;
+import com.fastproject.model.SysInterUrl;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.service.SysInterUrlService;
 import io.swagger.annotations.Api;

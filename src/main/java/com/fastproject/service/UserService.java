@@ -5,7 +5,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.fastproject.common.conf.FastProperties;
-import com.fastproject.common.domain.AjaxResult;
+import com.fastproject.model.response.AjaxResult;
 import com.fastproject.common.mybatis.LambdaQueryWrapperX;
 import com.fastproject.common.mybatis.QueryWrapperX;
 import com.fastproject.common.utils.ConvertUtil;
@@ -60,8 +60,8 @@ public class UserService {
   }
 
 
-  @Transactional
-  public AjaxResult updateStatus(List<String> userIds, Character status) {
+  @Transactional(rollbackFor = Exception.class)
+  public AjaxResult updateStatus(List<Long> userIds, Character status) {
     userIds.forEach(id -> {
       User entity = new User();
       entity.setStatus(status);
@@ -76,15 +76,15 @@ public class UserService {
    */
   @Transactional(rollbackFor = Exception.class)
   public AjaxResult add(User record, String roleIds) {
-    String userid = SnowflakeIdWorker.getUUID();
+    Long userid = SnowflakeIdWorker.getUUID();
     record.setId(userid);
     //密码加密
     record.setPassword(MD5Util.encode(record.getPassword()));
     record.setStatus(Status.ENABLE);
     userMapper.insert(record);
     if (StringUtils.isNotEmpty(roleIds)) {
-      List<String> roleIdList = ConvertUtil.toListStrArray(roleIds);
-      for (String rolesId : roleIdList) {
+      List<Long> roleIdList = ConvertUtil.toListLongArray(roleIds);
+      for (Long rolesId : roleIdList) {
         RelationRoleUser roleUser = new RelationRoleUser(SnowflakeIdWorker.getUUID(),
             record.getId(), rolesId);
         roleUserMapper.insert(roleUser);
@@ -145,14 +145,14 @@ public class UserService {
    * 修改用户信息以及角色信息
    */
   @Transactional(rollbackFor = Exception.class)
-  public AjaxResult updateUserRoles(User record, List<String> roleIds) {
+  public AjaxResult updateUserRoles(User record, List<Long> roleIds) {
     //先删除这个用户的所有角色
     roleUserMapper.delete(new LambdaQueryWrapperX<RelationRoleUser>()
         .inIfPresent(RelationRoleUser::getRoleId, roleIds)
         .eq(RelationRoleUser::getUserId, record.getId()));
     //添加新的角色信息
     if (CollectionUtils.isNotEmpty(roleIds)) {
-      for (String roleId : roleIds) {
+      for (Long roleId : roleIds) {
         RelationRoleUser roleUser = new RelationRoleUser();
         roleUser.setId(SnowflakeIdWorker.getUUID());
         roleUser.setUserId(record.getId());

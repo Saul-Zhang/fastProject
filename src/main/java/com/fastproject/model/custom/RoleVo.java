@@ -1,9 +1,11 @@
 package com.fastproject.model.custom;
 
 import com.fastproject.model.Role;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 角色自定义数据
@@ -18,7 +20,7 @@ public class RoleVo extends Role {
 	 */
 	private boolean checked;
 
-	public RoleVo(String id, String name, boolean checked) {
+	public RoleVo(Long id, String name, boolean checked) {
 		super(id, name);
 		this.checked = checked;
 	}

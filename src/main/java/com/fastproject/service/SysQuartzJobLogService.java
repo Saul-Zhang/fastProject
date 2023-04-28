@@ -3,7 +3,7 @@ package com.fastproject.service;
 import com.fastproject.common.base.BaseService;
 import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.SysQuartzJobLogMapper;
-import com.fastproject.model.auto.SysQuartzJobLog;
+import com.fastproject.model.SysQuartzJobLog;
 import com.fastproject.model.auto.SysQuartzJobLogExample;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.util.SnowflakeIdWorker;

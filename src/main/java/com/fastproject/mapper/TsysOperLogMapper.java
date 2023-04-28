@@ -1,6 +1,6 @@
 package com.fastproject.mapper;
 
-import com.fastproject.model.auto.TsysOperLog;
+import com.fastproject.model.TsysOperLog;
 import com.fastproject.model.auto.TsysOperLogExample;
 import org.apache.ibatis.annotations.Param;
 

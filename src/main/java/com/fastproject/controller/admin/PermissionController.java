@@ -1,7 +1,17 @@
 package com.fastproject.controller.admin;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.session.SaSessionCustomUtil;
+import com.fastproject.model.Permission;
+import com.fastproject.model.response.AjaxResult;
+import com.fastproject.model.response.PageResult;
+import com.fastproject.model.response.TreeResult;
+import com.fastproject.service.PermissionService;
+import com.fastproject.service.RoleService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import java.util.List;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -12,269 +22,174 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.fastproject.common.base.BaseController;
-import com.fastproject.common.domain.AjaxResult;
-import com.fastproject.common.domain.TreeResult;
-import com.fastproject.common.domain.PageResult;
-import com.fastproject.model.Permission;
-import com.fastproject.model.custom.Tablepar;
-import com.github.pagehelper.PageInfo;
-
-import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.dev33.satoken.session.SaSessionCustomUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 
 /**
  * 权限Controller
- * @author fuce 
- * @date: 2018年9月2日 下午8:08:21
+ *
+ * @author fastProject
  */
 @Api(value = "权限")
 @Controller
 @RequestMapping("/PermissionController")
-public class PermissionController  extends BaseController{
-	
-	//跳转页面参数
-	private final String prefix = "admin/permission";
-	
-	/**
-	 * 权限列表展示
-	 * @param model
-	 * @return
-	 * @author fuce
-	 * @Date 2019年11月11日 下午3:43:51
-	 */
-	@ApiOperation(value = "分页跳转", notes = "分页跳转")
-	@GetMapping("/view")
-	@SaCheckPermission("system:permission:view")
-    public String view(ModelMap model)
-    {
-		return prefix + "/list";
+@RequiredArgsConstructor
+public class PermissionController {
+
+  private final String prefix = "admin/permission";
+
+  private final PermissionService permissionService;
+  private final RoleService roleService;
+
+  /**
+   * 权限列表展示
+   */
+  @ApiOperation(value = "分页跳转", notes = "分页跳转")
+  @GetMapping("/view")
+  @SaCheckPermission("system:permission:view")
+  public String view(ModelMap model) {
+    return prefix + "/list";
+  }
+
+  /**
+   * 权限列表
+   */
+  @ApiOperation(value = "分页查询", notes = "分页查询")
+  @GetMapping("/list")
+  @SaCheckPermission("system:permission:list")
+  @ResponseBody
+  public PageResult list() {
+    return PageResult.page(permissionService.list());
+  }
+
+  /**
+   * 新增权限
+   */
+  @ApiOperation(value = "新增跳转", notes = "新增跳转")
+  @GetMapping("/add")
+  public String add() {
+    return prefix + "/add";
+  }
+
+
+  /**
+   * 权限添加
+   *
+   * @param role
+   * @return
+   */
+  //@Log(title = "权限添加", action = "1")
+  @ApiOperation(value = "新增", notes = "新增")
+  @PostMapping("/add")
+  @SaCheckPermission("system:permission:add")
+  @ResponseBody
+  public AjaxResult add(@RequestBody Permission permission) {
+    return permissionService.insert(permission);
+  }
+
+  /**
+   * 删除权限
+   */
+  //@Log(title = "删除权限", action = "1")
+  @ApiOperation(value = "删除", notes = "删除")
+  @DeleteMapping("/remove")
+  @SaCheckPermission("system:permission:remove")
+  @ResponseBody
+  public AjaxResult remove(@RequestParam List<Long> ids) {
+    return permissionService.delete(ids);
+  }
+
+  /**
+   * 修改权限
+   */
+  @ApiOperation(value = "修改跳转", notes = "修改跳转")
+  @GetMapping("/edit/{roleId}")
+  public String edit(@PathVariable("roleId") Long id, ModelMap mmap) {
+    //获取自己的权限信息
+    Permission permission = permissionService.selectById(id);
+    //获取父权限信息
+    Permission pattsysPermission = permissionService.selectById(permission.getPid());
+    mmap.put("permission", permission);
+    mmap.put("parentPermission", pattsysPermission);
+    return prefix + "/edit";
+  }
+
+  /**
+   * 修改保存权限
+   */
+  //@Log(title = "修改保存权限", action = "1")
+  @ApiOperation(value = "修改保存", notes = "修改保存")
+  @SaCheckPermission("system:permission:edit")
+  @PostMapping("/edit")
+  @ResponseBody
+  public AjaxResult editSave(@RequestBody Permission permission) {
+    return return permissionService.update(permission);
+  }
+
+
+  /**
+   * 根据角色id获取bootstarp 所有打勾权限
+   *
+   * @param roleId 角色id集合
+   * @return
+   */
+  @ApiOperation(value = "根据角色id获取所有打勾权限", notes = "根据角色id获取 所有打勾权限")
+  @GetMapping("/getCheckPrem")
+  @ResponseBody
+  public TreeResult getCheckPrem(String roleId) {
+
+    return dataTree(permissionService.getRolePower(roleId));
+  }
+
+
+  /**
+   * 跳转到菜单树页面
+   *
+   * @return
+   */
+  @ApiOperation(value = "跳转到菜单树页面", notes = "跳转到菜单树页面")
+  @GetMapping("/tree/{roleId}")
+  public String Tree(@PathVariable("roleId") String roleId, Model model) {
+    model.addAttribute("roleId", roleId);
+    return prefix + "/tree";
+  }
+
+
+  /**
+   * 修改保存角色
+   */
+  //@Log(title = "修改保存角色", action = "1")
+  @ApiOperation(value = "授权保存", notes = "授权保存")
+  @SaCheckPermission("system:role:edit")
+  @PutMapping("/saveRolePower")
+  @ResponseBody
+  public AjaxResult saveRolePower(String roleId, String powerIds) {
+    int i = roleService.updateRoleAndPrem(roleId, powerIds);
+    if (i > 0) {
+      //大于0刷新权限
+      SaSessionCustomUtil.getSessionById("role-" + roleId).delete("Permission_List");
     }
-	
-	/**
-	 * 权限列表
-	 * @param tablepar
-	 * @param searchText 搜索字符
-	 * @return
-	 */
-	@ApiOperation(value = "分页查询", notes = "分页查询")
-	@PostMapping("/list")
-	@SaCheckPermission("system:permission:list")
-	@ResponseBody
-	public PageResult list(Tablepar tablepar,String searchText){
-		PageInfo<Permission> page= permissionService.list(tablepar, searchText) ;
-
-		return  treeTable(page.getList());
-	}
-
-	/**
-     * 新增权限
-     */
-	@ApiOperation(value = "新增跳转", notes = "新增跳转")
-    @GetMapping("/add")
-    public String add()
-    {
-        return prefix + "/add";
-    }
-	
-	
-    /**
-     * 权限添加
-     * @param role
-     * @return
-     */
-	//@Log(title = "权限添加", action = "1")
-	@ApiOperation(value = "新增", notes = "新增")
-	@PostMapping("/add")
-	@SaCheckPermission("system:permission:add")
-	@ResponseBody
-	public AjaxResult add(@RequestBody Permission permission){
-		int b= permissionService.insertSelective(permission);
-		if(b>0){
-			return success();
-		}else{
-			return error();
-		}
-	}
-	
-	/**
-	 * 删除权限
-	 * @param ids
-	 * @return
-	 */
-	//@Log(title = "删除权限", action = "1")
-	@ApiOperation(value = "删除", notes = "删除")
-	@DeleteMapping("/remove")
-	@SaCheckPermission("system:permission:remove")
-	@ResponseBody
-	public AjaxResult remove(String ids){
-		int b= permissionService.deleteByPrimaryKey(ids);
-		if(b==1){
-			return success();
-		}else if(b==-1){
-			return error("该权限有子权限，请先删除子权限");
-		}else if(b==-2){
-			return error("该权限绑定了角色，请解除角色绑定");
-		}else {
-			return error();
-		}
-	}
-	
-	/**
-	 * 检查权限
-	 * @param Permission
-	 * @return
-	 */
-	@ApiOperation(value = "检查权限", notes = "检查权限")
-	@PostMapping("/checkNameUnique")
-	@ResponseBody
-	public int checkNameUnique(Permission Permission){
-		int b= permissionService.checkNameUnique(Permission);
-		if(b>0){
-			return 1;
-		}else{
-			return 0;
-		}
-	}
-	
-	/**
-	 * 检查权限URL
-	 * @param tsysUser
-	 * @return
-	 */
-	@ApiOperation(value = "检查权限URL", notes = "检查权限URL")
-	@PostMapping("/checkURLUnique")
-	@ResponseBody
-	public int checkURLUnique(@RequestBody Permission permission){
-		int b= permissionService.checkURLUnique(permission);
-		if(b>0){
-			return 1;
-		}else{
-			return 0;
-		}
-	}
-	
-	/**
-	 * 检查权限perms字段
-	 * @param tsysUser
-	 * @return
-	 */
-	@ApiOperation(value = "检查权限perms字段", notes = "检查权限perms字段")
-	@PostMapping("/checkPermsUnique")
-	@ResponseBody
-	public int checkPermsUnique(Permission permission){
-		int b= permissionService.checkPermsUnique(permission);
-		if(b>0){
-			return 1;
-		}else{
-			return 0;
-		}
-	}
-	
-	/**
-	 * 修改权限
-	 * @param id
-	 * @param mmap
-	 * @return
-	 */
-	@ApiOperation(value = "修改跳转", notes = "修改跳转")
-	@GetMapping("/edit/{roleId}")
-    public String edit(@PathVariable("roleId") String id, ModelMap mmap)
-    {	
-		//获取自己的权限信息
-		Permission mytsysPermission = permissionService.selectByPrimaryKey(id);
-		//获取父权限信息
-		Permission pattsysPermission = permissionService.selectByPrimaryKey(mytsysPermission.getPid());
-        mmap.put("TsysPermission", mytsysPermission);
-        mmap.put("pattsysPermission", pattsysPermission);
-        return prefix + "/edit";
-    }
-	
-	/**
-     * 修改保存权限
-     */
-	//@Log(title = "修改保存权限", action = "1")
-	@ApiOperation(value = "修改保存", notes = "修改保存")
-    @SaCheckPermission("system:permission:edit")
-    @PostMapping("/edit")
-    @ResponseBody
-    public AjaxResult editSave(@RequestBody Permission Permission)
-    {
-        return toAjax(permissionService.updateByPrimaryKey(Permission));
-    }
-    
-
-    
-    
-    /**
-     * 根据角色id获取bootstarp 所有打勾权限
-     * @param roleId 角色id集合
-     * @return
-     */
-	@ApiOperation(value = "根据角色id获取所有打勾权限", notes = "根据角色id获取 所有打勾权限")
-    @GetMapping("/getCheckPrem")
-    @ResponseBody
-    public TreeResult getCheckPrem(String roleId){
-
-    	return dataTree(permissionService.getRolePower(roleId));
-    }
-    
-    
-    /**
-     * 跳转到菜单树页面
-     * @return
-     */
-	@ApiOperation(value = "跳转到菜单树页面", notes = "跳转到菜单树页面")
-    @GetMapping("/tree/{roleId}")
-    public String Tree(@PathVariable("roleId") String roleId, Model model){
-		 model.addAttribute("roleId",roleId);
-    	 return prefix + "/tree";
-    }
+    return toAjax(i);
+  }
 
 
+  @GetMapping("/selectParent")
+  @ResponseBody
+  public TreeResult selectParent() {
+    List<Permission> list = permissionService.getPermissionByUserid(null);
+    Permission basePower = new Permission();
+    basePower.setName("顶级权限");
+    basePower.setId("0");
+    basePower.setPid("-1");
+    list.add(basePower);
+    return dataTree(list);
+  }
 
+  @PutMapping("/updateVisible")
+  @ResponseBody
+  public AjaxResult updateVisible(@RequestBody Permission Permission) {
+    int i = permissionService.updateVisible(Permission);
+    return toAjax(i);
+  }
 
-    /**
-     * 修改保存角色
-     */
-	//@Log(title = "修改保存角色", action = "1")
-	@ApiOperation(value = "授权保存", notes = "授权保存")
-    @SaCheckPermission("system:role:edit")
-    @PutMapping("/saveRolePower")
-    @ResponseBody
-    public AjaxResult saveRolePower(String roleId,String powerIds)
-    {
-    	int i= roleService.updateRoleAndPrem(roleId,powerIds);
-    	if(i>0) {
-    		//大于0刷新权限
-    		SaSessionCustomUtil.getSessionById("role-" + roleId).delete("Permission_List");
-    	}
-        return toAjax(i);
-    }
-
-
-
-    @GetMapping("/selectParent")
-	@ResponseBody
-    public TreeResult selectParent(){
-        List<Permission> list = permissionService.getPermissionByUserid(null);
-        Permission basePower = new Permission();
-        basePower.setName("顶级权限");
-        basePower.setId("0");
-        basePower.setPid("-1");
-        list.add(basePower);
-        return dataTree(list);
-    }
-
-    @PutMapping("/updateVisible")
-	@ResponseBody
-    public AjaxResult updateVisible(@RequestBody Permission Permission){
-		int i= permissionService.updateVisible(Permission);
-		 return toAjax(i);
-	}
-    
 }

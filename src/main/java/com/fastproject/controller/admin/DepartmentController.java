@@ -2,9 +2,9 @@ package com.fastproject.controller.admin;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fastproject.common.base.BaseController;
-import com.fastproject.common.domain.AjaxResult;
-import com.fastproject.common.domain.PageResult;
-import com.fastproject.common.domain.TreeResult;
+import com.fastproject.model.response.AjaxResult;
+import com.fastproject.model.response.PageResult;
+import com.fastproject.model.response.TreeResult;
 import com.fastproject.model.Department;
 import com.fastproject.model.auto.SysDepartmentExample;
 import com.fastproject.model.custom.Tablepar;

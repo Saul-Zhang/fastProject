@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fastproject.common.conf.FastProperties;
-import com.fastproject.common.domain.AjaxResult;
+import com.fastproject.model.response.AjaxResult;
 import com.fastproject.common.exception.demo.DemoModeException;
 import com.fastproject.util.ServletUtils;
 import cn.dev33.satoken.exception.NotLoginException;

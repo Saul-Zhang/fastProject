@@ -3,8 +3,8 @@ package com.fastproject.common.quartz;
 import cn.hutool.core.exceptions.ExceptionUtil;
 
 import com.fastproject.common.utils.SpringUtils;
-import com.fastproject.model.auto.SysQuartzJob;
-import com.fastproject.model.auto.SysQuartzJobLog;
+import com.fastproject.model.SysQuartzJob;
+import com.fastproject.model.SysQuartzJobLog;
 import com.fastproject.service.SysQuartzJobLogService;
 import com.fastproject.util.StringUtils;
 

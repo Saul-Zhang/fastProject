@@ -11,10 +11,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Role {
 
-  private String id;
+  private Long id;
 
   private String name;
 
   private Character status;
 
+  public Role(Long id, String name) {
+    this.id = id;
+    this.name = name;
+  }
 }

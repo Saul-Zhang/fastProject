@@ -3,7 +3,7 @@ package com.fastproject.service;
 import com.fastproject.common.base.BaseService;
 import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.TsysOperLogMapper;
-import com.fastproject.model.auto.TsysOperLog;
+import com.fastproject.model.TsysOperLog;
 import com.fastproject.model.auto.TsysOperLogExample;
 import com.fastproject.model.custom.Tablepar;
 import com.fastproject.util.SnowflakeIdWorker;

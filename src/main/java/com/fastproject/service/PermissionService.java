@@ -1,134 +1,81 @@
 package com.fastproject.service;
 
-import com.fastproject.common.base.BaseService;
-import com.fastproject.common.utils.ConvertUtil;
+import com.fastproject.common.mybatis.LambdaQueryWrapperX;
 import com.fastproject.mapper.PermissionMapper;
-import com.fastproject.mapper.TsysPermissionMapper;
-import com.fastproject.mapper.TsysPermissionRoleMapper;
+import com.fastproject.mapper.PermissionRoleMapper;
 import com.fastproject.model.Permission;
+import com.fastproject.model.PermissionRole;
 import com.fastproject.model.auto.TsysPermissionExample;
-import com.fastproject.model.auto.TsysPermissionRole;
-import com.fastproject.model.auto.TsysPermissionRoleExample;
 import com.fastproject.model.custom.Menu;
 import com.fastproject.model.custom.SysPower;
-import com.fastproject.model.custom.Tablepar;
+import com.fastproject.model.response.AjaxResult;
 import com.fastproject.util.SnowflakeIdWorker;
-import com.github.pagehelper.PageInfo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class PermissionService implements BaseService<Permission, TsysPermissionExample> {
+@RequiredArgsConstructor
+public class PermissionService {
 
-  //权限mapper
-  @Autowired
-  private TsysPermissionMapper tsysPermissionMapper;
+  private final PermissionMapper permissionMapper;
 
-  //权限自定义dao
-  @Autowired
-  private PermissionMapper permissionMapper;
-  //权限角色关联表
-  @Autowired
-  private TsysPermissionRoleMapper permissionRoleMapper;
+  private final PermissionRoleMapper permissionRoleMapper;
 
   /**
    * 分页查询
-   *
-   * @param pageNum
-   * @param pageSize
-   * @return
    */
-  public PageInfo<Permission> list(Tablepar tablepar, String searchText) {
-    TsysPermissionExample testExample = new TsysPermissionExample();
-    testExample.setOrderByClause("order_num  is null  ASC,order_num  ASC");
-    if (searchText != null && !"".equals(searchText)) {
-      testExample.createCriteria().andNameLike("%" + searchText + "%");
-    }
-    List<Permission> list = tsysPermissionMapper.selectByExample(testExample);
-    PageInfo<Permission> pageInfo = new PageInfo<Permission>(list);
-    return pageInfo;
+  public List<Permission> list() {
+    return permissionMapper.selectList(null);
   }
 
 
-  @Override
-  public int deleteByPrimaryKey(String ids) {
-    //转成集合
-    List<String> lista = ConvertUtil.toListStrArray(ids);
+  @Transactional(rollbackFor = Exception.class)
+  public AjaxResult delete(List<Long> ids) {
 
-    //判断角色是否删除去除
-    TsysPermissionRoleExample permissionRoleExample = new TsysPermissionRoleExample();
-    permissionRoleExample.createCriteria().andPermissionIdIn(lista);
-    List<TsysPermissionRole> tsysPermissionRoles = permissionRoleMapper.selectByExample(
-        permissionRoleExample);
-    if (tsysPermissionRoles.size() > 0) {//有角色外键
-      return -2;
-    }
-
-    //判断是否有子集
-    TsysPermissionExample example = new TsysPermissionExample();
-    example.createCriteria().andIdIn(lista);
-    List<Permission> permissions = tsysPermissionMapper.selectByExample(example);
-    boolean lag = false;
-    for (Permission permission : permissions) {
-      if (permission.getChildCount() > 0) {
-        lag = true;
-      }
-    }
-    if (lag) {//有子集 无法删除
-      return -1;
-    } else {//删除操作
-      int i = tsysPermissionMapper.deleteByExample(example);
-      if (i > 0) {//删除成功
-        return 1;
-      } else {//删除失败
-        return 0;
-      }
-
-    }
+    permissionRoleMapper.delete(new LambdaQueryWrapperX<PermissionRole>()
+        .in(PermissionRole::getPermissionId, ids));
+    ids.forEach(id -> {
+      permissionMapper.delete(new LambdaQueryWrapperX<Permission>()
+          .eq(Permission::getId, id));
+      permissionMapper.delete(new LambdaQueryWrapperX<Permission>()
+          .eq(Permission::getPid, id));
+    });
+    return AjaxResult.success();
   }
 
 
-  @Override
-  public int insertSelective(Permission record) {
+  public AjaxResult insert(Permission record) {
     //添加雪花主键id
     record.setId(SnowflakeIdWorker.getUUID());
     //判断为目录的时候添加父id为0
-		/*if(record!=null&&record.getType()==0){
-			record.setPid("1");
-		}*/
+    if (record.getType() == 0) {
+      record.setPid(1L);
+    }
     //默认设置不跳转
     if (record.getIsBlank() == null) {
       record.setIsBlank(0);
     }
-    return tsysPermissionMapper.insertSelective(record);
+    permissionMapper.insert(record);
+    return AjaxResult.success();
   }
 
-  @Override
-  public Permission selectByPrimaryKey(String id) {
+  public Permission selectById(Long id) {
 
-    return tsysPermissionMapper.selectByPrimaryKey(id);
+    return permissionMapper.selectById(id);
   }
 
-
-  @Override
-  public int updateByPrimaryKeySelective(Permission record) {
+  public AjaxResult update(Permission record) {
     //默认设置不跳转
     if (record.getIsBlank() == null) {
       record.setIsBlank(0);
     }
-    return tsysPermissionMapper.updateByPrimaryKeySelective(record);
-  }
-
-  public int updateByPrimaryKey(Permission record) {
-    //默认设置不跳转
-    if (record.getIsBlank() == null) {
-      record.setIsBlank(0);
-    }
-    return tsysPermissionMapper.updateByPrimaryKey(record);
+    permissionMapper.updateById(record);
+    return AjaxResult.success();
   }
 
   /**
@@ -325,13 +272,13 @@ public class PermissionService implements BaseService<Permission, TsysPermission
   /**
    * 根据用户id获取用户角色如果用户为null 获取所有权限
    */
-  public List<Permission> getPermissionByUserid(Integer userId) {
-    if (userId == null) {
-      TsysPermissionExample example = new TsysPermissionExample();
-      example.createCriteria().andVisibleEqualTo(0);
-      example.setOrderByClause("order_num  is null  ASC,order_num  ASC");
-      return tsysPermissionMapper.selectByExample(example);
-    }
+  public List<Permission> getPermissionByUserid(Long userId) {
+//    if (userId == null) {
+//      TsysPermissionExample example = new TsysPermissionExample();
+//      example.createCriteria().andVisibleEqualTo(0);
+//      example.setOrderByClause("order_num  is null  ASC,order_num  ASC");
+//      return tsysPermissionMapper.selectByExample(example);
+//    }
     return permissionMapper.findByAdminUserId(userId);
   }
 

@@ -1,6 +1,6 @@
 package com.fastproject.common.quartz;
 
-import com.fastproject.model.auto.SysQuartzJob;
+import com.fastproject.model.SysQuartzJob;
 import com.fastproject.util.StringUtils;
 import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;

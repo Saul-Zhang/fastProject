@@ -1,6 +1,6 @@
 package com.fastproject.mapper;
 
-import com.fastproject.model.auto.SysQuartzJobLog;
+import com.fastproject.model.SysQuartzJobLog;
 import com.fastproject.model.auto.SysQuartzJobLogExample;
 import org.apache.ibatis.annotations.Param;
 

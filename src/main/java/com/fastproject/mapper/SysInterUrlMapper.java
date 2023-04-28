@@ -1,6 +1,6 @@
 package com.fastproject.mapper;
 
-import com.fastproject.model.auto.SysInterUrl;
+import com.fastproject.model.SysInterUrl;
 import com.fastproject.model.auto.SysInterUrlExample;
 import org.apache.ibatis.annotations.Param;
 

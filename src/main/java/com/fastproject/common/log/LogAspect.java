@@ -2,7 +2,8 @@ package com.fastproject.common.log;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fastproject.model.auto.TsysOperLog;
+import com.fastproject.common.annotation.Log;
+import com.fastproject.model.TsysOperLog;
 import com.fastproject.model.User;
 import com.fastproject.satoken.SaTokenUtil;
 import com.fastproject.service.SysOperLogService;
@@ -45,7 +46,7 @@ public class LogAspect {
   private SysOperLogService operLogService;
 
   // 配置织入点
-  @Pointcut("@annotation(com.fastproject.common.log.Log)")
+  @Pointcut("@annotation(com.fastproject.common.annotation.Log)")
   public void logPointCut() {
   }
 

@@ -26,7 +26,7 @@
     from def_permission a
   </select>
 
-  <select id="findByAdminUserId" parameterType="Integer" resultMap="BaseResultMap">
+  <select id="findByAdminUserId" parameterType="Long" resultMap="BaseResultMap">
     select distinct p.*, (select count(1) from def_permission where pid = p.id) childcount
     from rel_permission_role spr,
          rel_role_user sru,

@@ -1,15 +1,16 @@
 package com.fastproject.controller.admin;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.fastproject.common.base.BaseController;
-import com.fastproject.common.domain.AjaxResult;
-import com.fastproject.common.domain.PageResult;
 import com.fastproject.model.Role;
 import com.fastproject.model.request.query.RoleQuery;
+import com.fastproject.model.response.AjaxResult;
+import com.fastproject.model.response.PageResult;
+import com.fastproject.service.RoleService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.CollectionUtils;
@@ -29,9 +30,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Api(value = "用户角色")
 @Controller
 @RequestMapping("/RoleController")
-public class RoleController extends BaseController {
+@RequiredArgsConstructor
+public class RoleController {
 
   private final String prefix = "admin/role";
+
+  private final RoleService roleService;
 
   /**
    * 展示页面
@@ -52,7 +56,7 @@ public class RoleController extends BaseController {
   @ResponseBody
   public PageResult list(RoleQuery query) {
     PageInfo<Role> page = roleService.list(query);
-    return pageTable(page.getList(), page.getTotal());
+    return PageResult.page(page.getList(), page.getTotal());
   }
 
   /**
@@ -73,12 +77,7 @@ public class RoleController extends BaseController {
   @SaCheckPermission("system:role:add")
   @ResponseBody
   public AjaxResult add(@RequestBody Role role) {
-    int b = roleService.insertSelective(role);
-    if (b > 0) {
-      return success();
-    } else {
-      return error();
-    }
+    return roleService.insert(role);
   }
 
   /**
@@ -88,7 +87,7 @@ public class RoleController extends BaseController {
   @DeleteMapping("/status")
   @SaCheckPermission("system:role:remove")
   @ResponseBody
-  public AjaxResult updateStatus(@RequestParam List<String> roleIds,
+  public AjaxResult updateStatus(@RequestParam List<Long> roleIds,
       @RequestParam Character status) {
     if (CollectionUtils.isEmpty(roleIds)) {
       return AjaxResult.error("至少选择一个角色");
@@ -101,8 +100,8 @@ public class RoleController extends BaseController {
    */
   @ApiOperation(value = "修改跳转", notes = "修改跳转")
   @GetMapping("/edit/{roleId}")
-  public String edit(@PathVariable("roleId") String id, ModelMap mmap) {
-    mmap.put("sysRole", roleService.selectByPrimaryKey(id));
+  public String edit(@PathVariable("roleId") Long roleId, ModelMap modelMap) {
+    modelMap.put("role", roleService.selectById(roleId));
     return prefix + "/edit";
   }
 
@@ -116,7 +115,6 @@ public class RoleController extends BaseController {
   @PutMapping("/edit")
   @ResponseBody
   public AjaxResult editSave(@RequestBody Role role) {
-    int i = roleService.updateByPrimaryKeySelective(role);
-    return toAjax(i);
+    return roleService.updateById(role);
   }
 }

@@ -11,7 +11,7 @@ public class Permission implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  private String id;
+  private Long id;
 
   private String name;
 
@@ -21,7 +21,7 @@ public class Permission implements Serializable {
 
   private Integer isBlank;
 
-  private String pid;
+  private Long pid;
 
   private String perms;
 
