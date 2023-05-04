@@ -40,7 +40,7 @@ public class StpInterfaceImpl implements StpInterface {
     for (String roleId : getRoleList(loginId, loginType)) {
       SaSession roleSession = SaSessionCustomUtil.getSessionById("role-" + roleId);
       List<String> list = roleSession.get("Permission_List",
-          () -> permissionMapper.queryPermsList(roleId));
+          () -> permissionMapper.getCodesByRoleId(Long.valueOf(roleId)));
       permList.addAll(list);
     }
     return permList;

@@ -66,7 +66,6 @@ public class RoleService {
     roleMapper.updateById(record);
     return AjaxResult.success();
   }
-
   /**
    * 根据用户id查询角色
    * @param userid

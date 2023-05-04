@@ -1,7 +1,6 @@
 package com.fastproject.controller.admin;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.dev33.satoken.session.SaSessionCustomUtil;
 import com.fastproject.model.Permission;
 import com.fastproject.model.response.AjaxResult;
 import com.fastproject.model.response.PageResult;
@@ -74,9 +73,6 @@ public class PermissionController {
 
   /**
    * 权限添加
-   *
-   * @param role
-   * @return
    */
   //@Log(title = "权限添加", action = "1")
   @ApiOperation(value = "新增", notes = "新增")
@@ -104,13 +100,13 @@ public class PermissionController {
    */
   @ApiOperation(value = "修改跳转", notes = "修改跳转")
   @GetMapping("/edit/{roleId}")
-  public String edit(@PathVariable("roleId") Long id, ModelMap mmap) {
+  public String edit(@PathVariable("roleId") Long id, ModelMap modelMap) {
     //获取自己的权限信息
     Permission permission = permissionService.selectById(id);
     //获取父权限信息
     Permission pattsysPermission = permissionService.selectById(permission.getPid());
-    mmap.put("permission", permission);
-    mmap.put("parentPermission", pattsysPermission);
+    modelMap.put("permission", permission);
+    modelMap.put("parentPermission", pattsysPermission);
     return prefix + "/edit";
   }
 
@@ -123,7 +119,7 @@ public class PermissionController {
   @PostMapping("/edit")
   @ResponseBody
   public AjaxResult editSave(@RequestBody Permission permission) {
-    return return permissionService.update(permission);
+    return permissionService.update(permission);
   }
 
 
@@ -138,7 +134,7 @@ public class PermissionController {
   @ResponseBody
   public TreeResult getCheckPrem(String roleId) {
 
-    return dataTree(permissionService.getRolePower(roleId));
+    return TreeResult.treeData(permissionService.getRolePower(roleId));
   }
 
 
@@ -161,35 +157,31 @@ public class PermissionController {
   //@Log(title = "修改保存角色", action = "1")
   @ApiOperation(value = "授权保存", notes = "授权保存")
   @SaCheckPermission("system:role:edit")
-  @PutMapping("/saveRolePower")
+  @PutMapping("/updateRolePermission")
   @ResponseBody
-  public AjaxResult saveRolePower(String roleId, String powerIds) {
-    int i = roleService.updateRoleAndPrem(roleId, powerIds);
-    if (i > 0) {
-      //大于0刷新权限
-      SaSessionCustomUtil.getSessionById("role-" + roleId).delete("Permission_List");
-    }
-    return toAjax(i);
+  public AjaxResult updateRolePermission(Long roleId, List<Long> permissionIds) {
+    return permissionService.updateRolePermission(roleId, permissionIds);
   }
 
 
   @GetMapping("/selectParent")
   @ResponseBody
   public TreeResult selectParent() {
-    List<Permission> list = permissionService.getPermissionByUserid(null);
+    List<Permission> list = permissionService.getPermissionByUserId(null);
     Permission basePower = new Permission();
     basePower.setName("顶级权限");
-    basePower.setId("0");
-    basePower.setPid("-1");
+    basePower.setId(0L);
+    basePower.setPid(-1L);
     list.add(basePower);
-    return dataTree(list);
+    return TreeResult.treeData(list);
   }
 
   @PutMapping("/updateVisible")
   @ResponseBody
   public AjaxResult updateVisible(@RequestBody Permission Permission) {
-    int i = permissionService.updateVisible(Permission);
-    return toAjax(i);
+//    int i = permissionService.updateVisible(Permission);
+//    return toAjax(i);
+    return null;
   }
 
 }

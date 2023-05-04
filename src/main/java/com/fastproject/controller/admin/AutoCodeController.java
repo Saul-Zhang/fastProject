@@ -1,10 +1,6 @@
 package com.fastproject.controller.admin;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.fastproject.common.base.BaseController;
-import com.fastproject.model.response.AjaxResult;
-import com.fastproject.model.response.PageResult;
-import com.fastproject.model.response.TreeResult;
 import com.fastproject.model.custom.TsysTables;
 import com.fastproject.model.custom.TsysTablesVo;
 import com.fastproject.model.custom.autocode.AutoCodeConfig;
@@ -12,6 +8,9 @@ import com.fastproject.model.custom.autocode.AutoConfigModel;
 import com.fastproject.model.custom.autocode.AutoDictType;
 import com.fastproject.model.custom.autocode.BeanColumn;
 import com.fastproject.model.custom.autocode.TableInfo;
+import com.fastproject.model.response.AjaxResult;
+import com.fastproject.model.response.PageResult;
+import com.fastproject.model.response.TreeResult;
 import com.fastproject.service.DictService;
 import com.fastproject.service.GeneratorService;
 import com.fastproject.service.SysDictTypeService;
@@ -45,7 +44,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Api(value = "代码自动生成")
 @Controller
 @RequestMapping("/autoCodeController")
-public class AutoCodeController extends BaseController {
+public class AutoCodeController {
 
   private String prefix = "admin/autoCode";
   @Autowired
@@ -75,7 +74,7 @@ public class AutoCodeController extends BaseController {
     modelMap.put("author", AutoCodeConfig.getConfig().getProperty("author"));
     modelMap.put("email", AutoCodeConfig.getConfig().getProperty("author"));
     modelMap.put("parentPath", AutoCodeConfig.getConfig().getProperty("parentPath"));
-    modelMap.put("dictTypes", tSysDictTypeService.selectByExample(null));
+//    modelMap.put("dictTypes", tSysDictTypeService.selectByExample(null));
     return prefix + "/global";
   }
 
@@ -101,7 +100,7 @@ public class AutoCodeController extends BaseController {
     tables.setParentId(0);
     tables.setId(-1);
     TreeList.add(tables);
-    return dataTree(TreeList);
+    return TreeResult.treeData(TreeList);
   }
 
   /**
@@ -117,7 +116,7 @@ public class AutoCodeController extends BaseController {
   @ResponseBody
   public PageResult queryTableInfo(String tableName) {
     List<BeanColumn> list = generatorService.queryColumns2(tableName);
-    return pageTable(list, list.size());
+    return PageResult.page(list, list.size());
   }
 
   /**

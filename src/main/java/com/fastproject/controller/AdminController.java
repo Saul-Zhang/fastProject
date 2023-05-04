@@ -2,20 +2,21 @@ package com.fastproject.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.stp.StpUtil;
-import com.fastproject.common.base.BaseController;
-import com.fastproject.model.response.AjaxResult;
-import com.fastproject.mapper.GeneratorMapper.TsysUserMapper;
+import com.fastproject.common.conf.FastProperties;
 import com.fastproject.model.Notice;
 import com.fastproject.model.User;
 import com.fastproject.model.custom.Menu;
+import com.fastproject.model.response.AjaxResult;
 import com.fastproject.satoken.SaTokenUtil;
+import com.fastproject.service.NoticeService;
+import com.fastproject.service.PermissionService;
 import com.fastproject.service.UserService;
 import io.swagger.annotations.ApiOperation;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,27 +33,28 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/admin")
 @RequiredArgsConstructor
-public class AdminController extends BaseController {
+public class AdminController {
 
   private final UserService userService;
+  private final PermissionService permissionService;
+  private final NoticeService noticeService;
+  private final FastProperties fastProperties;
 
   private final String prefix = "admin";
 
-  @Autowired
-  private TsysUserMapper tsysUserMapper;
 
   @ApiOperation(value = "首页", notes = "首页")
   @GetMapping({"", "/index"})
   public String index(HttpServletRequest request) {
     request.getSession().setAttribute("sessionUserName", SaTokenUtil.getUser().getRealName());
     // 获取公告信息
-    List<Notice> notices = noticeService.getNotice(SaTokenUtil.getUser(), null);
-    request.getSession().setAttribute("notices", notices);
+//    List<Notice> notices = noticeService.getNotice(SaTokenUtil.getUser(), null);
+//    request.getSession().setAttribute("notices", notices);
+    request.getSession().setAttribute("notices", new ArrayList<Notice>());
     return prefix + "/index";
   }
 
 
-  @ApiOperation(value = "获取登录用户菜单栏", notes = "获取登录用户菜单栏")
   @GetMapping("/getUserMenu")
   @ResponseBody
   public List<Menu> getUserMenu() {
@@ -86,8 +88,6 @@ public class AdminController extends BaseController {
   }
 
 
-
-
   /**
    * 退出登陆
    *
@@ -101,7 +101,7 @@ public class AdminController extends BaseController {
     // ...
     // 注销
     StpUtil.logout();
-    return success();
+    return AjaxResult.success();
   }
 
   /**** 页面测试 ****/

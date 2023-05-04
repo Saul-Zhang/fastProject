@@ -10,7 +10,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">角色名</label>
                 <div class="layui-input-inline">
-                    <input type="text" name="searchText" placeholder="" class="layui-input">
+                    <input type="text" name="name" placeholder="" class="layui-input">
                 </div>
                 <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="role-query">
                     <i class="layui-icon layui-icon-search"></i>
@@ -69,8 +69,8 @@
         let cols = [
             [
                 {type: 'checkbox'},
-                {title: 'ID', field: 'id', align: 'center'},
                 {title: '角色名', field: 'name', align: 'center'},
+                {title: '描述', field: 'description', align: 'center'},
                 {title: '操作', toolbar: '#role-bar', align: 'center'}
             ]
         ]

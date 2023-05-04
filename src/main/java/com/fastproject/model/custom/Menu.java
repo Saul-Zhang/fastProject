@@ -14,12 +14,12 @@ public class Menu {
   /**
    * 菜单编号
    */
-  private String id;
+  private Long id;
 
   /**
    * 父节点
    */
-  private String parentId;
+  private Long parentId;
 
   /**
    * 标题
@@ -58,7 +58,7 @@ public class Menu {
   private transient String checkArr = "0";
 
 
-  public Menu(String id, String parentId, String title, Integer type, Integer openType,
+  public Menu(Long id, Long parentId, String title, Integer type, Integer openType,
       String icon, String href) {
     this.id = id;
     this.parentId = parentId;
@@ -67,9 +67,6 @@ public class Menu {
     this.openType = openType;
     this.icon = icon;
     this.href = href;
-  }
-
-  public Menu(String id, String pid, String name, Integer type, Integer isBlank, String icon, String url, List<Menu> childList) {
   }
 
 }

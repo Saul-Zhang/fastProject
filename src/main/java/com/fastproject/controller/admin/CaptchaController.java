@@ -1,6 +1,5 @@
 package com.fastproject.controller.admin;
 
-import com.fastproject.common.base.BaseController;
 import com.fastproject.common.conf.FastProperties;
 import com.fastproject.model.response.AjaxResult;
 import com.wf.captcha.GifCaptcha;
@@ -22,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/captcha")
 @RequiredArgsConstructor
-public class CaptchaController extends BaseController {
+public class CaptchaController {
 
   private final FastProperties properties;
 
@@ -55,9 +54,9 @@ public class CaptchaController extends BaseController {
   @RequestMapping("verify")
   public AjaxResult verify(HttpServletRequest request, String captcha) {
     if (CaptchaUtil.ver(captcha, request)) {
-      return success();
+      return AjaxResult.success();
     }
-    return error();
+    return AjaxResult.error();
   }
 
 

@@ -16,7 +16,7 @@ public class MyWebAppConfigurer implements WebMvcConfigurer {
 	/** 添加拦截器 **/
 	@Override
 	public void addInterceptors(InterceptorRegistry registry){
-		registry.addInterceptor(new MyInterceptor());
+//		registry.addInterceptor(new MyInterceptor());
 	}
 	
 	/** 静态资源处理 **/

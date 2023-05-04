@@ -37,8 +37,8 @@ public class SaTokenUtil {
 	/**
 	 * 获取登录用户id
 	 */
-	public static Integer getUserId() {
-		return StpUtil.getLoginIdAsInt();
+	public static Long getUserId() {
+		return StpUtil.getLoginIdAsLong();
 	}
 
 	/**

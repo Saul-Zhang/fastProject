@@ -43,7 +43,7 @@ public class RoleController {
   @ApiOperation(value = "分页跳转", notes = "分页跳转")
   @GetMapping("/view")
   @SaCheckPermission("system:role:view")
-  public String view(ModelMap model) {
+  public String view() {
     return prefix + "/list";
   }
 

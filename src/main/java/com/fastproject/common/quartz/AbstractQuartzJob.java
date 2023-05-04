@@ -94,7 +94,7 @@ public abstract class AbstractQuartzJob implements Job {
             sysJobLog.setStatus(ScheduleConstants.SUCCESS_STATUS);
         }
         //  这里获取service然后插入库中
-        SpringUtils.getBean(SysQuartzJobLogService.class).insertSelective(sysJobLog);
+//        SpringUtils.getBean(SysQuartzJobLogService.class).insertSelective(sysJobLog);
     }
 
     /**

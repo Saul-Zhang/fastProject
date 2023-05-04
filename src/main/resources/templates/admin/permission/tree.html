@@ -51,23 +51,24 @@
 
         form.on('submit(power-save)', function (data) {
             let param = dtree.getCheckbarNodesParam("role-power");
-            let ids = '';
+            let ids = [];
             for (let i = 0; i < param.length; i++) {
                 let id = param[i].nodeId;
-                ids += id + ',';
+                // ids += id + ',';
+                ids.push(id);
             }
-            ids = ids.substr(0, ids.length - 1);
+            // ids = ids.substr(0, ids.length - 1);
             data.field.roleId = [[${roleId}]];
-            data.field.powerIds = ids;
+            data.field.permissionIds = ids;
 
 
             $.ajax({
-                url: MODULE_PATH+'/saveRolePower',
+                url: MODULE_PATH+'/updateRolePermission',
                 data: data.field,
                 dataType: 'json',
                 type: 'put',
                 success: function (result) {
-                    if (result.code==200) {
+                    if (result.code===200) {
                         layer.msg(result.msg, {icon: 1, time: 1000}, function () {
                             parent.layer.close(parent.layer.getFrameIndex(window.name));
                         });

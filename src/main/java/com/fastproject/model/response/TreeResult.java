@@ -35,4 +35,10 @@ public class TreeResult {
     }
   }
 
+  public static TreeResult treeData(Object data){
+    TreeResult treeResult = new TreeResult();
+    treeResult.setData(data);
+    return treeResult;
+  }
+
 }

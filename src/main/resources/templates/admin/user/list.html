@@ -188,7 +188,6 @@
     form.on('switch(user_status)', function(obj){
       let context = '停用';
       let status = 0;
-      console.log(obj.elem.checked)
       let checked = obj.elem.checked;
       if (obj.elem.checked){
         context = '启用';
@@ -208,7 +207,6 @@
           success: function (result) {
             layer.close(loading);
             if (result.code === 200) {
-              obj.elem.checked =!checked
               layer.msg(result.msg, {icon: 1, time: 1000}, function () {
                 // obj.del();
                 table.reload('user-table');

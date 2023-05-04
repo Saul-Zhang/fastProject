@@ -23,7 +23,7 @@ public class Permission implements Serializable {
 
   private Long pid;
 
-  private String perms;
+  private String code;
 
   private Integer type;
 
@@ -32,7 +32,4 @@ public class Permission implements Serializable {
   private Integer orderNum;
 
   private Integer status;
-
-  private Integer childCount;
-
 }

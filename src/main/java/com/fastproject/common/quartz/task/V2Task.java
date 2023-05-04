@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * @Auther Jan  橙寂
  * @DATE 2019/9/2 0002 15:33
  */
-@Component("v2Task")
+//@Component("v2Task")
 @RequiredArgsConstructor
 public class V2Task {
 

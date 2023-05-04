@@ -32,9 +32,9 @@ import org.springframework.stereotype.Component;
  * @author fuce
  * @date: 2018年9月30日 下午1:40:33
  */
-@Aspect
-@Component
-@EnableAsync
+//@Aspect
+//@Component
+//@EnableAsync
 public class LogAspect {
 
   private static final Logger log = LoggerFactory.getLogger(LogAspect.class);
@@ -118,7 +118,7 @@ public class LogAspect {
       //System.out.println("-----------------");
       //System.out.println(new Gson().toJson(operLog));
       //System.out.println("-----------------");
-      operLogService.insertSelective(operLog);
+//      operLogService.insertSelective(operLog);
     } catch (Exception exp) {
       // 记录本地异常日志
       log.error("==前置通知异常==");

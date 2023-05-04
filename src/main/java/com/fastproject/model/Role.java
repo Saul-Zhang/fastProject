@@ -15,6 +15,8 @@ public class Role {
 
   private String name;
 
+  private String description;
+
   private Character status;
 
   public Role(Long id, String name) {
