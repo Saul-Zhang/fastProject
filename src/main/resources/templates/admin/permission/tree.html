@@ -58,14 +58,13 @@
                 ids.push(id);
             }
             // ids = ids.substr(0, ids.length - 1);
-            data.field.roleId = [[${roleId}]];
-            data.field.permissionIds = ids;
+            // data.field.roleId = [[${roleId}]];
+            // data.field.permissionIds = ids;
 
 
             $.ajax({
                 url: MODULE_PATH+'/updateRolePermission',
-                // data: data.field,
-                data: {"roleId":[[${roleId}]],"permissionIds":[[${roleId}]]},
+                data: JSON.stringify({ roleId: [[${roleId}]], ids: ids }),
                 dataType: 'json',
                 type: 'put',
                 // contentType: 'application/json',
