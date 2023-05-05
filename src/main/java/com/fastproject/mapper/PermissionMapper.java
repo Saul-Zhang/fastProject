@@ -28,7 +28,7 @@ public interface PermissionMapper extends BaseMapper<Permission> {
       + "from def_permission p\n"
       + "         left join rel_permission_role pr on p.id = pr.permission_id\n"
       + "where pr.role_id = #{roleId} ")
-  List<Permission> getByRoleId(String roleId);
+  List<Permission> getByRoleId(Long roleId);
 
   /**
    * 根据角色id查询权限码集合

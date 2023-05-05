@@ -2,6 +2,7 @@ package com.fastproject.controller.admin;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fastproject.model.Permission;
+import com.fastproject.model.request.request.PermissionRoleRequest;
 import com.fastproject.model.response.AjaxResult;
 import com.fastproject.model.response.PageResult;
 import com.fastproject.model.response.TreeResult;
@@ -126,15 +127,14 @@ public class PermissionController {
   /**
    * 根据角色id获取bootstarp 所有打勾权限
    *
-   * @param roleId 角色id集合
-   * @return
+   * @param roleId 角色id
    */
   @ApiOperation(value = "根据角色id获取所有打勾权限", notes = "根据角色id获取 所有打勾权限")
-  @GetMapping("/getCheckPrem")
+  @GetMapping("/getPermissions")
   @ResponseBody
-  public TreeResult getCheckPrem(String roleId) {
+  public TreeResult getPermissionsByRoleId(Long roleId) {
 
-    return TreeResult.treeData(permissionService.getRolePower(roleId));
+    return TreeResult.treeData(permissionService.getPermissionsByRoleId(roleId));
   }
 
 
@@ -159,8 +159,8 @@ public class PermissionController {
   @SaCheckPermission("system:role:edit")
   @PutMapping("/updateRolePermission")
   @ResponseBody
-  public AjaxResult updateRolePermission(Long roleId, List<Long> permissionIds) {
-    return permissionService.updateRolePermission(roleId, permissionIds);
+  public AjaxResult updateRolePermission(@RequestBody PermissionRoleRequest request) {
+    return permissionService.updateRolePermission(request.getRoleId(),request.getPermissionIds());
   }
 
 

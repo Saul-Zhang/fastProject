@@ -7,8 +7,8 @@ import com.fastproject.mapper.PermissionRoleMapper;
 import com.fastproject.model.Permission;
 import com.fastproject.model.PermissionRole;
 import com.fastproject.model.custom.Menu;
-import com.fastproject.model.custom.SysPower;
 import com.fastproject.model.response.AjaxResult;
+import com.fastproject.model.response.TreeResponse;
 import com.fastproject.util.SnowflakeIdWorker;
 import java.util.ArrayList;
 import java.util.List;
@@ -140,31 +140,29 @@ public class PermissionService {
 
   /**
    * 根据角色id查询所有权限，权限有会有标识表示
-   *
-   * @return
    */
-  public List<SysPower> getRolePower(String roleId) {
+  public List<TreeResponse> getPermissionsByRoleId(Long roleId) {
     //所有权限
-    List<Permission> allPower = getPermissionByUserId(null);
+    List<Permission> allPermission = getPermissionByUserId(null);
     //角色权限
-    List<Permission> rolePower = permissionMapper.getByRoleId(roleId);
+    List<Permission> rolePermission = permissionMapper.getByRoleId(roleId);
 
-    List<SysPower> sysPowerList = new ArrayList<>();
+    List<TreeResponse> result = new ArrayList<>();
 
-    allPower.forEach(sysPower -> {
-      SysPower sysPower1 = new SysPower(sysPower.getId(), sysPower.getName(), sysPower.getType(),
-          sysPower.getCode(), sysPower.getUrl(), sysPower.getIsBlank(), sysPower.getPid(),
-          sysPower.getIcon(), sysPower.getOrderNum(), sysPower.getStatus(), "0");
-      rolePower.forEach(sysRolePower -> {
-        if (sysRolePower.getId().equals(sysPower.getId())) {
-          sysPower1.setCheckArr("1");
-          return;
+    allPermission.forEach(permission -> {
+      TreeResponse response = new TreeResponse();
+      response.setId(permission.getId());
+      response.setParentId(permission.getPid());
+      response.setTitle(permission.getName());
+      rolePermission.forEach(entity -> {
+        if (entity.getId().equals(response.getId())) {
+          response.setCheckArr("1");
         }
       });
-      sysPowerList.add(sysPower1);
+      result.add(response);
 
     });
-    return sysPowerList;
+    return result;
 
   }
 
