@@ -10,13 +10,13 @@ public interface PermissionMapper extends BaseMapper<Permission> {
   /**
    * 根据用户id查询出用户的所有权限
    */
-  @Select("select p.*\n"
+  @Select("select distinct p.*\n"
       + "from rel_permission_role pr,\n"
       + "     rel_role_user ru,\n"
       + "     def_permission p\n"
       + "where pr.role_id = ru.role_id\n"
       + "  AND pr.permission_id = p.id\n"
-      + "  and p.status = 0\n"
+      + "  and p.status = 1\n"
       + "  AND ru.user_id = #{userId}\n"
       + "ORDER BY p.order_num is null ASC, p.order_num ASC")
   List<Permission> getByUserId(Long userId);

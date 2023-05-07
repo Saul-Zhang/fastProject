@@ -65,7 +65,7 @@
         let form = layui.form;
         let $ = layui.jquery;
 
-        let MODULE_PATH = rootPath+"/SysPositionController/";
+        let MODULE_PATH = rootPath+"/PositionController/";
         let cols = [
             [
                 {type: 'checkbox'},
@@ -82,7 +82,7 @@
             elem: '#position-table',
             url: MODULE_PATH + 'list',
             page: true,
-            method: 'post',
+            method: 'get',
             cols: cols,
             skin: 'line',
             toolbar: '#role-toolbar',

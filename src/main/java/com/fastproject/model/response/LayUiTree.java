@@ -10,7 +10,7 @@ import lombok.Data;
  * layui.dtree标准数据格式
  */
 @Data
-public class TreeResponse {
+public class LayUiTree {
 
   private Long id;
   private String title;

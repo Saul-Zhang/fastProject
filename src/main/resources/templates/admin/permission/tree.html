@@ -64,10 +64,10 @@
 
             $.ajax({
                 url: MODULE_PATH+'/updateRolePermission',
-                data: JSON.stringify({ roleId: [[${roleId}]], ids: ids }),
+                data: JSON.stringify({ roleId: [[${roleId}]], permissionIds: ids }),
                 dataType: 'json',
                 type: 'put',
-                // contentType: 'application/json',
+                contentType: 'application/json',
                 success: function (result) {
                     if (result.code===200) {
                         layer.msg(result.msg, {icon: 1, time: 1000}, function () {

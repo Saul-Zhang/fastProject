@@ -110,7 +110,7 @@ public class UserController {
   }
 
 
-  @PutMapping("/status")
+  @PutMapping("/updateStatus")
   @SaCheckPermission("system:user:remove")
   @ResponseBody
   public AjaxResult updateStatus(@RequestParam List<Long> userIds,

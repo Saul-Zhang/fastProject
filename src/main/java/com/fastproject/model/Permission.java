@@ -21,7 +21,7 @@ public class Permission implements Serializable {
 
   private Integer isBlank;
 
-  private Long pid;
+  private Long parentId;
 
   private String code;
 
@@ -31,5 +31,5 @@ public class Permission implements Serializable {
 
   private Integer orderNum;
 
-  private Integer status;
+  private Character status;
 }

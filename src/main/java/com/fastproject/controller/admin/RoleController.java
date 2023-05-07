@@ -84,7 +84,7 @@ public class RoleController {
    * 删除角色
    */
   @ApiOperation(value = "删除", notes = "删除")
-  @DeleteMapping("/status")
+  @DeleteMapping("/updateStatus")
   @SaCheckPermission("system:role:remove")
   @ResponseBody
   public AjaxResult updateStatus(@RequestParam List<Long> roleIds,

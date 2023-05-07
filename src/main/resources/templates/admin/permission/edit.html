@@ -4,7 +4,7 @@
     <th:block th:include="include :: header('权限修改')"/>
 </head>
 <body>
-<form class="layui-form" th:object="${TsysPermission}">
+<form class="layui-form" th:object="${permission}">
     <div class="mainBox">
         <div class="main-container">
             <div class="main-container">
@@ -31,31 +31,31 @@
                     </div>
                 </div>
 
-                <div class="layui-form-item" id="powerCodeItem">
+                <div class="layui-form-item" id="permissionCodeDiv">
                     <label class="layui-form-label">权限关键字</label>
                     <div class="layui-input-block">
-                        <input type="text" id="powerCode" name="perms" autocomplete="off" placeholder="权限标识" class="layui-input" th:value="*{perms}">
+                        <input type="text" id="permissionCode" name="code" autocomplete="off" placeholder="权限标识" class="layui-input" th:value="*{code}">
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">状态</label>
+                    <label class="layui-form-label">类型</label>
                     <div class=" ">
-                        <input type="radio" lay-filter="powerType" th:checked="${TsysPermission.type eq 0}"
+                        <input type="radio" lay-filter="permissionType" th:checked="${permission.type eq 0}"
                                name="type" value="0" title="目录">
-                        <input type="radio" lay-filter="powerType" th:checked="${TsysPermission.type eq 1}"
+                        <input type="radio" lay-filter="permissionType" th:checked="${permission.type eq 1}"
                                name="type" value="1" title="菜单">
-                        <input type="radio" lay-filter="powerType" th:checked="${TsysPermission.type eq 2}"
+                        <input type="radio" lay-filter="permissionType" th:checked="${permission.type eq 2}"
                                name="type" value="2" title="按钮">
                     </div>
                 </div>
-                <div class="layui-form-item" id="powerUrlItem">
+                <div class="layui-form-item" id="permissionUrlDiv">
                     <label class="layui-form-label">路径</label>
                     <div class="layui-input-block">
-                        <input type="text" id="powerUrl" name="url" autocomplete="off" placeholder="菜单路径" class="layui-input"
+                        <input type="text" id="permissionUrl" name="url" autocomplete="off" placeholder="菜单路径" class="layui-input"
                          th:value="*{url}">
                     </div>
                 </div>
-                <div class="layui-form-item" id="openTypeItem">
+                <div class="layui-form-item" id="openTypeDiv">
                     <label class="layui-form-label">打开类型</label>
                     <div class="layui-input-block">
                         <select name="isBlank" id="openType" th:field="*{isBlank}">
@@ -65,7 +65,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="layui-form-item">
+                <div class="layui-form-item" id="iconDiv">
                     <label class="layui-form-label">图标</label>
                     <div class="layui-input-block">
                         <input type="text" id="icon" name="icon" lay-filter="icon" class="layui-input"
@@ -82,12 +82,12 @@
                     </div>
                 </div>
 
-                <div class="layui-form-item" id="visibleItem">
-                    <label class="layui-form-label">菜单状态</label>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">状态</label>
                     <div class="layui-input-block">
-                        <select name="visible" id="visible" th:field="*{visible}">
-                            <option value="0">显示</option>
-                            <option value="1">隐藏</option>
+                        <select name="visible" id="visible" th:field="*{status}">
+                            <option value="0">禁用</option>
+                            <option value="1">启用</option>
                         </select>
                     </div>
                 </div>
@@ -120,31 +120,32 @@
             elem: "#selectParent",
             url: MODULE_PATH+"/selectParent",
             method: 'get',
-            selectInputName: {nodeId: "pid"},
+            selectInputName: {nodeId: "parentId"},
             skin: "layui",
             dataFormat: "list",
-            response: {treeId: "id", parentId: "pid", title: "name"},  //修改response中返回数据的定义
-            selectInitVal: '[[${TsysPermission.pid}]]'
+            // response: {treeId: "id", parentId: "parentId", title: "name"},  //修改response中返回数据的定义
+            selectInitVal: '[[${permission.parentId}]]'
         });
 
-        form.on("radio(powerType)", function (data) {
+        form.on("radio(permissionType)", function (data) {
             if (this.value == '0') {
-                $("#powerUrlItem").hide();
-                $("#powerCodeItem").hide();
-                $("#openTypeItem").hide();
-                $("#powerUrl").val("");
-                $("#powerCode").val("");
+                $("#permissionUrlDiv").hide();
+                $("#permissionCodeDiv").hide();
+                $("#openTypeDiv").hide();
+                $("#permissionUrl").val("");
+                $("#permissionCode").val("");
                 $("#openType").val("");
+                $("#iconDiv").show();
             } else if (this.value == '1') {
-                $("#powerUrlItem").show();
-                $("#powerCodeItem").show();
-                $("#openTypeItem").show();
+                $("#permissionUrlDiv").show();
+                $("#permissionCodeDiv").show();
+                $("#openTypeDiv").show();
+                $("#iconDiv").hide();
             } else if (this.value == '2') {
-                $("#powerUrlItem").hide();
-                $("#openTypeItem").hide();
-                $("#powerCodeItem").show();
-                $("#powerUrl").val("");
+                $("#openTypeDiv").hide();
+                $("#permissionCodeDiv").show();
                 $("#openType").val("");
+                $("#iconDiv").hide();
             }
         });
 
@@ -157,7 +158,7 @@
                 contentType: 'application/json',
                 type: 'post',
                 success: function (result) {
-                    if (result.code==200) {
+                    if (result.code===200) {
                         layer.msg(result.msg, {icon: 1, time: 1000}, function () {
                             parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页
                             parent.render();
@@ -187,30 +188,30 @@
             }
         });
 
-        iconPicker.checkIcon("icon", '[[${TsysPermission.icon}]]');
+        iconPicker.checkIcon("icon", '[[${permission.icon}]]');
 
          window.init = function (type) {
             if (type == '0') {
-                $("#powerUrlItem").hide();
-                $("#powerCodeItem").hide();
-                $("#openTypeItem").hide();
-                $("#powerUrl").val("");
-                $("#powerCode").val("");
+                $("#permissionUrlDiv").hide();
+                $("#permissionCodeDiv").hide();
+                $("#openTypeDiv").hide();
+                $("#permissionUrl").val("");
+                $("#permissionCode").val("");
                 $("#openType").val("");
             } else if (type == '1') {
-                $("#powerUrlItem").show();
-                $("#powerCodeItem").show();
-                $("#openTypeItem").show();
+                $("#permissionUrlDiv").show();
+                $("#permissionCodeDiv").show();
+                $("#openTypeDiv").show();
+                $("#iconDiv").hide();
             } else if (type == '2') {
-                $("#powerUrlItem").hide();
-                $("#openTypeItem").hide();
-                $("#powerCodeItem").show();
-                $("#powerUrl").val("");
+                $("#openTypeDiv").hide();
+                $("#permissionCodeDiv").show();
                 $("#openType").val("");
+                $("#iconDiv").hide();
             }
         }
 
-        window.init('[[${TsysPermission.type}]]');
+        window.init('[[${permission.type}]]');
 
     })
 </script>

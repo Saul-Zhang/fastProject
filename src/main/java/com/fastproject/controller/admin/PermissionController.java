@@ -5,6 +5,7 @@ import com.fastproject.model.Permission;
 import com.fastproject.model.request.request.PermissionRoleRequest;
 import com.fastproject.model.response.AjaxResult;
 import com.fastproject.model.response.PageResult;
+import com.fastproject.model.response.LayUiTree;
 import com.fastproject.model.response.TreeResult;
 import com.fastproject.service.PermissionService;
 import com.fastproject.service.RoleService;
@@ -105,9 +106,9 @@ public class PermissionController {
     //获取自己的权限信息
     Permission permission = permissionService.selectById(id);
     //获取父权限信息
-    Permission pattsysPermission = permissionService.selectById(permission.getPid());
+    LayUiTree parent = permissionService.getParent(permission);
     modelMap.put("permission", permission);
-    modelMap.put("parentPermission", pattsysPermission);
+    modelMap.put("parentPermission", parent);
     return prefix + "/edit";
   }
 
@@ -167,21 +168,14 @@ public class PermissionController {
   @GetMapping("/selectParent")
   @ResponseBody
   public TreeResult selectParent() {
-    List<Permission> list = permissionService.getPermissionByUserId(null);
-    Permission basePower = new Permission();
-    basePower.setName("顶级权限");
-    basePower.setId(0L);
-    basePower.setPid(-1L);
-    list.add(basePower);
-    return TreeResult.treeData(list);
+    return permissionService.selectParent();
+
   }
 
-  @PutMapping("/updateVisible")
+  @PutMapping("/updateStatus")
   @ResponseBody
-  public AjaxResult updateVisible(@RequestBody Permission Permission) {
-//    int i = permissionService.updateVisible(Permission);
-//    return toAjax(i);
-    return null;
+  public AjaxResult updateStatus(@RequestParam List<Long> ids,Character status) {
+    return permissionService.updateStatus(ids, status);
   }
 
 }

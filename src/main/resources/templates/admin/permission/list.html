@@ -26,7 +26,7 @@
 </div>
 <div class="layui-card">
     <div class="layui-card-body">
-        <table id="power-table" lay-filter="power-table"></table>
+        <table id="permission-table" lay-filter="permission-table"></table>
     </div>
 </div>
 
@@ -37,15 +37,15 @@
     </button>
     <button sa:hasPermission="system:permission:remove"  class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
         <i class="layui-icon layui-icon-delete"></i>
-        删除
+        停用
     </button>
 </script>
 
 <script type="text/html" id="power-bar">
     <button sa:hasPermission="system:permission:edit"  class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>
     </button>
-    <button sa:hasPermission="system:permission:remove"  class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i>
-    </button>
+<!--   <button sa:hasPermission="system:permission:remove"  class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i>&ndash;&gt;
+    </button>-->
 </script>
 
 <script type="text/html" id="power-type">
@@ -58,8 +58,8 @@
     {{# } }}
 </script>
 
-<script type="text/html" id="power-enable">
-    <input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="power-enable" {{ d.visible== 0 ? 'checked' : '' }}>
+<script type="text/html" id="permission-status">
+    <input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="permission-status" {{ d.status== 1 ? 'checked' : '' }}>
 </script>
 
 <script type="text/html" id="icon">
@@ -82,12 +82,13 @@
                 treeColIndex: 1,
                 treeSpid: 0,
                 treeIdName: 'id',
-                treePidName: 'pId',
+                treePidName: 'parentId',
                 skin: 'line',
-                method: 'post',
+                method: 'get',
                 treeDefaultClose: true,
                 toolbar: '#power-toolbar',
-                elem: '#power-table',
+                elem: '#permission-table',
+                id: 'permission-table',
                 url: MODULE_PATH+'list',
                 page: false,
                 cols: [
@@ -96,7 +97,7 @@
                         {field: 'name', minWidth: 200, title: '权限名称'},
                         {field: 'icon', title: '图标', templet: '#icon'},
                         {field: 'type', title: '权限类型', templet: '#power-type'},
-                        {field: 'visible', title: '是否可用', templet: '#power-enable'},
+                        {field: 'visible', title: '状态', templet: '#permission-status'},
                         {field: 'orderNum', title: '排序'},
                         {title: '操作', templet: '#power-bar', width: 150, align: 'center'}
                     ]
@@ -108,7 +109,7 @@
 
         form.on('submit(power-query)', function (data) {
             var keyword = data.field.powerName;
-            var $tds = $('#power-table').next('.treeTable').find('.layui-table-body tbody tr td');
+            var $tds = $('#permission-table').next('.treeTable').find('.layui-table-body tbody tr td');
             if (!keyword) {
                 $tds.css('background-color', 'transparent');
                 layer.msg("请输入关键字", {icon: 5});
@@ -129,12 +130,12 @@
             if (searchCount == 0) {
                 layer.msg("没有匹配结果", {icon: 5});
             } else {
-                treetable.expandAll('#power-table');
+                treetable.expandAll('#permission-table');
             }
             return false;
         });
 
-        table.on('tool(power-table)', function (obj) {
+        table.on('tool(permission-table)', function (obj) {
             if (obj.event === 'remove') {
                 window.remove(obj);
             } else if (obj.event === 'edit') {
@@ -143,7 +144,7 @@
         })
 
 
-        table.on('toolbar(power-table)', function (obj) {
+        table.on('toolbar(permission-table)', function (obj) {
             if (obj.event === 'add') {
                 window.add();
             } else if (obj.event === 'refresh') {
@@ -153,27 +154,27 @@
             }
         });
 
-        form.on('switch(power-enable)', function (obj) {
+        form.on('switch(permission-status)', function (obj) {
             let operate;
 
             if (obj.elem.checked) {
-                operate = 0;
-            } else {
                 operate = 1;
+            } else {
+                operate = 0;
             }
 
             let loading = layer.load()
-
             $.ajax({
-                url: MODULE_PATH+'updateVisible',
-                data: JSON.stringify({id: this.value,visible:operate}),
+                url: MODULE_PATH+'updateStatus?ids='+ this.value,
+                data: {status:operate},
                 dataType: 'json',
-                contentType: 'application/json',
+                // contentType: 'application/json',
                 type: 'put',
                 success: function (result) {
                     layer.close(loading);
-                    if (result.code==200) {
+                    if (result.code===200) {
                         layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                            render();
                         });
                     } else {
                         layer.msg(result.msg, {icon: 2, time: 1000});
@@ -203,27 +204,27 @@
             });
         }
 
-        window.remove = function (obj) {
-            layer.confirm('确定要删除该权限', {icon: 3, title: '提示'}, function (index) {
-                layer.close(index);
-                let loading = layer.load();
-                $.ajax({
-                    url: MODULE_PATH + "remove?ids=" + obj.data['id'],
-                    dataType: 'json',
-                    type: 'delete',
-                    success: function (result) {
-                        layer.close(loading);
-                        if (result.code==200) {
-                            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
-                                obj.del();
-                            });
-                        } else {
-                            layer.msg(result.msg, {icon: 2, time: 1000});
-                        }
-                    }
-                })
-            });
-        }
+        // window.remove = function (obj) {
+        //     layer.confirm('确定要停用该权限', {icon: 3, title: '提示'}, function (index) {
+        //         layer.close(index);
+        //         let loading = layer.load();
+        //         $.ajax({
+        //             url: MODULE_PATH + "updateStatus?ids=" + obj.data['id'],
+        //             dataType: 'json',
+        //             type: 'delete',
+        //             success: function (result) {
+        //                 layer.close(loading);
+        //                 if (result.code==200) {
+        //                     layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+        //                         obj.del();
+        //                     });
+        //                 } else {
+        //                     layer.msg(result.msg, {icon: 2, time: 1000});
+        //                 }
+        //             }
+        //         })
+        //     });
+        // }
 
         //批量删除
         window.batchRemove = function (obj) {
@@ -232,23 +233,25 @@
                 layer.msg("未选中数据", {icon: 3, time: 1000});
                 return false;
             }
-            let ids = "";
+            let ids = [];
             for (let i = 0; i < data.length; i++) {
-                ids += data[i].id + ",";
+                // ids += data[i].id + ",";
+                ids.push(data[i].id);
             }
-            ids = ids.substr(0, ids.length - 1);
-            layer.confirm('确定要删除这些权限', {icon: 3, title: '提示'}, function (index) {
+            // ids = ids.substr(0, ids.length - 1);
+            layer.confirm('确定要停用这些权限？子权限也将被停用', {icon: 3, title: '提示'}, function (index) {
                 layer.close(index);
                 let loading = layer.load();
                 $.ajax({
-                    url: MODULE_PATH + "remove?ids=" + ids,
+                    url: MODULE_PATH + "updateStatus?ids=" + ids,
+                    data: {status:0},
                     dataType: 'json',
-                    type: 'delete',
+                    type: 'put',
                     success: function (result) {
                         layer.close(loading);
-                        if (result.code==200) {
+                        if (result.code===200) {
                             layer.msg(result.msg, {icon: 1, time: 1000}, function () {
-                            	table.reload('power-table');
+                            	table.reload('permission-table');
                             });
                         } else {
                             layer.msg(result.msg, {icon: 2, time: 1000});

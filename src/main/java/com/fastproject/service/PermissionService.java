@@ -8,7 +8,8 @@ import com.fastproject.model.Permission;
 import com.fastproject.model.PermissionRole;
 import com.fastproject.model.custom.Menu;
 import com.fastproject.model.response.AjaxResult;
-import com.fastproject.model.response.TreeResponse;
+import com.fastproject.model.response.LayUiTree;
+import com.fastproject.model.response.TreeResult;
 import com.fastproject.util.SnowflakeIdWorker;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,7 @@ public class PermissionService {
       permissionMapper.delete(new LambdaQueryWrapperX<Permission>()
           .eq(Permission::getId, id));
       permissionMapper.delete(new LambdaQueryWrapperX<Permission>()
-          .eq(Permission::getPid, id));
+          .eq(Permission::getParentId, id));
     });
     return AjaxResult.success();
   }
@@ -54,9 +55,9 @@ public class PermissionService {
     //添加雪花主键id
     record.setId(SnowflakeIdWorker.getUUID());
     //判断为目录的时候添加父id为0
-    if (record.getType() == 0) {
-      record.setPid(1L);
-    }
+//    if (record.getType() == 0) {
+//      record.setParentId(0L);
+//    }
     //默认设置不跳转
     if (record.getIsBlank() == null) {
       record.setIsBlank(0);
@@ -68,6 +69,21 @@ public class PermissionService {
   public Permission selectById(Long id) {
 
     return permissionMapper.selectById(id);
+  }
+
+  public LayUiTree getParent(Permission permission) {
+    LayUiTree response = new LayUiTree();
+    Permission parent = permissionMapper.selectById(permission.getParentId());
+    if (parent == null) {
+      response.setTitle("顶级权限");
+      response.setId(0L);
+      response.setParentId(-1L);
+      return response;
+    }
+    response.setId(parent.getId());
+    response.setParentId(parent.getParentId());
+    response.setTitle(parent.getName());
+    return response;
   }
 
   public AjaxResult update(Permission record) {
@@ -85,36 +101,13 @@ public class PermissionService {
    */
   public List<Menu> getMenus(Long userId) {
     List<Menu> collect = getPermissionByUserId(userId).stream()
-        .map(permission -> new Menu(permission.getId(), permission.getPid(), permission.getName(),
+        .map(permission -> new Menu(permission.getId(), permission.getParentId(),
+            permission.getName(),
             permission.getType(), permission.getIsBlank(), permission.getIcon(),
             permission.getUrl()))
         .collect(Collectors.toList());
     return getTree(collect);
   }
-
-//  /**
-//   * 递归查询权限
-//   */
-//  private List<Menu> getMenus(List<Menu> treeList, String parentId) {
-//    List<Menu> menuList = new ArrayList<>();
-//    if (StringUtils.isNotNull(parentId) && treeList != null && treeList.size() > 0) {
-//      List<Menu> childList = null;
-//      for (Menu menu : treeList) {
-//        if (permission.getPid().equals(parentId)) {
-//          if (permission.getChildCount() != null && permission.getChildCount() > 0) {
-//            childList = getMenus(treeList, permission.getId());
-//          }
-//          Menu menu = new Menu(permission.getId(), permission.getPid(), permission.getName(),
-//              permission.getType(), permission.getIsBlank(), permission.getIcon(),
-//              permission.getUrl(), childList);
-//          menuList.add(menu);
-//          childList = null;
-//        }
-//      }
-//    }
-//
-//    return menuList;
-//  }
 
   public static List<Menu> getTree(List<Menu> list) {
     Map<Long, Menu> map;
@@ -141,18 +134,18 @@ public class PermissionService {
   /**
    * 根据角色id查询所有权限，权限有会有标识表示
    */
-  public List<TreeResponse> getPermissionsByRoleId(Long roleId) {
+  public List<LayUiTree> getPermissionsByRoleId(Long roleId) {
     //所有权限
     List<Permission> allPermission = getPermissionByUserId(null);
     //角色权限
     List<Permission> rolePermission = permissionMapper.getByRoleId(roleId);
 
-    List<TreeResponse> result = new ArrayList<>();
+    List<LayUiTree> result = new ArrayList<>();
 
     allPermission.forEach(permission -> {
-      TreeResponse response = new TreeResponse();
+      LayUiTree response = new LayUiTree();
       response.setId(permission.getId());
-      response.setParentId(permission.getPid());
+      response.setParentId(permission.getParentId());
       response.setTitle(permission.getName());
       rolePermission.forEach(entity -> {
         if (entity.getId().equals(response.getId())) {
@@ -194,5 +187,54 @@ public class PermissionService {
     // 刷新权限
     SaSessionCustomUtil.getSessionById("role-" + roleId).delete("Permission_List");
     return AjaxResult.success();
+  }
+
+  public AjaxResult updateStatus(List<Long> ids, Character status) {
+    for (Long id : ids) {
+      Permission permission = permissionMapper.selectById(id);
+      if (permission == null) {
+        return AjaxResult.error("权限不存在");
+      }
+      List<Permission> children = getAllChildren(id);
+      children.add(permission);
+
+      children.forEach(per -> {
+        per.setStatus(status);
+        permissionMapper.updateById(per);
+      });
+    }
+    return AjaxResult.success();
+  }
+
+  public List<Permission> getAllChildren(Long id) {
+    List<Permission> permissions = new ArrayList<>();
+    getChildrenPermission(id, permissions);
+    return permissions;
+  }
+
+  public void getChildrenPermission(Long id, List<Permission> result) {
+    List<Permission> permissions = permissionMapper.selectList(
+        new LambdaQueryWrapperX<Permission>().eq(Permission::getParentId, id));
+    if (!CollectionUtils.isEmpty(permissions)) {
+      permissions.forEach(per -> getChildrenPermission(per.getId(), result));
+    }
+    result.addAll(permissions);
+  }
+
+  public TreeResult selectParent() {
+    List<LayUiTree> list = getPermissionByUserId(null).stream()
+        .map(per -> {
+          LayUiTree response = new LayUiTree();
+          response.setId(per.getId());
+          response.setParentId(per.getParentId());
+          response.setTitle(per.getName());
+          return response;
+        }).collect(Collectors.toList());
+    LayUiTree response = new LayUiTree();
+    response.setTitle("顶级权限");
+    response.setId(0L);
+    response.setParentId(-1L);
+    list.add(response);
+    return TreeResult.treeData(list);
   }
 }

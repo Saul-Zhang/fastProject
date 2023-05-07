@@ -1,7 +1,11 @@
 package com.fastproject.controller.admin;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.fastproject.model.Position;
+import com.fastproject.model.request.query.PositionQuery;
+import com.fastproject.model.response.PageResult;
 import com.fastproject.service.PositionService;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,11 +13,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/SysPositionController")
+@RequestMapping("/PositionController")
 @Api(value = "岗位表")
-public class SysPositionController {
+public class PositionController {
 
   private final String prefix = "admin/sysPosition";
   @Autowired
@@ -29,18 +34,18 @@ public class SysPositionController {
     return prefix + "/list";
   }
 
-//	/**
-//	 * 分页集合
-//	 */
-//	//@Log(title = "岗位表集合查询", action = "111")
-//	@ApiOperation(value = "分页查询", notes = "分页查询")
-//	@PostMapping("/list")
-//	@SaCheckPermission("gen:sysPosition:list")
-//	@ResponseBody
-//	public PageResult list(Tablepar tablepar, String searchText){
-//		PageInfo<Position> page= positionService.list(tablepar,searchText) ;
-//		return pageTable(page.getList(),page.getTotal());
-//	}
+	/**
+	 * 分页集合
+	 */
+	//@Log(title = "岗位表集合查询", action = "111")
+	@ApiOperation(value = "分页查询", notes = "分页查询")
+	@GetMapping("/list")
+	@SaCheckPermission("gen:sysPosition:list")
+	@ResponseBody
+	public PageResult list(PositionQuery query){
+		PageInfo<Position> page= positionService.list(query) ;
+		return PageResult.page(page.getList(),page.getTotal());
+	}
 //
 //	/**
 //     * 新增跳转

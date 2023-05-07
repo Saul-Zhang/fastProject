@@ -2,6 +2,9 @@ package com.fastproject.service;
 
 import com.fastproject.mapper.PositionMapper;
 import com.fastproject.model.Position;
+import com.fastproject.model.request.query.PositionQuery;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,27 +26,12 @@ public class PositionService {
   /**
    * 分页查询
    *
-   * @param pageNum
-   * @param pageSize
-   * @return
    */
-//  public PageInfo<Position> list(Tablepar tablepar, String name) {
-//    SysPositionExample testExample = new SysPositionExample();
-//    testExample.setOrderByClause("id ASC");
-//    if (name != null && !"".equals(name)) {
-//      testExample.createCriteria().andPostNameLike("%" + name + "%");
-//    }
-//
-//    if (StrUtil.isNotEmpty(tablepar.getOrderByColumn())) {
-//      testExample.setOrderByClause(
-//          StringUtils.toUnderScoreCase(tablepar.getOrderByColumn()) + " " + tablepar.getIsAsc());
-//    }
-//
-//    PageHelper.startPage(tablepar.getPage(), tablepar.getLimit());
-//    List<Position> list = positionMapper.selectByExample(testExample);
-//    PageInfo<Position> pageInfo = new PageInfo<Position>(list);
-//    return pageInfo;
-//  }
+  public PageInfo<Position> list(PositionQuery query) {
+    PageHelper.startPage(query.getPage(), query.getLimit());
+    List<Position> list = positionMapper.selectList(null);
+    return new PageInfo<>(list);
+  }
 
 //  @Override
 //  public int deleteByPrimaryKey(String ids) {
