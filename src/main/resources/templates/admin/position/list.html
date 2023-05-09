@@ -32,11 +32,11 @@
 </body>
 
 <script type="text/html" id="role-toolbar">
-    <button sa:hasPermission="gen:position:add" class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+    <button sa:hasPermission="system:position:add" class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
         <i class="layui-icon layui-icon-add-1"></i>
         新增
     </button>
-    <button sa:hasPermission="gen:position:remove" class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
+    <button sa:hasPermission="system:position:remove" class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
         <i class="layui-icon layui-icon-delete"></i>
         删除
     </button>
@@ -44,10 +44,10 @@
 
 <script type="text/html" id="user-bar">
 
-    <button sa:hasPermission="gen:position:edit" class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>
+    <button sa:hasPermission="system:position:edit" class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>
     </button>
 
-    <button sa:hasPermission="gen:position:remove" class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i>
+    <button sa:hasPermission="system:position:remove" class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i>
     </button>
 
 
@@ -69,8 +69,7 @@
         let cols = [
             [
                 {type: 'checkbox'},
-                {title: 'ID', field: 'id', align: 'center'},
-                {title: '岗位名称', field: 'postName', align: 'center'},
+                {title: '岗位名称', field: 'name', align: 'center'},
                 {title: '排序号', field: 'orderNum', align: 'center'},
                 {title: '状态', field: 'status', align: 'center',templet: '#position-enable'},
                 {title: '操作', toolbar: '#user-bar', align: 'center'}
@@ -123,15 +122,15 @@
             let operate;
 
             if (obj.elem.checked) {
-                operate = 1;
-            } else {
                 operate = 0;
+            } else {
+                operate = 1;
             }
 
             let loading = layer.load()
 
             $.ajax({
-                url: MODULE_PATH+'updateVisible',
+                url: MODULE_PATH+'updateStatus',
                 data: JSON.stringify({id: this.value,status:operate}),
                 dataType: 'json',
                 contentType: 'application/json',

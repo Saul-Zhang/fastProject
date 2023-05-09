@@ -40,7 +40,6 @@ public class PermissionController {
   private final String prefix = "admin/permission";
 
   private final PermissionService permissionService;
-  private final RoleService roleService;
 
   /**
    * 权限列表展示

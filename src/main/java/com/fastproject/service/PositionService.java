@@ -3,6 +3,8 @@ package com.fastproject.service;
 import com.fastproject.mapper.PositionMapper;
 import com.fastproject.model.Position;
 import com.fastproject.model.request.query.PositionQuery;
+import com.fastproject.model.response.AjaxResult;
+import com.fastproject.util.SnowflakeIdWorker;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import java.util.List;
@@ -10,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * 岗位表 SysPositionService
+ * 岗位 PositionService
  **/
 @Service
 @RequiredArgsConstructor
@@ -25,7 +27,6 @@ public class PositionService {
 
   /**
    * 分页查询
-   *
    */
   public PageInfo<Position> list(PositionQuery query) {
     PageHelper.startPage(query.getPage(), query.getLimit());
@@ -33,16 +34,30 @@ public class PositionService {
     return new PageInfo<>(list);
   }
 
-//  @Override
-//  public int deleteByPrimaryKey(String ids) {
-//
-//    List<String> lista = ConvertUtil.toListStrArray(ids);
-//    SysPositionExample example = new SysPositionExample();
-//    example.createCriteria().andIdIn(lista);
-//    return positionMapper.deleteByExample(example);
-//
-//
-//  }
+  public AjaxResult add(Position position) {
+    position.setId(SnowflakeIdWorker.getUUID());
+    positionMapper.insert(position);
+    return AjaxResult.success();
+  }
+
+  public AjaxResult updateStatus(Long id, Character status) {
+    Position entity = new Position();
+    entity.setId(id);
+    entity.setStatus(status);
+    positionMapper.updateById(entity);
+    return AjaxResult.success();
+  }
+
+  public AjaxResult delete(List<Long> ids) {
+    positionMapper.deleteBatchIds(ids);
+    return AjaxResult.success();
+
+
+  }
+
+  public Position selectById(Long id) {
+    return positionMapper.selectById(id);
+  }
 
 //  @Override
 //  public Position selectByPrimaryKey(String id) {
@@ -53,9 +68,10 @@ public class PositionService {
 //
 //
 //  @Override
-//  public int updateByPrimaryKeySelective(Position record) {
-//    return positionMapper.updateByPrimaryKeySelective(record);
-//  }
+  public AjaxResult updateById(Position record) {
+    positionMapper.updateById(record);
+    return AjaxResult.success();
+  }
 //
 //
 //  /**

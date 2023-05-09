@@ -1,7 +1,6 @@
 package com.fastproject.model;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import lombok.Data;
@@ -9,7 +8,6 @@ import lombok.Data;
 /**
  * 部门表
  */
-@ApiModel(value = "Department", description = "部门表")
 @Data
 @TableName("def_department")
 public class Department implements Serializable {
@@ -20,7 +18,7 @@ public class Department implements Serializable {
    * id
    **/
   @ApiModelProperty(value = "id")
-  private Integer id;
+  private Long id;
 
   /**
    * 父id
@@ -56,7 +54,7 @@ public class Department implements Serializable {
    * 状态
    **/
   @ApiModelProperty(value = "状态")
-  private Integer status;
+  private Character status;
 
   /**
    * 排序

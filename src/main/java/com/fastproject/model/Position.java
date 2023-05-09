@@ -9,7 +9,7 @@ import java.lang.Integer;
 import lombok.Data;
 
 /**
- * 岗位表 SysPosition
+ * 岗位表 Position
  */
 @TableName("def_position")
 @Data
@@ -19,7 +19,7 @@ public class Position implements Serializable {
 
 	/** 主键 **/
 	@ApiModelProperty(value = "主键")
-	private String id;
+	private Long id;
 
 	/** 岗位名称 **/
 	@ApiModelProperty(value = "岗位名称")
@@ -31,6 +31,6 @@ public class Position implements Serializable {
 
 	/** 状态 **/
 	@ApiModelProperty(value = "状态")
-	private Integer status;
+	private Character status;
 
 }

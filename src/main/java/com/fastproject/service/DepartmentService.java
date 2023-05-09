@@ -1,21 +1,17 @@
 package com.fastproject.service;
 
-import cn.hutool.core.util.StrUtil;
 import com.fastproject.common.mybatis.LambdaQueryWrapperX;
-import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.DepartmentMapper;
 import com.fastproject.model.Department;
-import com.fastproject.model.custom.Tablepar;
-import com.fastproject.util.StringUtils;
-import com.github.pagehelper.PageInfo;
-import java.util.Arrays;
+import com.fastproject.model.request.query.DepartmentQuery;
+import com.fastproject.model.response.AjaxResult;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class DepartmentService{
+public class DepartmentService {
 
   private final DepartmentMapper departmentMapper;
 
@@ -46,6 +42,10 @@ public class DepartmentService{
         new LambdaQueryWrapperX<Department>().eq(Department::getStatus, 1));
   }
 
+  public List<Department> list(DepartmentQuery query) {
+    return departmentMapper.selectList(null);
+  }
+
 //  @Override
 //  public int deleteByPrimaryKey(String ids) {
 //
@@ -56,30 +56,26 @@ public class DepartmentService{
 //    return departmentMapper.deleteByExample(example);
 //
 //  }
-//
-//  @Override
-//  public Department selectByPrimaryKey(String id) {
-//
-//    Integer id1 = Integer.valueOf(id);
-//    return departmentMapper.selectByPrimaryKey(id1);
-//
-//  }
-//
-//  @Override
-//  public int updateByPrimaryKeySelective(Department record) {
-//    return departmentMapper.updateByPrimaryKeySelective(record);
-//  }
-//
-//  /**
-//   * 添加
-//   */
-//  @Override
-//  public int insertSelective(Department record) {
-//
-//    record.setId(null);
-//
-//    return departmentMapper.insertSelective(record);
-//  }
+
+  public Department selectById(Long id) {
+
+    return departmentMapper.selectById(id);
+
+  }
+
+  public AjaxResult updateById(Department record) {
+    departmentMapper.updateById(record);
+    return AjaxResult.success();
+  }
+
+
+  /**
+   * 添加
+   */
+  public AjaxResult insert(Department record) {
+    departmentMapper.insert(record);
+    return AjaxResult.success();
+  }
 //
 //  @Override
 //  public int updateByExampleSelective(Department record, SysDepartmentExample example) {
@@ -92,46 +88,33 @@ public class DepartmentService{
 //
 //    return departmentMapper.updateByExample(record, example);
 //  }
-//
-//  @Override
-//  public List<Department> selectByExample(SysDepartmentExample example) {
-//
-//    return departmentMapper.selectByExample(example);
-//  }
-//
+
+  public List<Department> selectAll() {
+
+    return departmentMapper.selectList(null);
+  }
+
 //  @Override
 //  public long countByExample(SysDepartmentExample example) {
 //
 //    return departmentMapper.countByExample(example);
 //  }
 //
-//  @Override
-//  public int deleteByExample(SysDepartmentExample example) {
-//
-//    return departmentMapper.deleteByExample(example);
-//  }
-//
-//  /**
-//   * 检查name
-//   *
-//   * @param department
-//   * @return
-//   */
-//  public int checkNameUnique(Department department) {
-//    SysDepartmentExample example = new SysDepartmentExample();
-//    example.createCriteria().andDeptNameEqualTo(department.getName());
-//    List<Department> list = departmentMapper.selectByExample(example);
-//    return list.size();
-//  }
-//
-//  /**
-//   * 修改权限状态展示或者不展示
-//   *
-//   * @param record
-//   * @return
-//   */
-//  public int updateVisible(Department record) {
-//    return departmentMapper.updateByPrimaryKeySelective(record);
-//  }
+
+  public AjaxResult deleteByIds(List<Long> ids) {
+    departmentMapper.deleteBatchIds(ids);
+    return AjaxResult.success();
+  }
+
+  /**
+   * 修改权限状态展示或者不展示
+   */
+  public AjaxResult updateStatus(Long id, Character status) {
+    Department entity = new Department();
+    entity.setStatus(status);
+    entity.setId(id);
+    departmentMapper.updateById(entity);
+    return AjaxResult.success();
+  }
 
 }
