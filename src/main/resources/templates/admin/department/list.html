@@ -84,45 +84,48 @@ td .layui-form-select{
     </div>
     <div class="user-main">
     	
-    	<div class="layui-card">
-	    	<div class="layui-tab layui-tab-brief">
-				<ul class="layui-tab-title">
-					<li class="layui-this">配置</li>
-				    <li>待开发</li>
-				</ul>
-			</div>
-    	</div>
-    
+
         <div class="layui-card">
             <div class="layui-card-body">
-                <table id="global-table" lay-filter="global-table"></table>
+              <form class="layui-form" action="" lay-filter="user_form">
+                <div class="layui-form-item">
+                  <label class="layui-form-label">姓名</label>
+                  <div class="layui-input-inline">
+                    <input type="text" name="realName" placeholder="" class="layui-input">
+                  </div>
+
+                  <label class="layui-form-label">工号</label>
+                  <div class="layui-input-inline">
+                    <input type="text" name="employeeId" placeholder="" class="layui-input">
+                  </div>
+                  <label class="layui-form-label">状态</label>
+                  <div class="layui-input-inline">
+                    <select id="status" name="status" >
+                      <option value="">全部</option>
+                      <option value="1" selected="selected">启用</option>
+                      <option value="0">停用</option>
+                    </select>
+                  </div>
+                  <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user_query">
+                    <i class="layui-icon layui-icon-search"></i>
+                    查询
+                  </button>
+                  <button type="reset" class="pear-btn pear-btn-md">
+                    <i class="layui-icon layui-icon-refresh"></i>
+                    重置
+                  </button>
+                </div>
+              </form>
             </div>
         </div>
+      <div class="layui-card">
+        <div class="layui-card-body">
+          <table id="user-table" lay-filter="user-table"></table>
+        </div>
+      </div>
     </div>
 </body>
 
-<script type="text/html" id="user-toolbar">
-    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="createAdmin">
-        <i class="pear-icon pear-icon-column-vertical"></i>
-    	生成后台类
-    </button>
-    <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="createHTML">
-        <i class="pear-icon pear-icon-layout"></i>
-       	生成HTML
-    </button>
-	<button class="pear-btn pear-btn-danger pear-btn-md" lay-event="view">
-        <i class="pear-icon pear-icon-browse"></i>
-       	预览
-    </button>
-	<button class="pear-btn pear-btn-danger pear-btn-md" lay-event="zip">
-        <i class="pear-icon pear-icon-browse"></i>
-       	生成zip
-    </button>
-    <button class="pear-btn pear-btn-warming pear-btn-md" lay-event="collasped">
-        <i class="layui-icon layui-icon-screen-full"></i>
-       	放大
-    </button>
-</script>
 
 <script type="text/html" id="user-bar">
     <button sec:authorize="hasPermission('/system/user/edit','sys:user:edit')" class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="pear-icon pear-icon-edit"></i>
@@ -131,28 +134,11 @@ td .layui-form-select{
     </button>
 </script>
 
-<script type="text/html" id="user-enable">
-    <input type="checkbox" name="enable" value="{{d.userId}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable" {{ d.enable== true ? 'checked' : '' }} />
+<script type="text/html" id="user_status">
+  <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-filter="user_status" lay-text="启用|停用"
+         {{d.status == '1' ? 'checked' : '' }} >
 </script>
 
-<script type="text/html" id="user-sex">
-    {{#if (d.sex == 0) { }}
-    <span>男</span>
-    {{# }else if(d.sex == 1){ }}
-    <span>女</span>
-    {{# } }}
-</script>
-
-<script type="text/html" id="user-login">
-    {{#if (d.login == 0) { }}
-    <span>在线</span>
-    {{# }else if(d.sex == 1){ }}
-    <span>离线</span>
-    {{# } }}
-</script>
-<script type="text/javascript" th:inline="javascript">
-var dictTypes_list = [[${dictTypes}]];
-</script>
 <th:block th:include="include :: footer"/>
 <script>
     layui.use(['table', 'dtree','form','element','jquery'], function () {
@@ -162,88 +148,56 @@ var dictTypes_list = [[${dictTypes}]];
         let element = layui.element;
         let dtree = layui.dtree;
         let MODULE_PATH = rootPath+"/DepartmentController";
-        let PERMISSION_PATH = rootPath+"/PermissionController";
+        let USER_PATH = rootPath+"/UserController";
         let tableName;
-        let cols = [
-            [
-                /* {type: 'checkbox'}, */
-                {title: '字段名', field: 'column_name', align: 'center', width: 110},
-                {title: '实体名称', field: 'beanName', align: 'center'},
-                {title: '数据库类型', field: 'column_type', align: 'center'},
-                {title: 'JAVA类型', field: 'beanType', align: 'center'},
-                {title: '主键', field: 'column_key', align: 'center'},
-                {title: '是否自增', field: 'extra', align: 'center'},
-                {title: '是否可为空', field: 'is_nullable', align: 'center'},
-                {title: '默认值', field: 'column_default', align: 'center'},
-                {title: '备注', width:300,field: 'column_comment', align: 'center',width:150},
-                {title: '字段类型', field: 'htmlType', align: 'center',templet:function(data){
-                	var html="<select lay-filter=\"demo\" init-data='"+data.LAY_TABLE_INDEX+"'>";
-                	    html+="<option value=\"1\">字符串</option>";
-                	    html+="<option value=\"2\">字典表</option>";
-                	    html+="<option value=\"3\">开关类型</option>";
-                	    html+="<option value=\"4\">时间类型</option>";
-                	    html+="<option value=\"5\">文件上传</option>";
-                		html+="</select>";
-                	return html;
-                }},
-                {title: '字典选择', field: 'dictTypeName', align: 'center',templet:function(data){
-                	
-                	var html="<select lay-filter=\"demo2\" init-data='"+data.LAY_TABLE_INDEX+"'>";
-                		for(var i=0;i<dictTypes_list.length;i++){
-                			html+="<option value=\""+dictTypes_list[i].dictType+"\">"+dictTypes_list[i].dictName+"</option>";
-                		}
-                		html+="</select>";
-                	return html;
-                }}
-               /*  {title: '操作', toolbar: '#user-bar', align: 'center'} */
-            ]
+      let cols = [
+        [
+          {type: 'checkbox'},
+          {title: '姓名', field: 'realName', align: 'center'},
+          {title: '账号', field: 'username', align: 'center'},
+          {title: '工号', field: 'employeeId', align: 'center'},
+          {title: '岗位', field: 'posName', align: 'center'},
+          {title: '电话', field: 'phone', align: 'center'},
+          {title: '邮箱', field: 'email', align: 'center'},
+          {title: '性别', field: 'gender', align: 'center'},
+          {title: '状态', field: 'status', align: 'center',templet: '#user_status'},
+          // {title: '状态', field: 'status', align: 'center',toolbar: '#user_status'},
+          {title: '操作', toolbar: '#user-bar', align: 'center'}
         ]
+      ]
 		
-        //权限树
-        dtree.renderSelect({
-            elem: "#selectParent",
-            url: PERMISSION_PATH+"/selectParent",
-            method: 'get',
-            selectInputName: {nodeId: "pid"},
-            skin: "layui",
-            dataFormat: "list",
-            response: {treeId: "id", parentId: "pid", title: "name"},  //修改response中返回数据的定义
-            selectInitVal: "0"
-        });
-        
-        table.render({
-            elem: '#global-table',
-            // url: MODULE_PATH + '/list',
-            page: false,
-            cols: cols,
-            zIndex:120, //层优先级
-            skin: 'line',
-            height: 'full-148',
-            toolbar: '#user-toolbar',
-            text: {none: '暂无表字段信息'},
-            defaultToolbar: [{layEvent: 'refresh', icon: 'layui-icon-refresh'}, 'filter', 'print', 'exports']
-        });
-        
-        
-        form.on('select(demo)', function(data){
-        	
-        	var init_data=$(data.elem).attr("init-data");
-        	var checkStatus = table.cache["global-table"][init_data];
-        	checkStatus.htmlType=data.value;
-        	console.log("sss"+JSON.stringify(checkStatus));
-		});
-        
-		form.on('select(demo2)', function(data){
-        	
-        	var init_data=$(data.elem).attr("init-data");
-        	var checkStatus = table.cache["global-table"][init_data];
-        	checkStatus.dictTypeName=data.value;
-        	debugger
-        	console.log("sss"+JSON.stringify(checkStatus));
-		});
+        // table.render({
+        //     elem: '#global-table',
+        //     url: USER_PATH + '/list',
+        //   where: form.val("user_form"),
+        //     page: true,
+        //     cols: cols,
+        //     zIndex:120, //层优先级
+        //     skin: 'line',
+        //     height: 'full-148',
+        //     toolbar: '#user-toolbar',
+        //     text: {none: '暂无表字段信息'},
+        //     defaultToolbar: [{layEvent: 'refresh', icon: 'layui-icon-refresh'}, 'filter', 'print', 'exports']
+        // });
+
+      //table表单列表
+      table.render({
+        elem: '#user-table',
+        url: USER_PATH + '/list',
+        page: true,
+        method: 'get',
+        where: form.val("user_form"),
+        cols: cols,
+        skin: 'line',
+        toolbar: '#role-toolbar',
+        defaultToolbar: [{
+          layEvent: 'refresh',
+          icon: 'layui-icon-refresh',
+        }, 'filter', 'print', 'exports']
+      });
         
         
-        
+
 		//文档地址：http://www.wisdomelon.com/DTreeHelper/
         dtree.render({
             elem: "#dept-tree",
@@ -259,34 +213,15 @@ var dictTypes_list = [[${dictTypes}]];
         
         //tree点击事件
         dtree.on("node('dept-tree')" ,function(obj){
-            let field = form.val("user-query-form");
-            console.log(obj.param.recordData);
-            field.tableName =  obj.param.recordData.tableName;
-            $("#tableName").val(obj.param.recordData.tableName);
-            $("#tableComment").val(obj.param.recordData.tableComment);
-            tableName=field.tableName;
+            let field = form.val("user_query");
+            console.log(obj.param)
+            field.departmentId =  obj.param.nodeId;
+            // $("#tableName").val(obj.param.recordData.tableName);
+            // $("#tableComment").val(obj.param.recordData.tableComment);
+            // tableName=field.tableName;
             window.refresh(field);
         });
-/* 
-        $(".user-group").click(function(){
-            let group =  $(this).attr("user-group");
-            let field = form.val("user-query-form");
-            if(group==="-1"){
-                field.tableName = group;
-                $(this).removeClass("button-default");
-                $(this).prev().removeClass("button-primary");
-                $(this).prev().addClass("button-default");
-                $(this).addClass("button-primary");
-            }else{
-                field.tableName = group;
-                $(this).removeClass("button-default");
-                $(this).next().removeClass("button-primary");
-                $(this).next().addClass("button-default");
-                $(this).addClass("button-primary");
-            }
-            window.refresh(field);
-        })
- */
+
         table.on('tool(global-table)', function (obj) {
             if (obj.event === 'remove') {
                 window.remove(obj);
@@ -295,106 +230,14 @@ var dictTypes_list = [[${dictTypes}]];
             }
         });
 
-        table.on('toolbar(global-table)', function (obj) {
-            if (obj.event === 'createAdmin') {
-                window.createAdmin();
-            } else if (obj.event === 'refresh') {
-                window.refresh();
-            } else if (obj.event === 'createHTML') {
-                window.createHTML(obj);
-            } else if (obj.event === 'view') {
-                window.view(obj);
-            } else if (obj.event === 'zip') {
-                window.zip(obj);
-            } else if(obj.event == 'collasped'){
-                if($(".user-left").hasClass("user-collasped")){
-                    $(".user-left").removeClass("user-collasped");
-                    $(".user-main").removeClass("user-collasped");
-                }else{
-                    $(".user-left").addClass("user-collasped");
-                    $(".user-main").addClass("user-collasped");
-                }
-                table.resize();
-            }
-        });
+      //查询按钮绑定
+      form.on('submit(user_query)', function (data) {
+        table.reload('user-table', {where: data.field})
+        return false;
+      });
 
-        form.on('submit(user-query)', function (data) {
-            window.refresh(data.field);
-            return false;
-        });
-
-		
-
-        //预览
-        window.view = function () {
-        	if(tableName==null||tableName==""){
-        		layer.msg("未选表！", {icon: 2, time: 1000});
-        		return
-        	}
-        	var autoConfigData = form.val("autoConfigForm");
-        	var urlpar="tableName="+autoConfigData.tableName+"&tableComment="+autoConfigData.tableComment+"&author="
-        	+autoConfigData.author+"&pid="+autoConfigData.pid;
-        	
-        	var index = layer.open({
-                type: 2,
-                title: '预览',
-                shade: 0.1,
-                maxmin: true,
-                area: ['800px', '600px'],
-                content: MODULE_PATH + "/viewAuto?"+urlpar
-            });
-            layer.full(index);
-        }
-        
-      	//zip
-        window.zip = function () {
-        	if(tableName==null||tableName==""){
-        		layer.msg("未选表！", {icon: 2, time: 1000});
-        		return
-        	}
-        	var autoConfigData = form.val("autoConfigForm");
-        	var urlpar="tableName="+autoConfigData.tableName+"&tableComment="+autoConfigData.tableComment+"&author="
-        	+autoConfigData.author+"&pid="+autoConfigData.pid;
-        	
-            document.location.href=MODULE_PATH + "/createAutoZip?"+urlpar;
-        }
-        
-      	//生成后台
-        window.createAdmin = function () {
-        	if(tableName==null||tableName==""){
-        		layer.msg("未选表！", {icon: 2, time: 1000});
-        		return
-        	}
-        	console.log(table.cache["global-table"]);
-        	var autoConfigData = form.val("autoConfigForm");
-        	autoConfigData.beanColumns=table.cache["global-table"];
-        	let loading = layer.load();
-        	 $.ajax({
-                 url: MODULE_PATH + "/createAuto",
-                 dataType: 'json',
-                 data:JSON.stringify(autoConfigData),
-                 contentType: 'application/json',
-                 type: 'post',
-                 success: function (result) {
-                     layer.close(loading);
-                     if (result.code==200) {
-                         layer.msg(result.msg, {icon: 1, time: 1000}, function () {
-                             
-                         });
-                     } else {
-                         layer.msg(result.msg, {icon: 2, time: 1000});
-                     }
-                 }
-             })
-        }
-      	
-      	
-        window.createHTML=function(){
-        	layer.msg("开发中", {icon: 2, time: 1000});
-        }
-        
         window.refresh = function (param) {
-            table.reload('global-table', {where: param});
+            table.reload('user-table', {where: param});
         }
     })
 </script>

@@ -10,4 +10,5 @@ public class UserQuery extends AbstractPageQuery {
   protected String realName;
   protected String employeeId;
   private Character status;
+  private Long departmentId;
 }
