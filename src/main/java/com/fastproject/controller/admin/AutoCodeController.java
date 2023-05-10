@@ -9,13 +9,12 @@ import com.fastproject.model.custom.autocode.AutoDictType;
 import com.fastproject.model.custom.autocode.BeanColumn;
 import com.fastproject.model.custom.autocode.TableInfo;
 import com.fastproject.model.response.AjaxResult;
-import com.fastproject.model.response.PageResult;
-import com.fastproject.model.response.TreeResult;
+import com.fastproject.model.response.PageResponse;
+import com.fastproject.model.response.TreeResponse;
 import com.fastproject.service.DictService;
 import com.fastproject.service.GeneratorService;
 import com.fastproject.service.SysDictTypeService;
 import com.fastproject.util.AutoCode.AutoCodeUtil;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,8 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,26 +36,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * 代码自动生成
  *
- * @author fuce
- * @ClassName: AutoCodeController
+ * @author fastProject
  * @date 2019-08-13 00:34
  */
-@Api(value = "代码自动生成")
 @Controller
 @RequestMapping("/autoCodeController")
+@RequiredArgsConstructor
 public class AutoCodeController {
 
-  private String prefix = "admin/autoCode";
-  @Autowired
-  private GeneratorService generatorService;
-  // @Autowired
-  // private SysUtilService sysUtilService;
+  private final String prefix = "admin/autoCode";
+  private final GeneratorService generatorService;
 
-  @Autowired
-  private SysDictTypeService tSysDictTypeService;
+  private final SysDictTypeService tSysDictTypeService;
 
-  @Autowired
-  private DictService dictService;
+  private final DictService dictService;
 
   /**
    * 代码自动生成全局配置
@@ -83,7 +76,7 @@ public class AutoCodeController {
    */
   @GetMapping("/selectTables")
   @ResponseBody
-  public TreeResult selectTables() {
+  public TreeResponse selectTables() {
     List<TsysTables> list = generatorService.queryList(null);
     List<TsysTablesVo> TreeList = new ArrayList<TsysTablesVo>();
     for (int i = 0; i < list.size(); i++) {
@@ -100,7 +93,7 @@ public class AutoCodeController {
     tables.setParentId(0);
     tables.setId(-1);
     TreeList.add(tables);
-    return TreeResult.treeData(TreeList);
+    return TreeResponse.treeData(TreeList);
   }
 
   /**
@@ -114,9 +107,9 @@ public class AutoCodeController {
   @ApiOperation(value = "根据表查询表字段详情", notes = "根据表查询表字段详情")
   @GetMapping("/queryTableInfo")
   @ResponseBody
-  public PageResult queryTableInfo(String tableName) {
+  public PageResponse queryTableInfo(String tableName) {
     List<BeanColumn> list = generatorService.queryColumns2(tableName);
-    return PageResult.page(list, list.size());
+    return PageResponse.page(list, list.size());
   }
 
   /**

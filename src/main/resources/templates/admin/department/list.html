@@ -1,255 +1,401 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <th:block th:include="include :: header('部门列表')"/>
+    <th:block th:include="include :: header('全局配置')"/>
+    <style>
+        .dept-tree {
+            width: 100%;
+            height: -webkit-calc(100vh - 247px);
+            height: -moz-calc(100vh - 247px);
+            height: calc(100vh - 247px);
+            margin-top: 20px;
+        }
+
+        .button{
+            margin-top: 10px;
+            width: 94%;
+            margin-left: 3%;
+            display: block;
+            height: 40px;
+            line-height: 40px;
+            padding: 0 15px;
+            white-space: nowrap;
+            text-align: center;
+            font-size: 14.5px;
+            border: none;
+            cursor: pointer;
+            box-sizing: border-box;
+            display:inline-block;
+            outline: 0;
+            border-radius: 2px;
+            -webkit-appearance: none;
+            box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.15);
+        }
+
+        .button-primary{
+            background-color: #5FB878;
+            color: white;
+        }
+
+        .button-default{
+            color: #2f495e;
+            background-color: #edf2f7;
+        }
+    </style>
+    <style>
+        .user-main{
+            width: calc(100% - 312px);
+            float: right;
+        }
+        .user-left{
+            width: 300px;
+            float: left;
+        }
+        .user-collasped.user-main{
+            width: 100%;
+        }
+        .user-collasped.user-left{
+            width: 0px;
+        }
+        
+        .layui-table-cell{
+    overflow: visible;
+}
+.layui-layer-tips{
+    display: none
+}
+/* 设置下拉框的高度与表格单元相同 */
+td .layui-form-select{
+    margin-top: -10px;
+    margin-left: -15px;
+    margin-right: -15px;
+}
+    </style>
 </head>
 <body class="pear-container">
-<div class="layui-card">
-    <div class="layui-card-body">
-        <form class="layui-form" action="">
-            <div class="layui-form-item">
-                <label class="layui-form-label">部门名称</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="powerName" placeholder="" class="layui-input">
+    <div class="user-left">
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <div style="overflow: auto">
+                    <ul id="dept-tree" class="dept-tree" data-id="0"></ul>
                 </div>
-                <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="department-query">
-                    <i class="layui-icon layui-icon-search"></i>
-                    查询
-                </button>
-                <button type="reset" class="pear-btn pear-btn-md">
-                    <i class="layui-icon layui-icon-refresh"></i>
-                    重置
-                </button>
             </div>
-        </form>
+        </div>
     </div>
-</div>
-<div class="layui-card">
-    <div class="layui-card-body">
-        <table id="department-table" lay-filter="department-table"></table>
+    <div class="user-main">
+    	
+    	<div class="layui-card">
+	    	<div class="layui-tab layui-tab-brief">
+				<ul class="layui-tab-title">
+					<li class="layui-this">配置</li>
+				    <li>待开发</li>
+				</ul>
+			</div>
+    	</div>
+    
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <table id="global-table" lay-filter="global-table"></table>
+            </div>
+        </div>
     </div>
-</div>
-
-<script type="text/html" id="department-toolbar">
-    <button sa:hasPermission="system:department:add"  class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
-        <i class="layui-icon layui-icon-add-1"></i>
-        新增
-    </button>
-    <button sa:hasPermission="system:department:remove"  class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
-        <i class="layui-icon layui-icon-delete"></i>
-        删除
-    </button>
-</script>
-
-<script type="text/html" id="department-bar">
-    <button sa:hasPermission="system:department:edit"  class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>
-    </button>
-    <button sa:hasPermission="system:department:remove"  class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i>
-    </button>
-</script>
-
-
-<script type="text/html" id="department-enable">
-    <input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="department-enable" {{ d.status== 1 ? 'checked' : '' }}>
-</script>
-
-
-
 </body>
+
+<script type="text/html" id="user-toolbar">
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="createAdmin">
+        <i class="pear-icon pear-icon-column-vertical"></i>
+    	生成后台类
+    </button>
+    <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="createHTML">
+        <i class="pear-icon pear-icon-layout"></i>
+       	生成HTML
+    </button>
+	<button class="pear-btn pear-btn-danger pear-btn-md" lay-event="view">
+        <i class="pear-icon pear-icon-browse"></i>
+       	预览
+    </button>
+	<button class="pear-btn pear-btn-danger pear-btn-md" lay-event="zip">
+        <i class="pear-icon pear-icon-browse"></i>
+       	生成zip
+    </button>
+    <button class="pear-btn pear-btn-warming pear-btn-md" lay-event="collasped">
+        <i class="layui-icon layui-icon-screen-full"></i>
+       	放大
+    </button>
+</script>
+
+<script type="text/html" id="user-bar">
+    <button sec:authorize="hasPermission('/system/user/edit','sys:user:edit')" class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="pear-icon pear-icon-edit"></i>
+    </button>
+    <button sec:authorize="hasPermission('/system/user/remove','sys:user:remove')" class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="pear-icon pear-icon-ashbin"></i>
+    </button>
+</script>
+
+<script type="text/html" id="user-enable">
+    <input type="checkbox" name="enable" value="{{d.userId}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable" {{ d.enable== true ? 'checked' : '' }} />
+</script>
+
+<script type="text/html" id="user-sex">
+    {{#if (d.sex == 0) { }}
+    <span>男</span>
+    {{# }else if(d.sex == 1){ }}
+    <span>女</span>
+    {{# } }}
+</script>
+
+<script type="text/html" id="user-login">
+    {{#if (d.login == 0) { }}
+    <span>在线</span>
+    {{# }else if(d.sex == 1){ }}
+    <span>离线</span>
+    {{# } }}
+</script>
+<script type="text/javascript" th:inline="javascript">
+var dictTypes_list = [[${dictTypes}]];
+</script>
 <th:block th:include="include :: footer"/>
 <script>
-    layui.use(['table', 'form', 'jquery', 'treetable'], function () {
+    layui.use(['table', 'dtree','form','element','jquery'], function () {
         let table = layui.table;
         let form = layui.form;
         let $ = layui.jquery;
-        let treetable = layui.treetable;
-
-        let MODULE_PATH = rootPath+"/DepartmentController/";
-
-        window.render = function () {
-            treetable.render({
-                treeColIndex: 1,
-                treeSpid: 0,
-                treeIdName: 'id',
-                treePidName: 'parentId',
-                skin: 'line',
-                method: 'get',
-                treeDefaultClose: true,
-                toolbar: '#department-toolbar',
-                elem: '#department-table',
-                url: MODULE_PATH+'list',
-                page: false,
-                cols: [
-                    [
-                        {type: 'checkbox'},
-                        {field: 'deptName', minWidth: 200, title: '部门名称'},
-                        {field: 'leader', title: '部门负责人'},
-                        {field: 'phone', title: '电话'},
-                        {field: 'email', title: '邮箱'},
-                        {field: 'status', title: '状态',templet: '#department-enable'},
-                        {field: 'orderNum', title: '排序'},
-                        {title: '操作', templet: '#department-bar', width: 150, align: 'center'}
-                    ]
-                ]
-            });
-        }
-
-        render();
-
-        form.on('submit(department-query)', function (data) {
-            var keyword = data.field.powerName;
-            var $tds = $('#department-table').next('.treeTable').find('.layui-table-body tbody tr td');
-            if (!keyword) {
-                $tds.css('background-color', 'transparent');
-                layer.msg("请输入关键字", {icon: 5});
-                return;
-            }
-            var searchCount = 0;
-            $tds.each(function () {
-                $(this).css('background-color', 'transparent');
-                if ($(this).text().indexOf(keyword) >= 0) {
-                    $(this).css('background-color', 'rgba(250,230,160,0.5)');
-                    if (searchCount == 0) {
-                        $('body,html').stop(true);
-                        $('body,html').animate({scrollTop: $(this).offset().top - 150}, 500);
-                    }
-                    searchCount++;
-                }
-            });
-            if (searchCount == 0) {
-                layer.msg("没有匹配结果", {icon: 5});
-            } else {
-                treetable.expandAll('#department-table');
-            }
-            return false;
+        let element = layui.element;
+        let dtree = layui.dtree;
+        let MODULE_PATH = rootPath+"/DepartmentController";
+        let PERMISSION_PATH = rootPath+"/PermissionController";
+        let tableName;
+        let cols = [
+            [
+                /* {type: 'checkbox'}, */
+                {title: '字段名', field: 'column_name', align: 'center', width: 110},
+                {title: '实体名称', field: 'beanName', align: 'center'},
+                {title: '数据库类型', field: 'column_type', align: 'center'},
+                {title: 'JAVA类型', field: 'beanType', align: 'center'},
+                {title: '主键', field: 'column_key', align: 'center'},
+                {title: '是否自增', field: 'extra', align: 'center'},
+                {title: '是否可为空', field: 'is_nullable', align: 'center'},
+                {title: '默认值', field: 'column_default', align: 'center'},
+                {title: '备注', width:300,field: 'column_comment', align: 'center',width:150},
+                {title: '字段类型', field: 'htmlType', align: 'center',templet:function(data){
+                	var html="<select lay-filter=\"demo\" init-data='"+data.LAY_TABLE_INDEX+"'>";
+                	    html+="<option value=\"1\">字符串</option>";
+                	    html+="<option value=\"2\">字典表</option>";
+                	    html+="<option value=\"3\">开关类型</option>";
+                	    html+="<option value=\"4\">时间类型</option>";
+                	    html+="<option value=\"5\">文件上传</option>";
+                		html+="</select>";
+                	return html;
+                }},
+                {title: '字典选择', field: 'dictTypeName', align: 'center',templet:function(data){
+                	
+                	var html="<select lay-filter=\"demo2\" init-data='"+data.LAY_TABLE_INDEX+"'>";
+                		for(var i=0;i<dictTypes_list.length;i++){
+                			html+="<option value=\""+dictTypes_list[i].dictType+"\">"+dictTypes_list[i].dictName+"</option>";
+                		}
+                		html+="</select>";
+                	return html;
+                }}
+               /*  {title: '操作', toolbar: '#user-bar', align: 'center'} */
+            ]
+        ]
+		
+        //权限树
+        dtree.renderSelect({
+            elem: "#selectParent",
+            url: PERMISSION_PATH+"/selectParent",
+            method: 'get',
+            selectInputName: {nodeId: "pid"},
+            skin: "layui",
+            dataFormat: "list",
+            response: {treeId: "id", parentId: "pid", title: "name"},  //修改response中返回数据的定义
+            selectInitVal: "0"
         });
-
-        table.on('tool(department-table)', function (obj) {
+        
+        table.render({
+            elem: '#global-table',
+            // url: MODULE_PATH + '/list',
+            page: false,
+            cols: cols,
+            zIndex:120, //层优先级
+            skin: 'line',
+            height: 'full-148',
+            toolbar: '#user-toolbar',
+            text: {none: '暂无表字段信息'},
+            defaultToolbar: [{layEvent: 'refresh', icon: 'layui-icon-refresh'}, 'filter', 'print', 'exports']
+        });
+        
+        
+        form.on('select(demo)', function(data){
+        	
+        	var init_data=$(data.elem).attr("init-data");
+        	var checkStatus = table.cache["global-table"][init_data];
+        	checkStatus.htmlType=data.value;
+        	console.log("sss"+JSON.stringify(checkStatus));
+		});
+        
+		form.on('select(demo2)', function(data){
+        	
+        	var init_data=$(data.elem).attr("init-data");
+        	var checkStatus = table.cache["global-table"][init_data];
+        	checkStatus.dictTypeName=data.value;
+        	debugger
+        	console.log("sss"+JSON.stringify(checkStatus));
+		});
+        
+        
+        
+		//文档地址：http://www.wisdomelon.com/DTreeHelper/
+        dtree.render({
+            elem: "#dept-tree",
+            method: "get",
+            height: 'full',
+            url: MODULE_PATH+"/list",
+            dataFormat: "list",//配置data的风格为list
+            icon: ["0","-1"],
+            line: true,//开启树线
+            record: true,
+            // response: {treeId: "id", parentId: "parentId", title: "tableAndName"}
+        });
+        
+        //tree点击事件
+        dtree.on("node('dept-tree')" ,function(obj){
+            let field = form.val("user-query-form");
+            console.log(obj.param.recordData);
+            field.tableName =  obj.param.recordData.tableName;
+            $("#tableName").val(obj.param.recordData.tableName);
+            $("#tableComment").val(obj.param.recordData.tableComment);
+            tableName=field.tableName;
+            window.refresh(field);
+        });
+/* 
+        $(".user-group").click(function(){
+            let group =  $(this).attr("user-group");
+            let field = form.val("user-query-form");
+            if(group==="-1"){
+                field.tableName = group;
+                $(this).removeClass("button-default");
+                $(this).prev().removeClass("button-primary");
+                $(this).prev().addClass("button-default");
+                $(this).addClass("button-primary");
+            }else{
+                field.tableName = group;
+                $(this).removeClass("button-default");
+                $(this).next().removeClass("button-primary");
+                $(this).next().addClass("button-default");
+                $(this).addClass("button-primary");
+            }
+            window.refresh(field);
+        })
+ */
+        table.on('tool(global-table)', function (obj) {
             if (obj.event === 'remove') {
                 window.remove(obj);
             } else if (obj.event === 'edit') {
                 window.edit(obj);
             }
-        })
+        });
 
-
-        table.on('toolbar(department-table)', function (obj) {
-            if (obj.event === 'add') {
-                window.add();
+        table.on('toolbar(global-table)', function (obj) {
+            if (obj.event === 'createAdmin') {
+                window.createAdmin();
             } else if (obj.event === 'refresh') {
                 window.refresh();
-            } else if (obj.event === 'batchRemove') {
-                window.batchRemove(obj);
-            }
-        });
-
-        form.on('switch(department-enable)', function (obj) {
-            let operate;
-
-            if (obj.elem.checked) {
-                operate = 1;
-            } else {
-                operate = 0;
-            }
-
-            let loading = layer.load()
-
-            $.ajax({
-                url: MODULE_PATH+'updateStatus',
-                data: JSON.stringify({id: this.value,status:operate}),
-                dataType: 'json',
-                contentType: 'application/json',
-                type: 'put',
-                success: function (result) {
-                    layer.close(loading);
-                    if (result.code==200) {
-                        layer.msg(result.msg, {icon: 1, time: 1000}, function () {
-                        });
-                    } else {
-                        layer.msg(result.msg, {icon: 2, time: 1000});
-                    }
+            } else if (obj.event === 'createHTML') {
+                window.createHTML(obj);
+            } else if (obj.event === 'view') {
+                window.view(obj);
+            } else if (obj.event === 'zip') {
+                window.zip(obj);
+            } else if(obj.event == 'collasped'){
+                if($(".user-left").hasClass("user-collasped")){
+                    $(".user-left").removeClass("user-collasped");
+                    $(".user-main").removeClass("user-collasped");
+                }else{
+                    $(".user-left").addClass("user-collasped");
+                    $(".user-main").addClass("user-collasped");
                 }
-            })
+                table.resize();
+            }
         });
 
+        form.on('submit(user-query)', function (data) {
+            window.refresh(data.field);
+            return false;
+        });
 
-        window.add = function () {
-            layer.open({
+		
+
+        //预览
+        window.view = function () {
+        	if(tableName==null||tableName==""){
+        		layer.msg("未选表！", {icon: 2, time: 1000});
+        		return
+        	}
+        	var autoConfigData = form.val("autoConfigForm");
+        	var urlpar="tableName="+autoConfigData.tableName+"&tableComment="+autoConfigData.tableComment+"&author="
+        	+autoConfigData.author+"&pid="+autoConfigData.pid;
+        	
+        	var index = layer.open({
                 type: 2,
-                title: '新增',
+                title: '预览',
                 shade: 0.1,
-                area: ['450px', '500px'],
-                content: MODULE_PATH + 'add'
+                maxmin: true,
+                area: ['800px', '600px'],
+                content: MODULE_PATH + "/viewAuto?"+urlpar
             });
+            layer.full(index);
         }
-
-        window.edit = function (obj) {
-            layer.open({
-                type: 2,
-                title: '修改',
-                shade: 0.1,
-                area: ['450px', '500px'],
-                content: MODULE_PATH + 'edit/' + obj.data['id']
-            });
+        
+      	//zip
+        window.zip = function () {
+        	if(tableName==null||tableName==""){
+        		layer.msg("未选表！", {icon: 2, time: 1000});
+        		return
+        	}
+        	var autoConfigData = form.val("autoConfigForm");
+        	var urlpar="tableName="+autoConfigData.tableName+"&tableComment="+autoConfigData.tableComment+"&author="
+        	+autoConfigData.author+"&pid="+autoConfigData.pid;
+        	
+            document.location.href=MODULE_PATH + "/createAutoZip?"+urlpar;
         }
-
-        window.remove = function (obj) {
-            layer.confirm('确定要删除该部门', {icon: 3, title: '提示'}, function (index) {
-                layer.close(index);
-                let loading = layer.load();
-                $.ajax({
-                    url: MODULE_PATH + "remove?ids=" + obj.data['id'],
-                    dataType: 'json',
-                    type: 'delete',
-                    success: function (result) {
-                        layer.close(loading);
-                        if (result.code==200) {
-                            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
-                                obj.del();
-
-                            });
-                        } else {
-                            layer.msg(result.msg, {icon: 2, time: 1000});
-                        }
-                    }
-                })
-            });
+        
+      	//生成后台
+        window.createAdmin = function () {
+        	if(tableName==null||tableName==""){
+        		layer.msg("未选表！", {icon: 2, time: 1000});
+        		return
+        	}
+        	console.log(table.cache["global-table"]);
+        	var autoConfigData = form.val("autoConfigForm");
+        	autoConfigData.beanColumns=table.cache["global-table"];
+        	let loading = layer.load();
+        	 $.ajax({
+                 url: MODULE_PATH + "/createAuto",
+                 dataType: 'json',
+                 data:JSON.stringify(autoConfigData),
+                 contentType: 'application/json',
+                 type: 'post',
+                 success: function (result) {
+                     layer.close(loading);
+                     if (result.code==200) {
+                         layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                             
+                         });
+                     } else {
+                         layer.msg(result.msg, {icon: 2, time: 1000});
+                     }
+                 }
+             })
         }
-
-        //批量删除
-        window.batchRemove = function (obj) {
-            let data = table.checkStatus(obj.config.id).data;
-            if (data.length === 0) {
-                layer.msg("未选中数据", {icon: 3, time: 1000});
-                return false;
-            }
-            let ids = "";
-            for (let i = 0; i < data.length; i++) {
-                ids += data[i].id + ",";
-            }
-            ids = ids.substr(0, ids.length - 1);
-            layer.confirm('确定要删除这些部门', {icon: 3, title: '提示'}, function (index) {
-                layer.close(index);
-                let loading = layer.load();
-                $.ajax({
-                    url: MODULE_PATH + "remove?ids=" + ids,
-                    dataType: 'json',
-                    type: 'delete',
-                    success: function (result) {
-                        layer.close(loading);
-                        if (result.code==200) {
-                            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
-                                table.reload('department-table');
-                            });
-                        } else {
-                            layer.msg(result.msg, {icon: 2, time: 1000});
-                        }
-                    }
-                })
-            });
+      	
+      	
+        window.createHTML=function(){
+        	layer.msg("开发中", {icon: 2, time: 1000});
         }
-
-
+        
+        window.refresh = function (param) {
+            table.reload('global-table', {where: param});
+        }
     })
 </script>
 </html>

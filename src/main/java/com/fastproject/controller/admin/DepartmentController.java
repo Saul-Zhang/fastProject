@@ -4,9 +4,8 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fastproject.model.Department;
 import com.fastproject.model.request.query.DepartmentQuery;
 import com.fastproject.model.response.AjaxResult;
-import com.fastproject.model.response.LayUiTree;
-import com.fastproject.model.response.PageResult;
-import com.fastproject.model.response.TreeResult;
+import com.fastproject.model.response.PageResponse;
+import com.fastproject.model.response.TreeResponse;
 import com.fastproject.service.DepartmentService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -46,8 +45,8 @@ public class DepartmentController {
   @GetMapping("/list")
   @SaCheckPermission("system:department:list")
   @ResponseBody
-  public PageResult list(DepartmentQuery query) {
-    return PageResult.page(departmentService.list(query));
+  public TreeResponse list(DepartmentQuery query) {
+    return TreeResponse.treeData(departmentService.list(query));
   }
 
   /**
@@ -106,8 +105,8 @@ public class DepartmentController {
 
   @GetMapping("/selectParent")
   @ResponseBody
-  public TreeResult selectParent() {
-    return TreeResult.treeData(departmentService.selectAll());
+  public TreeResponse selectParent() {
+    return TreeResponse.treeData(departmentService.selectAll());
   }
 
 

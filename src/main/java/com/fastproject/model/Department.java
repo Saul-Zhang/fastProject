@@ -24,7 +24,7 @@ public class Department implements Serializable {
    * 父id
    **/
   @ApiModelProperty(value = "父id")
-  private String parentId;
+  private Long parentId;
 
   /**
    * 部门名称

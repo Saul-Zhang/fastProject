@@ -1,26 +1,10 @@
 package com.fastproject.controller.admin;
 
-import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.fastproject.model.DictType;
-import com.fastproject.model.custom.Tablepar;
-import com.fastproject.model.response.AjaxResult;
-import com.fastproject.model.response.PageResult;
 import com.fastproject.service.SysDictTypeService;
-import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 字典类型Controller

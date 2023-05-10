@@ -5,7 +5,9 @@ import com.fastproject.mapper.DepartmentMapper;
 import com.fastproject.model.Department;
 import com.fastproject.model.request.query.DepartmentQuery;
 import com.fastproject.model.response.AjaxResult;
+import com.fastproject.model.response.LayUiTree;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -42,8 +44,15 @@ public class DepartmentService {
         new LambdaQueryWrapperX<Department>().eq(Department::getStatus, 1));
   }
 
-  public List<Department> list(DepartmentQuery query) {
-    return departmentMapper.selectList(null);
+  public List<LayUiTree> list(DepartmentQuery query) {
+    return departmentMapper.selectList(null).stream()
+        .map(department -> {
+          LayUiTree tree = new LayUiTree();
+          tree.setId(department.getId());
+          tree.setTitle(department.getName());
+          tree.setParentId(department.getParentId());
+          return tree;
+        }).collect(Collectors.toList());
   }
 
 //  @Override

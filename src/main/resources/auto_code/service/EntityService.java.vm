@@ -8,7 +8,6 @@ import com.github.pagehelper.PageInfo;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 
-import ${parentPack}.common.base.BaseService;
 import ${parentPack}.common.support.ConvertUtil;
 import ${parentPack}.mapper.auto.${tableInfo.javaTableName}Mapper;
 import ${parentPack}.model.auto.${tableInfo.javaTableName};
@@ -18,13 +17,12 @@ import ${parentPack}.util.SnowflakeIdWorker;
 import ${parentPack}.util.StringUtils;
 
 /**
- * ${tableInfo.tableComment} ${tableInfo.javaTableName}Service
  * @author ${author}
  * @date ${datetime}
  **/
 @Service
 @RequiredArgsConstructor
-public class ${tableInfo.javaTableName}Service implements BaseService<${tableInfo.javaTableName}, ${tableInfo.javaTableName}Example> {
+public class ${tableInfo.javaTableName}Service {
 
   private final ${tableInfo.javaTableName}Mapper ${tableInfo.javaTableName_a}Mapper;
 

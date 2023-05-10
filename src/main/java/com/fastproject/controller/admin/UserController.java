@@ -9,7 +9,7 @@ import com.fastproject.model.User;
 import com.fastproject.model.custom.RoleVo;
 import com.fastproject.model.request.query.UserQuery;
 import com.fastproject.model.response.AjaxResult;
-import com.fastproject.model.response.PageResult;
+import com.fastproject.model.response.PageResponse;
 import com.fastproject.model.response.UserResponse;
 import com.fastproject.service.DepartmentService;
 import com.fastproject.service.DictCacheService;
@@ -69,9 +69,9 @@ public class UserController {
   @GetMapping("/list")
   @SaCheckPermission("system:user:list")
   @ResponseBody
-  public PageResult list(UserQuery query) {
+  public PageResponse list(UserQuery query) {
     PageInfo<UserResponse> page = userService.list(query);
-    return PageResult.page(page.getList(), page.getTotal());
+    return PageResponse.page(page.getList(), page.getTotal());
   }
 
   /**

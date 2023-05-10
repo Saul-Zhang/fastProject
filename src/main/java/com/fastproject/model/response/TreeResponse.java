@@ -4,7 +4,7 @@ package com.fastproject.model.response;
 import lombok.Data;
 
 @Data
-public class TreeResult {
+public class TreeResponse {
 
   /**
    * 状态信息
@@ -35,10 +35,10 @@ public class TreeResult {
     }
   }
 
-  public static TreeResult treeData(Object data){
-    TreeResult treeResult = new TreeResult();
-    treeResult.setData(data);
-    return treeResult;
+  public static TreeResponse treeData(Object data){
+    TreeResponse treeResponse = new TreeResponse();
+    treeResponse.setData(data);
+    return treeResponse;
   }
 
 }

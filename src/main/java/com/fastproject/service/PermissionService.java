@@ -9,7 +9,7 @@ import com.fastproject.model.PermissionRole;
 import com.fastproject.model.custom.Menu;
 import com.fastproject.model.response.AjaxResult;
 import com.fastproject.model.response.LayUiTree;
-import com.fastproject.model.response.TreeResult;
+import com.fastproject.model.response.TreeResponse;
 import com.fastproject.util.SnowflakeIdWorker;
 import java.util.ArrayList;
 import java.util.List;
@@ -221,7 +221,7 @@ public class PermissionService {
     result.addAll(permissions);
   }
 
-  public TreeResult selectParent() {
+  public TreeResponse selectParent() {
     List<LayUiTree> list = getPermissionByUserId(null).stream()
         .map(per -> {
           LayUiTree response = new LayUiTree();
@@ -235,6 +235,6 @@ public class PermissionService {
     response.setId(0L);
     response.setParentId(-1L);
     list.add(response);
-    return TreeResult.treeData(list);
+    return TreeResponse.treeData(list);
   }
 }

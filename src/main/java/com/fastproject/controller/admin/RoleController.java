@@ -4,7 +4,7 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fastproject.model.Role;
 import com.fastproject.model.request.query.RoleQuery;
 import com.fastproject.model.response.AjaxResult;
-import com.fastproject.model.response.PageResult;
+import com.fastproject.model.response.PageResponse;
 import com.fastproject.service.RoleService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
@@ -54,9 +54,9 @@ public class RoleController {
   @GetMapping("/list")
   @SaCheckPermission("system:role:list")
   @ResponseBody
-  public PageResult list(RoleQuery query) {
+  public PageResponse list(RoleQuery query) {
     PageInfo<Role> page = roleService.list(query);
-    return PageResult.page(page.getList(), page.getTotal());
+    return PageResponse.page(page.getList(), page.getTotal());
   }
 
   /**

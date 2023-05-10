@@ -4,7 +4,7 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fastproject.model.Position;
 import com.fastproject.model.request.query.PositionQuery;
 import com.fastproject.model.response.AjaxResult;
-import com.fastproject.model.response.PageResult;
+import com.fastproject.model.response.PageResponse;
 import com.fastproject.service.PositionService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
@@ -49,9 +49,9 @@ public class PositionController {
   @GetMapping("/list")
   @SaCheckPermission("system:position:list")
   @ResponseBody
-  public PageResult list(PositionQuery query) {
+  public PageResponse list(PositionQuery query) {
     PageInfo<Position> page = positionService.list(query);
-    return PageResult.page(page.getList(), page.getTotal());
+    return PageResponse.page(page.getList(), page.getTotal());
   }
 
   /**

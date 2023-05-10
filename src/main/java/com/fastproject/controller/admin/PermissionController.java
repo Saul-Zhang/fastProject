@@ -4,11 +4,10 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fastproject.model.Permission;
 import com.fastproject.model.request.request.PermissionRoleRequest;
 import com.fastproject.model.response.AjaxResult;
-import com.fastproject.model.response.PageResult;
+import com.fastproject.model.response.PageResponse;
 import com.fastproject.model.response.LayUiTree;
-import com.fastproject.model.response.TreeResult;
+import com.fastproject.model.response.TreeResponse;
 import com.fastproject.service.PermissionService;
-import com.fastproject.service.RoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
@@ -58,8 +57,8 @@ public class PermissionController {
   @GetMapping("/list")
   @SaCheckPermission("system:permission:list")
   @ResponseBody
-  public PageResult list() {
-    return PageResult.page(permissionService.list());
+  public PageResponse list() {
+    return PageResponse.page(permissionService.list());
   }
 
   /**
@@ -132,9 +131,9 @@ public class PermissionController {
   @ApiOperation(value = "根据角色id获取所有打勾权限", notes = "根据角色id获取 所有打勾权限")
   @GetMapping("/getPermissions")
   @ResponseBody
-  public TreeResult getPermissionsByRoleId(Long roleId) {
+  public TreeResponse getPermissionsByRoleId(Long roleId) {
 
-    return TreeResult.treeData(permissionService.getPermissionsByRoleId(roleId));
+    return TreeResponse.treeData(permissionService.getPermissionsByRoleId(roleId));
   }
 
 
@@ -166,7 +165,7 @@ public class PermissionController {
 
   @GetMapping("/selectParent")
   @ResponseBody
-  public TreeResult selectParent() {
+  public TreeResponse selectParent() {
     return permissionService.selectParent();
 
   }

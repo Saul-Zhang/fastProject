@@ -87,7 +87,7 @@
 
         dtree.renderSelect({
             elem: "#selectParent",
-            url: rootPath+"/SysDepartmentController/selectParent",
+            url: rootPath+"/DepartmentController/selectParent",
             method: 'get',
             selectInputName: {nodeId: "parentId"},
             skin: "layui",
@@ -100,7 +100,7 @@
         form.on('submit(department-save)', function (data) {
             data.field.icon = "layui-icon " + data.field.icon;
             $.ajax({
-                url: rootPath+'/SysDepartmentController/add',
+                url: rootPath+'/DepartmentController/add',
                 data: JSON.stringify(data.field),
                 dataType: 'json',
                 contentType: 'application/json',

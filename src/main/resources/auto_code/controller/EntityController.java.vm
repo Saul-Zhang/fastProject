@@ -1,8 +1,7 @@
-package ${parentPack}.controller.gen;
+package ${parentPack}.controller.admin;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 
-import ${parentPack}.common.base.BaseController;
 import ${parentPack}.common.domain.AjaxResult;
 import ${parentPack}.common.domain.ResultTable;
 import ${parentPack}.model.auto.${tableInfo.javaTableName};
@@ -38,28 +37,24 @@ import com.fastproject.common.conf.oss.OssConfig;
 #end
 
 /**
- * ${tableInfo.tableComment}Controller
  * @author ${author}
  * @date ${datetime}
  */
-@Api(value = "${tableInfo.tableComment}")
 @Controller
 @RequestMapping("/${tableInfo.javaTableName}Controller")
 @RequiredArgsConstructor
-public class ${tableInfo.javaTableName}Controller extends BaseController {
+public class ${tableInfo.javaTableName}Controller {
 
-  private String final prefix ="gen/${tableInfo.javaTableName_a}";
+  private String final prefix ="system/${tableInfo.javaTableName_a}";
 
-  @Autowired
-  private ${tableInfo.javaTableName}Service ${tableInfo.javaTableName_a}Service;
+  private final ${tableInfo.javaTableName}Service ${tableInfo.javaTableName_a}Service;
 
 
   /**
    * ${tableInfo.tableComment}页面展示
    */
-  @ApiOperation(value = "分页跳转", notes = "分页跳转")
   @GetMapping("/view")
-  @SaCheckPermission("gen:${tableInfo.javaTableName_a}:view")
+  @SaCheckPermission("system:${tableInfo.javaTableName_a}:view")
       #if($isupload==true)
       @OssConfig
       #end
@@ -72,7 +67,7 @@ public class ${tableInfo.javaTableName}Controller extends BaseController {
    */
   @ApiOperation(value = "分页跳转", notes = "分页跳转")
   @GetMapping("/list")
-  @SaCheckPermission("gen:${tableInfo.javaTableName_a}:list")
+  @SaCheckPermission("system:${tableInfo.javaTableName_a}:list")
   @ResponseBody
   public ResultTable list(
       Tablepar tablepar,${tableInfo.javaTableName} ${tableInfo.javaTableName_a}) {
@@ -98,7 +93,7 @@ public class ${tableInfo.javaTableName}Controller extends BaseController {
    */
   @ApiOperation(value = "新增", notes = "新增")
   @PostMapping("/add")
-  @SaCheckPermission("gen:${tableInfo.javaTableName_a}:add")
+  @SaCheckPermission("system:${tableInfo.javaTableName_a}:add")
   @ResponseBody
   public AjaxResult add(${tableInfo.javaTableName} ${tableInfo.javaTableName_a}) {
     int b = ${tableInfo.javaTableName_a}Service.insertSelective(${tableInfo.javaTableName_a});
@@ -114,7 +109,7 @@ public class ${tableInfo.javaTableName}Controller extends BaseController {
    */
   @ApiOperation(value = "删除", notes = "删除")
   @DeleteMapping("/remove")
-  @SaCheckPermission("gen:${tableInfo.javaTableName_a}:remove")
+  @SaCheckPermission("system:${tableInfo.javaTableName_a}:remove")
   @ResponseBody
   public AjaxResult remove(String ids) {
     int b = ${tableInfo.javaTableName_a}Service.deleteByPrimaryKey(ids);
@@ -145,7 +140,7 @@ public class ${tableInfo.javaTableName}Controller extends BaseController {
    * 修改保存
    */
   @ApiOperation(value = "修改保存", notes = "修改保存")
-  @SaCheckPermission("gen:${tableInfo.javaTableName_a}:edit")
+  @SaCheckPermission("system:${tableInfo.javaTableName_a}:edit")
   @PostMapping("/edit")
   @ResponseBody
   public AjaxResult editSave(${tableInfo.javaTableName} ${tableInfo.javaTableName_a}) {
@@ -157,7 +152,7 @@ public class ${tableInfo.javaTableName}Controller extends BaseController {
   /**
    * 修改状态
    */
-  @PutMapping("/updateVisible")
+  @PutMapping("/updateStatus")
   @ResponseBody
   public AjaxResult updateVisible(
       @RequestBody ${tableInfo.javaTableName} ${tableInfo.javaTableName_a}) {
