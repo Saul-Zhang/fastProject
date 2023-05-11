@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.fastproject.common.mybatis.QueryWrapperX;
 import com.fastproject.model.User;
+import com.fastproject.model.request.query.UserQuery;
 import com.fastproject.model.response.UserResponse;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
@@ -24,4 +25,6 @@ public interface UserMapper extends BaseMapper<User> {
       + "         LEFT JOIN def_department d ON u.dept_id = d.id "
       + " ${ew.customSqlSegment}")
   List<UserResponse> getUsers(@Param(Constants.WRAPPER) QueryWrapperX<User> queryWrapper);
+
+  List<UserResponse> getAll(@Param("e") UserQuery query);
 }

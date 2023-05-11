@@ -52,11 +52,7 @@ public class UserService {
    */
   public PageInfo<UserResponse> list(UserQuery query) {
     PageHelper.startPage(query.getPage(), query.getLimit());
-    QueryWrapperX<User> queryWrapperX = new QueryWrapperX<User>()
-        .likeIfPresent("employee_id", query.getEmployeeId())
-        .likeIfPresent("real_name", query.getRealName())
-        .eqIfPresent("u.status", query.getStatus());
-    return new PageInfo<>(userMapper.getUsers(queryWrapperX));
+    return new PageInfo<>(userMapper.getAll(query));
   }
 
 
