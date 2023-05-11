@@ -12,36 +12,36 @@
       margin-top: 20px;
     }
 
-    .button {
-      margin-top: 10px;
-      width: 94%;
-      margin-left: 3%;
-      display: block;
-      height: 40px;
-      line-height: 40px;
-      padding: 0 15px;
-      white-space: nowrap;
-      text-align: center;
-      font-size: 14.5px;
-      border: none;
-      cursor: pointer;
-      box-sizing: border-box;
-      display: inline-block;
-      outline: 0;
-      border-radius: 2px;
-      -webkit-appearance: none;
-      box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.15);
-    }
+    /*.button {*/
+    /*  margin-top: 10px;*/
+    /*  width: 94%;*/
+    /*  margin-left: 3%;*/
+    /*  display: block;*/
+    /*  height: 40px;*/
+    /*  line-height: 40px;*/
+    /*  padding: 0 15px;*/
+    /*  white-space: nowrap;*/
+    /*  text-align: center;*/
+    /*  font-size: 14.5px;*/
+    /*  border: none;*/
+    /*  cursor: pointer;*/
+    /*  box-sizing: border-box;*/
+    /*  display: inline-block;*/
+    /*  outline: 0;*/
+    /*  border-radius: 2px;*/
+    /*  -webkit-appearance: none;*/
+    /*  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.15);*/
+    /*}*/
 
-    .button-primary {
+ /*   .button-primary {
       background-color: #5FB878;
       color: white;
-    }
+    }*/
 
-    .button-default {
+/*    .button-default {
       color: #2f495e;
       background-color: #edf2f7;
-    }
+    }*/
   </style>
   <style>
     .user-main {
@@ -54,11 +54,11 @@
       float: left;
     }
 
-    .user-collasped.user-main {
+   /* .user-collasped.user-main {
       width: 100%;
     }
-
-    .user-collasped.user-left {
+*/
+    /*.user-collasped.user-left {
       width: 0px;
     }
 
@@ -68,7 +68,7 @@
 
     .layui-layer-tips {
       display: none
-    }
+    }*/
 
     /* 设置下拉框的高度与表格单元相同 */
     td .layui-form-select {
@@ -89,8 +89,6 @@
   </div>
 </div>
 <div class="user-main">
-
-
   <div class="layui-card">
     <div class="layui-card-body">
       <form class="layui-form" action="" lay-filter="user_form">
@@ -150,23 +148,30 @@
   <button sa:hasPermission="system:department:remove" class="pear-btn pear-btn-danger pear-btn-md"
           lay-event="removeDepartment">
     <i class="layui-icon layui-icon-delete"></i>
-    删除部门
+    删除此部门
   </button>
-  <button sa:hasPermission="system:department:edit" class="pear-btn pear-btn-danger pear-btn-md"
+  <button sa:hasPermission="system:department:edit" class="pear-btn pear-btn-primary pear-btn-md"
           lay-event="editDepartment">
     <i class="layui-icon layui-icon-edit"></i>
-    编辑部门
+    编辑此部门
   </button>
 </script>
 
 <script type="text/html" id="user-bar">
-  <button sec:authorize="hasPermission('/system/user/edit','sys:user:edit')"
-          class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i
-      class="pear-icon pear-icon-edit"></i>
-  </button>
-  <button sec:authorize="hasPermission('/system/user/remove','sys:user:remove')"
-          class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i
-      class="pear-icon pear-icon-ashbin"></i>
+<!--  <button sec:authorize="hasPermission('/system/user/edit','sys:user:edit')"-->
+<!--          class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i-->
+<!--      class="pear-icon pear-icon-edit"></i>-->
+<!--  </button>-->
+<!--  <button sec:authorize="hasPermission('/system/user/remove','sys:user:remove')"-->
+<!--          class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i-->
+<!--      class="pear-icon pear-icon-ashbin"></i>-->
+<!--  </button>-->
+<button sa:hasPermission="system:user:edit" class="pear-btn pear-btn-primary pear-btn-sm"
+        lay-event="editUser"><i class="layui-icon layui-icon-edit"></i>
+</button>
+
+  <button sa:hasPermission="system:user:remove" class="pear-btn pear-btn-danger pear-btn-sm"
+          lay-event="removeUser"><i class="layui-icon layui-icon-delete"></i>
   </button>
 </script>
 
@@ -226,10 +231,10 @@
       height: 'full',
       url: MODULE_PATH + "/list",
       dataFormat: "list",//配置data的风格为list
+      // 隐藏最后一级节点图标
       icon: ["0", "-1"],
-      line: true,//开启树线
-      record: true,
-      // response: {treeId: "id", parentId: "parentId", title: "tableAndName"}
+      // line: true,//开启树线
+      // record: true,
     });
 
     //tree点击事件
@@ -242,17 +247,29 @@
 
     table.on('tool(user-table)', function (obj) {
       if (obj.event === 'removeUser') {
+        console.log('obj.event ===  removeUser')
+        window.removeUser(obj);
+      } else if (obj.event === 'editUser') {
+        window.editUser(obj);
+      }
+    });
+
+    table.on('toolbar(user-table)', function (obj) {
+      if (obj.event === 'removeUser') {
+        console.log('obj.event ===  removeUser')
         window.removeUser(obj);
       } else if (obj.event === 'editUser') {
         window.editUser(obj);
       } else if (obj.event === 'addUser') {
-        window.addUser(obj);
+        window.addUser();
       } else if (obj.event === 'removeDepartment') {
-        window.removeDepartment(obj);
+        window.removeDepartment();
       } else if (obj.event === 'editDepartment') {
-        window.editDepartment(obj);
+        window.editDepartment();
       } else if (obj.event === 'addDepartment') {
-        window.addDepartment(obj);
+        window.addDepartment();
+      } else if (obj.event === 'refresh') {
+        window.refresh(form.val("user_query"));
       }
     });
 
@@ -336,11 +353,11 @@
         title: '新增',
         shade: 0.1,
         area: ['450px', '500px'],
-        content: MODULE_PATH + 'add'
+        content: MODULE_PATH + '/add'
       });
     }
 
-    window.editDepartment = function (obj) {
+    window.editDepartment = function () {
       if (departmentId === '') {
         layer.msg('请选择要操作的部门！', {icon: 5, time: 1000} );
         return;
@@ -350,7 +367,7 @@
         title: '修改',
         shade: 0.1,
         area: ['450px', '500px'],
-        content: MODULE_PATH + 'edit/' + departmentId
+        content: MODULE_PATH + '/edit/' + departmentId
       });
     }
 
@@ -363,7 +380,7 @@
         layer.close(index);
         let loading = layer.load();
         $.ajax({
-          url: MODULE_PATH + "remove?ids=" + departmentId,
+          url: MODULE_PATH + "/remove?ids=" + departmentId,
           dataType: 'json',
           type: 'delete',
           success: function (result) {

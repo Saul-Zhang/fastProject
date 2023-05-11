@@ -1,7 +1,7 @@
 
 /**************** 主题换肤  ****************/
 /* 默认风格*/
-.dtree-theme-item-this{color: green!important;}
+.dtree-theme-item-this{/* color: green!important; */background-color:#36b368!important;}
 .dtree-theme-item:hover{color: green!important;}
 .dtree-theme-item cite{font-size:12px!important;}
 .dtree-theme-item:hover cite{color: green!important;}
