@@ -118,8 +118,11 @@
             selectInputName: {nodeId: "deptId"},
             skin: "layui",
             dataFormat: "list",
-            response: {treeId: "id", parentId: "parentId", title: "name"},
-            selectInitVal: "1"
+            checkbar: true,
+            checkbarType: "self",
+            // response: {treeId: "id", parentId: "parentId", title: "name"},
+            selectInitVal: "1",
+            // data:  JSON.stringify([[${departments}]])
         });
 
         //名称验证

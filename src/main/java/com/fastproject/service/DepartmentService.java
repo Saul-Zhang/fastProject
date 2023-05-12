@@ -1,12 +1,16 @@
 package com.fastproject.service;
 
-import com.fastproject.common.mybatis.LambdaQueryWrapperX;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fastproject.mapper.DepartmentMapper;
+import com.fastproject.mapper.RelationDepartmentUserMapper;
 import com.fastproject.model.Department;
+import com.fastproject.model.RelationDepartmentUser;
 import com.fastproject.model.request.query.DepartmentQuery;
 import com.fastproject.model.response.AjaxResult;
 import com.fastproject.model.response.LayUiTree;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class DepartmentService {
 
   private final DepartmentMapper departmentMapper;
+  private final RelationDepartmentUserMapper departmentUserMapper;
 
 //  /**
 //   * 分页查询
@@ -40,9 +45,49 @@ public class DepartmentService {
 //  }
 
   public List<Department> getAll() {
-    return departmentMapper.selectList(
-        new LambdaQueryWrapperX<Department>().eq(Department::getStatus, 1));
+    return departmentMapper.selectList(null);
   }
+
+  public Set<Long> getDepartmentIdByUserId(Long userId){
+    if (userId == null) {
+      return new HashSet<>();
+    }
+    return departmentUserMapper.selectList(new LambdaQueryWrapper<RelationDepartmentUser>()
+        .select(RelationDepartmentUser::getDepartmentId)
+        .eq(RelationDepartmentUser::getUserId, userId)).stream().map(
+        RelationDepartmentUser::getDepartmentId).collect(Collectors.toSet());
+  }
+
+  public List<LayUiTree> getAllTree() {
+    return departmentMapper.selectList(
+            new LambdaQueryWrapper<Department>()
+                .select(Department::getId, Department::getParentId, Department::getName))
+        .stream().map(department -> {
+          LayUiTree tree = new LayUiTree();
+          tree.setId(department.getId());
+          tree.setParentId(department.getParentId());
+          tree.setTitle(department.getName());
+          return tree;
+        }).collect(Collectors.toList());
+  }
+
+  public List<LayUiTree> getTreeByUser(Long userId) {
+    Set<Long> departmentIds = getDepartmentIdByUserId(userId);
+    return departmentMapper.selectList(
+            new LambdaQueryWrapper<Department>()
+                .select(Department::getId, Department::getParentId, Department::getName))
+        .stream().map(department -> {
+          LayUiTree tree = new LayUiTree();
+          tree.setId(department.getId());
+          tree.setParentId(department.getParentId());
+          tree.setTitle(department.getName());
+          if (departmentIds.contains(department.getId())){
+            tree.setCheckArr("1");
+          }
+          return tree;
+        }).collect(Collectors.toList());
+  }
+
 
   public List<LayUiTree> list(DepartmentQuery query) {
     return departmentMapper.selectList(null).stream()

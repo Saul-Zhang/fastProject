@@ -5,9 +5,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.fastproject.common.conf.FastProperties;
-import com.fastproject.model.response.AjaxResult;
 import com.fastproject.common.mybatis.LambdaQueryWrapperX;
-import com.fastproject.common.mybatis.QueryWrapperX;
 import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.RelationRoleUserMapper;
 import com.fastproject.mapper.RoleMapper;
@@ -17,6 +15,7 @@ import com.fastproject.model.User;
 import com.fastproject.model.constant.Status;
 import com.fastproject.model.custom.RoleVo;
 import com.fastproject.model.request.query.UserQuery;
+import com.fastproject.model.response.AjaxResult;
 import com.fastproject.model.response.UserResponse;
 import com.fastproject.satoken.SaTokenUtil;
 import com.fastproject.util.MD5Util;
@@ -46,6 +45,8 @@ public class UserService {
   private final RelationRoleUserMapper roleUserMapper;
 
   private final RoleMapper roleMapper;
+
+  private final DepartmentService departmentService;
 
   /**
    * 分页查询
@@ -107,7 +108,7 @@ public class UserService {
   /**
    * 获取所有权限 并且增加是否有权限字段
    */
-  public List<RoleVo> getRolesByUserId(String userId) {
+  public List<RoleVo> getRolesByUserId(Long userId) {
     List<RoleVo> list = new ArrayList<>();
     roleMapper.selectList(null).forEach(
         role -> {
@@ -121,10 +122,12 @@ public class UserService {
     return list;
   }
 
-  public User getUserById(String userId) {
-    return userMapper.selectById(userId);
+  public UserResponse getUserById(Long userId) {
+    UserResponse userResponse = userMapper.selectById(userId);
+    userResponse.setDepartmentIds(
+        StringUtils.join(departmentService.getDepartmentIdByUserId(userId), ","));
+    return userResponse;
   }
-
 
   /**
    * 修改用户密码
@@ -160,7 +163,7 @@ public class UserService {
     StpUtil.getSessionByLoginId(record.getId()).delete("Role_List");
 
     //修改用户信息
-     userMapper.updateById(record);
+    userMapper.updateById(record);
     return AjaxResult.success();
   }
 

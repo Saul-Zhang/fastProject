@@ -4,7 +4,6 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fastproject.model.Department;
 import com.fastproject.model.request.query.DepartmentQuery;
 import com.fastproject.model.response.AjaxResult;
-import com.fastproject.model.response.PageResponse;
 import com.fastproject.model.response.TreeResponse;
 import com.fastproject.service.DepartmentService;
 import java.util.List;
@@ -26,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequiredArgsConstructor
 public class DepartmentController {
 
-  private final String prefix = "admin/department";
+  private final String prefix = "admin/department" ;
   private final DepartmentService departmentService;
 
   /**
@@ -35,7 +34,7 @@ public class DepartmentController {
   @GetMapping("/view")
   @SaCheckPermission("system:department:view")
   public String view(ModelMap model) {
-    return prefix + "/list";
+    return prefix + "/list" ;
   }
 
   /**
@@ -54,7 +53,7 @@ public class DepartmentController {
    */
   @GetMapping("/add")
   public String add(ModelMap modelMap) {
-    return prefix + "/add";
+    return prefix + "/add" ;
   }
 
   /**
@@ -87,8 +86,8 @@ public class DepartmentController {
   public String edit(@PathVariable("id") Long id, ModelMap mmap) {
     Department department = departmentService.selectById(id);
 
-    mmap.put("department", department);
-    return prefix + "/edit";
+    mmap.put("department" , department);
+    return prefix + "/edit" ;
   }
 
   /**
@@ -109,7 +108,6 @@ public class DepartmentController {
     return TreeResponse.treeData(departmentService.selectAll());
   }
 
-
 //  /**
 //   * 根据主键查询
 //   *
@@ -118,28 +116,26 @@ public class DepartmentController {
 //   * @return
 //   */
 //  @PostMapping("/get/{id}")
-//  @ApiOperation(value = "根据id查询唯一", notes = "根据id查询唯一")
 //  public Department edit(@PathVariable("id") String id) {
 //    return departmentService.selectByPrimaryKey(id);
 //  }
-//
-//  /**
-//   * Describe: 获取部门树状数据结构
-//   */
-//  @GetMapping("tree")
-//  @ApiOperation(value = "获取部门树状数据结构", notes = "获取部门树状数据结构")
-//  @ResponseBody
-//  public TreeResult tree() {
-//    return dataTree(departmentService.getAll());
-//  }
+
+  /**
+   * 获取部门树状数据结构
+   */
+  @GetMapping("tree")
+  @ResponseBody
+  public TreeResponse tree(@RequestParam(required = false) Long userId) {
+    return TreeResponse.treeData(departmentService.getTreeByUser(userId));
+  }
+
   /**
    * 修改状态
    */
   @PutMapping("/updateStatus")
   @ResponseBody
   public AjaxResult updateStatus(@RequestParam Long id, Character status) {
-    return departmentService.updateStatus(id,status );
+    return departmentService.updateStatus(id, status);
   }
-
 
 }

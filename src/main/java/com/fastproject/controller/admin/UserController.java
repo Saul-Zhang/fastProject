@@ -2,13 +2,13 @@ package com.fastproject.controller.admin;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fastproject.common.annotation.Log;
-import com.fastproject.model.Department;
 import com.fastproject.model.Position;
 import com.fastproject.model.Role;
 import com.fastproject.model.User;
 import com.fastproject.model.custom.RoleVo;
 import com.fastproject.model.request.query.UserQuery;
 import com.fastproject.model.response.AjaxResult;
+import com.fastproject.model.response.LayUiTree;
 import com.fastproject.model.response.PageResponse;
 import com.fastproject.model.response.UserResponse;
 import com.fastproject.service.DepartmentService;
@@ -83,14 +83,13 @@ public class UserController {
     //添加角色列表
     List<Role> roleList = roleService.getAll();
     //部门列表
-    List<Department> departments = departmentService.getAll();
+    List<LayUiTree> departments = departmentService.getTreeByUser(null);
     //岗位列表
     List<Position> positions = positionService.getAll();
     //角色
     modelMap.put("roles", roleList);
     //部门
     modelMap.put("departments", departments);
-    //岗位
     modelMap.put("positions", positions);
     modelMap.put("genders", dictCacheService.getDict("gender"));
     return prefix + "/add";
@@ -122,29 +121,18 @@ public class UserController {
   }
 
   /**
-   * 检查用户
-   */
-  @ApiOperation(value = "检查Name唯一", notes = "检查Name唯一")
-  @PostMapping("/checkLoginNameUnique")
-  @ResponseBody
-  public int checkLoginNameUnique(String username) {
-    return userService.checkLoginNameUnique(username);
-  }
-
-
-  /**
    * 修改用户跳转
    */
   @ApiOperation(value = "修改跳转", notes = "修改跳转")
   @GetMapping("/edit/{id}")
-  public String edit(@PathVariable("id") String userId, ModelMap modelMap) {
-    List<RoleVo> roleVos = userService.getRolesByUserId(userId);
+  public String edit(@PathVariable("id") Long userId, ModelMap modelMap) {
 
-    modelMap.put("roleVos", roleVos);
+    modelMap.put("roleVos", userService.getRolesByUserId(userId));
     modelMap.put("user", userService.getUserById(userId));
     //岗位
     modelMap.put("positions", positionService.getAll());
     modelMap.put("genders", dictCacheService.getDict("gender"));
+//    modelMap.put("departments", departmentService.getDepartmentIdByUserId(userId));
     return prefix + "/edit";
   }
 
@@ -168,7 +156,7 @@ public class UserController {
   //@Log(title = "修改用户密码", action = "1")
   @ApiOperation(value = "修改用户密码跳转", notes = "修改用户密码跳转")
   @GetMapping("/editPwd/{id}")
-  public String editPwd(@PathVariable("id") String id, ModelMap modelMap) {
+  public String editPwd(@PathVariable("id") Long id, ModelMap modelMap) {
     modelMap.put("user", userService.getUserById(id));
     return prefix + "/editPwd";
   }

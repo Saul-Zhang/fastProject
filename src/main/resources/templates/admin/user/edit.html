@@ -119,13 +119,15 @@
     //部门树
     dtree.renderSelect({
       elem: "#selectParent",
-      url: DEPAR_PATH + "/tree",
+      url: DEPAR_PATH + "/tree?userId=" + [[${user.id}]],
       method: 'get',
-      selectInputName: {nodeId: "deptId"},
+      // selectInputName: {nodeId: "deptId"},
       skin: "layui",
       dataFormat: "list",
-      response: {treeId: "id", parentId: "parentId", title: "name"},
-      selectInitVal: "[[${user.deptId}]]"
+      checkbar: true,
+      checkbarType: "self",
+      // 指定默认值
+      selectInitVal: "[[${user.departmentIds}]]"
     });
 
     //名称验证

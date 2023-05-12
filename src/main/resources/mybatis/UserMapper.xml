@@ -39,6 +39,8 @@
     LEFT JOIN (<include refid="selectDepartment"/>) d
     ON u.id=d.user_id
   </sql>
+
+
   <select id="getAll" resultType="UserResponse">
     SELECT u.*,
     p.NAME AS posName
@@ -61,5 +63,8 @@
         and du.department_id = #{e.departmentId}
       </if>
     </where>
+  </select>
+  <select id="selectById" resultType="UserResponse">
+    select * from def_user where id=#{id}
   </select>
 </mapper>

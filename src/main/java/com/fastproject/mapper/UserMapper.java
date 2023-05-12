@@ -27,4 +27,6 @@ public interface UserMapper extends BaseMapper<User> {
   List<UserResponse> getUsers(@Param(Constants.WRAPPER) QueryWrapperX<User> queryWrapper);
 
   List<UserResponse> getAll(@Param("e") UserQuery query);
+
+  UserResponse selectById(Long id);
 }
