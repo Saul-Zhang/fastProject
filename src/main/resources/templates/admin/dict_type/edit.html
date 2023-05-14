@@ -4,7 +4,7 @@
     <th:block th:include="include :: header('字典类型修改')"/>
 </head>
 <body>
-<form class="layui-form" action=""  th:object="${TSysDictType}">
+<form class="layui-form" action=""  th:object="${dictType}">
     <div class="mainBox">
         <div class="main-container">
             <div class="main-container">
@@ -18,13 +18,13 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">字典名称</label>
                     <div class="layui-input-block">
-                        <input th:value="*{dictName}" type="text" name="dictName" autocomplete="off" placeholder="拦截名称" class="layui-input">
+                        <input th:value="*{name}" type="text" name="dictName" autocomplete="off" placeholder="拦截名称" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">字典名称</label>
+                    <label class="layui-form-label">字典编码</label>
                     <div class="layui-input-block">
-                        <input th:value="*{dictType}" type="text" name="dictType" lay-verify="dictType" autocomplete="off" placeholder="拦截名称" class="layui-input">
+                        <input th:value="*{code}" type="text" name="dictType" lay-verify="dictType" autocomplete="off" placeholder="拦截名称" class="layui-input">
                     </div>
                 </div>
 
@@ -32,8 +32,8 @@
                     <label class="layui-form-label">状态</label>
                     <div class="layui-input-block">
                         <select name="status" id="status" th:field="*{status}">
-                            <option value="0">正常</option>
-							<option value="1">停用</option>
+                            <option value="1">正常</option>
+							<option value="0">停用</option>
                         </select>
                     </div>
                 </div>
@@ -42,7 +42,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">备注</label>
                     <div class="layui-input-block">
-                        <input th:value="*{remark}" type="remark" name="remark" autocomplete="off"  class="layui-input" placeholder="拦截URL">
+                        <input th:value="*{remark}" type="remark" name="remark" autocomplete="off"  class="layui-input" placeholder="备注">
                     </div>
                 </div>
 

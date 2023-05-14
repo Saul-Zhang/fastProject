@@ -13,7 +13,7 @@ import com.fastproject.model.response.PageResponse;
 import com.fastproject.model.response.TreeResponse;
 import com.fastproject.service.DictService;
 import com.fastproject.service.GeneratorService;
-import com.fastproject.service.SysDictTypeService;
+import com.fastproject.service.DictTypeService;
 import com.fastproject.util.AutoCode.AutoCodeUtil;
 import io.swagger.annotations.ApiOperation;
 import java.io.ByteArrayOutputStream;
@@ -47,7 +47,7 @@ public class AutoCodeController {
   private final String prefix = "admin/autoCode";
   private final GeneratorService generatorService;
 
-  private final SysDictTypeService tSysDictTypeService;
+  private final DictTypeService tDictTypeService;
 
   private final DictService dictService;
 

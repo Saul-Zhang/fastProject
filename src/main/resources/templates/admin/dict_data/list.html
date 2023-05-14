@@ -73,21 +73,20 @@
         let table = layui.table;
         let form = layui.form;
         let $ = layui.jquery;
-        let dictId= '[[${dictId}]]';
+        let code= '[[${code}]]';
 
         let MODULE_PATH = rootPath+"/DictDataController";
         let typeUrl= rootPath+"/DictTypeController/view";
         let cols = [
             [
                 {type: 'checkbox'},
-                {title: 'ID', field: 'id', align: 'center'},
-                {title: '字典排序', field: 'dictSort', align: 'left'},
                 {title: '字典标签', field: 'dictLabel', align: 'left'},
-                {title: '字典键值', field: 'dictValue', align: 'left'},
-                {title: '字典类型', field: 'dictType', align: 'left'},
+                {title: '字典键值', field: 'value', align: 'left'},
+                {title: '字典编码', field: 'code', align: 'left'},
+                {title: '排序', field: 'dictSort', align: 'left'},
                 {title: '是否默认', field: 'isDefault', align: 'left',toolbar: '#dictData-isDefault'},
                 {title: '状态', field: 'status', align: 'left',toolbar: '#dictData-enable'},
-                {title: '创建者', field: 'createBy', align: 'left'},
+                // {title: '创建者', field: 'createBy', align: 'left'},
                 {title: '创建时间', field: 'createTime', align: 'left'},
                 {title: '备注', field: 'remark', align: 'left'},
                 {title: '操作', toolbar: '#dictData-bar', align: 'left',width:150}
@@ -97,7 +96,7 @@
         //table表单列表
         table.render({
             elem: '#dictData-table',
-            url: MODULE_PATH + '/list?dictId='+dictId,
+            url: MODULE_PATH + '/list?code='+code,
             page: true,
             method: 'get',
             cols: cols,
@@ -145,7 +144,7 @@
                 title: '新增',
                 shade: 0.1,
                 area: ['500px', '500px'],
-                content: MODULE_PATH + '/add?dictId=[[${dictId}]]'
+                content: MODULE_PATH + '/add?code=[[${code}]]'
             });
         }
         //修改

@@ -1,7 +1,7 @@
 package com.fastproject.service;
 
 import com.fastproject.mapper.DictDataMapper;
-import com.fastproject.mapper.TSysDictTypeMapper;
+import com.fastproject.mapper.DictTypeMapper;
 import com.fastproject.model.DictData;
 import com.fastproject.model.DictType;
 
@@ -17,7 +17,7 @@ public class DictService {
 	private DictDataMapper dictDataMapper;
 	
 	@Autowired
-	private TSysDictTypeMapper dictTypeMapper;
+	private DictTypeMapper dictTypeMapper;
 
 	/**
 	 * 根据字典类型查询字典数据信息

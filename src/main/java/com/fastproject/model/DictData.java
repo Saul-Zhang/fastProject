@@ -23,7 +23,7 @@ public class DictData implements Serializable {
 	/**
 	 * 字典数据表id
 	 */
-	private String id;
+	private Long id;
 
 	/**
 	 * 字典排序

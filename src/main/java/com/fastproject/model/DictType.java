@@ -1,6 +1,8 @@
 
 package com.fastproject.model;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
@@ -10,7 +12,7 @@ import lombok.Data;
 /**
  * 字典类型表
  */
-@TableName("def_dic_type")
+@TableName("def_dict_type")
 @Data
 public class DictType implements Serializable {
 
@@ -19,7 +21,7 @@ public class DictType implements Serializable {
   /**
    * 主键
    **/
-  private String id;
+  private Long id;
 
   /**
    * 字典名称
@@ -45,17 +47,14 @@ public class DictType implements Serializable {
    * 创建时间
    **/
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+  @TableField(fill = FieldFill.INSERT)
   private Date createTime;
-
-  /**
-   * 更新者
-   **/
-  private String updateBy;
 
   /**
    * 更新时间
    **/
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+  @TableField(fill = FieldFill.INSERT_UPDATE)
   private Date updateTime;
 
   /**
