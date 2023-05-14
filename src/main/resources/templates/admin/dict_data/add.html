@@ -11,18 +11,18 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">字典标签</label>
                     <div class="layui-input-block">
-                        <input type="text" name="dictLabel" lay-verify="dictLabel" autocomplete="off" placeholder="字典名称" class="layui-input">
+                        <input type="text" name="label" lay-verify="label" autocomplete="off" placeholder="字典标签" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">字典键值</label>
                     <div class="layui-input-block">
-                        <input type="text" name="dictValue" autocomplete="off"  class="layui-input" placeholder="字典键值">
+                        <input type="text" name="value" autocomplete="off"  class="layui-input" placeholder="字典键值">
                     </div>
                 </div>
 
                 <div class="layui-form-item">
-                    <label class="layui-form-label">字典类型</label>
+                    <label class="layui-form-label">字典编码</label>
                     <div class="layui-input-block">
                         <input th:value="*{code}" disabled type="text" name="code"  autocomplete="off"  class="layui-input layui-btn-disabled" placeholder="字典类型">
                     </div>
@@ -36,7 +36,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">字典排序</label>
                     <div class="layui-input-block">
-                        <input type="number" name="dictSort" autocomplete="off"  class="layui-input" placeholder="字典排序">
+                        <input type="number" name="sortNum" autocomplete="off"  class="layui-input" placeholder="字典排序">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -66,8 +66,8 @@
                     <label class="layui-form-label">状态</label>
                     <div class="layui-input-block">
                         <select name="dataStatus" id="dataStatus">
-                            <option value="0">正常</option>
-							<option value="1">停用</option>
+                            <option value="1">启用</option>
+							<option value="0">停用</option>
                         </select>
                     </div>
                 </div>

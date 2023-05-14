@@ -26,3 +26,8 @@
 @import url("pear-module/step.css");
 @import url("pear-module/tab.css");
 @import url("pear-module/tag.css");
+
+label.required:after {   /* 给红色的必填项打红色星号（文字后）如果打前面用before*/
+  content: ' *';
+  color: red;
+}

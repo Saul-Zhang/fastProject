@@ -38,7 +38,7 @@ public class DictCacheService {
             new LambdaQueryWrapperX<DictData>().eq(DictData::getStatus, "0"))
         .stream().collect(
             Collectors.groupingBy(DictData::getCode,
-                Collectors.toMap(DictData::getValue, DictData::getDictLabel))
+                Collectors.toMap(DictData::getValue, DictData::getLabel))
         );
   }
 

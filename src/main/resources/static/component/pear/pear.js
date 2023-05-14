@@ -36,7 +36,7 @@ layui.config({
 	cropper:"cropper",
 	yaml:"yaml",
 	theme: "theme",
-	message: "message"		// 通知组件
+	message: "message",		// 通知组件
 }).use(['layer', 'theme'], function () {
 	layui.theme.changeTheme(window, false);
 });

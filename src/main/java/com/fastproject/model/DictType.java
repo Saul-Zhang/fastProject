@@ -34,19 +34,14 @@ public class DictType implements Serializable {
   private String code;
 
   /**
-   * 状态（0正常 1停用）
+   * 状态（1正常 0停用）
    **/
   private Character status;
 
   /**
-   * 创建者
-   **/
-  private String createBy;
-
-  /**
    * 创建时间
    **/
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+//  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
   @TableField(fill = FieldFill.INSERT)
   private Date createTime;
 

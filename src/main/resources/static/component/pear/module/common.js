@@ -4,17 +4,27 @@ layui.define(["layer", "jquery","table"], function (exports) {
     var $ = layui.jquery;
     var table = layui.table;
     var obj = {
-        checkField: function(obj, field) {
+        checkField: function(obj) {
             let data = table.checkStatus(obj.config.id).data;
             if (data.length === 0) {
-                return "";
+                layer.msg("未选中数据", {icon: 3, time: 1000});
+                return false;
             }
-            let ids = "";
+            let ids = [];
             for (let i = 0; i < data.length; i++) {
-                ids += data[i][field] + ",";
+                ids.push(data[i].id);
             }
-            ids = ids.substr(0, ids.length - 1);
             return ids;
+            // let data = table.checkStatus(obj.config.id).data;
+            // if (data.length === 0) {
+            //     return "";
+            // }
+            // let ids = "";
+            // for (let i = 0; i < data.length; i++) {
+            //     ids += data[i][field] + ",";
+            // }
+            // ids = ids.substr(0, ids.length - 1);
+            // return ids;
         },
         resizeTable:function(tableId){
             layui.table.resize(tableId);

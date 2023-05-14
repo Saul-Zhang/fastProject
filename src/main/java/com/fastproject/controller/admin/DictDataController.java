@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Api(value = "字典数据表")
@@ -137,16 +138,11 @@ public class DictDataController {
 
   /**
    * 修改是否启用
-   *
-   * @param record
-   * @return
    */
   @PutMapping("/updateEnable")
   @ResponseBody
-  public AjaxResult updateEnable(@RequestBody DictData record) {
-//    int i = tSysDictDataService.updateByPrimaryKeySelective(record);
-//    return toAjax(i);
-    return null;
+  public AjaxResult updateStatus(@RequestParam Long id, @RequestParam Character status) {
+    return dictDataService.updateStatus(id, status);
   }
 
 }

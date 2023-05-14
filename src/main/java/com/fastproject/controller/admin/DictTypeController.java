@@ -76,28 +76,9 @@ public class DictTypeController {
   @DeleteMapping("/remove")
   @SaCheckPermission("system:dictType:remove")
   @ResponseBody
-  public AjaxResult remove(List<Long> ids) {
+  public AjaxResult remove(@RequestParam List<Long> ids) {
     return dictTypeService.deleteByIds(ids);
   }
-
-//  /**
-//   * 检查字典类型名字相同
-//   *
-//   * @param dictType
-//   * @return
-//   */
-//  @ApiOperation(value = "检查Name唯一", notes = "检查Name唯一")
-//  @PostMapping("/checkNameUnique")
-//  @ResponseBody
-//  public int checkNameUnique(DictType dictType) {
-//    int b = tSysDictTypeService.checkNameUnique(dictType);
-//    if (b > 0) {
-//      return 1;
-//    } else {
-//      return 0;
-//    }
-//  }
-//
 
   /**
    * 修改跳转

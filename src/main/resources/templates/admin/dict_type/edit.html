@@ -16,15 +16,15 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">字典名称</label>
+                    <label class="layui-form-label" >字典名称</label>
                     <div class="layui-input-block">
-                        <input th:value="*{name}" type="text" name="dictName" autocomplete="off" placeholder="拦截名称" class="layui-input">
+                        <input th:value="*{name}" type="text" name="code" autocomplete="off" placeholder="字典名称" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">字典编码</label>
+                    <label class="layui-form-label required">字典编码</label>
                     <div class="layui-input-block">
-                        <input th:value="*{code}" type="text" name="dictType" lay-verify="dictType" autocomplete="off" placeholder="拦截名称" class="layui-input">
+                        <input th:value="*{code}" type="text" name="code" lay-verify="required" autocomplete="off" placeholder="字典编码" class="layui-input">
                     </div>
                 </div>
 
@@ -68,7 +68,6 @@
     layui.use(['form', 'jquery'], function () {
         let form = layui.form;
         let $ = layui.jquery;
-        let dtree = layui.dtree;
         let MODULE_PATH = rootPath+"/DictTypeController";
         //名称验证
         form.verify({
