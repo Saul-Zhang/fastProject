@@ -22,33 +22,12 @@ public class DepartmentService {
   private final DepartmentMapper departmentMapper;
   private final RelationDepartmentUserMapper departmentUserMapper;
 
-//  /**
-//   * 分页查询
-//   *
-//   * @param pageNum
-//   * @param pageSize
-//   * @return
-//   */
-//  public PageInfo<Department> list(Tablepar tablepar, String name) {
-//    SysDepartmentExample testExample = new SysDepartmentExample();
-//    testExample.setOrderByClause("id ASC");
-//    if (name != null && !"".equals(name)) {
-//      testExample.createCriteria().andDeptNameLike("%" + name + "%");
-//    }
-//    if (StrUtil.isNotEmpty(tablepar.getOrderByColumn())) {
-//      testExample.setOrderByClause(
-//          StringUtils.toUnderScoreCase(tablepar.getOrderByColumn()) + " " + tablepar.getIsAsc());
-//    }
-//    List<Department> list = departmentMapper.selectByExample(testExample);
-//    PageInfo<Department> pageInfo = new PageInfo<Department>(list);
-//    return pageInfo;
-//  }
 
   public List<Department> getAll() {
     return departmentMapper.selectList(null);
   }
 
-  public Set<Long> getDepartmentIdByUserId(Long userId){
+  public Set<Long> getDepartmentIdByUserId(Long userId) {
     if (userId == null) {
       return new HashSet<>();
     }
@@ -81,7 +60,7 @@ public class DepartmentService {
           tree.setId(department.getId());
           tree.setParentId(department.getParentId());
           tree.setTitle(department.getName());
-          if (departmentIds.contains(department.getId())){
+          if (departmentIds.contains(department.getId())) {
             tree.setCheckArr("1");
           }
           return tree;
@@ -100,21 +79,8 @@ public class DepartmentService {
         }).collect(Collectors.toList());
   }
 
-//  @Override
-//  public int deleteByPrimaryKey(String ids) {
-//
-//    Integer[] integers = ConvertUtil.toIntArray(",", ids);
-//    List<Integer> stringB = Arrays.asList(integers);
-//    SysDepartmentExample example = new SysDepartmentExample();
-//    example.createCriteria().andIdIn(stringB);
-//    return departmentMapper.deleteByExample(example);
-//
-//  }
-
   public Department selectById(Long id) {
-
     return departmentMapper.selectById(id);
-
   }
 
   public AjaxResult updateById(Department record) {
@@ -130,30 +96,11 @@ public class DepartmentService {
     departmentMapper.insert(record);
     return AjaxResult.success();
   }
-//
-//  @Override
-//  public int updateByExampleSelective(Department record, SysDepartmentExample example) {
-//
-//    return departmentMapper.updateByExampleSelective(record, example);
-//  }
-//
-//  @Override
-//  public int updateByExample(Department record, SysDepartmentExample example) {
-//
-//    return departmentMapper.updateByExample(record, example);
-//  }
 
   public List<Department> selectAll() {
 
     return departmentMapper.selectList(null);
   }
-
-//  @Override
-//  public long countByExample(SysDepartmentExample example) {
-//
-//    return departmentMapper.countByExample(example);
-//  }
-//
 
   public AjaxResult deleteByIds(List<Long> ids) {
     departmentMapper.deleteBatchIds(ids);
@@ -169,6 +116,12 @@ public class DepartmentService {
     entity.setId(id);
     departmentMapper.updateById(entity);
     return AjaxResult.success();
+  }
+
+  public int deleteRelDeptUser(List<Long> userId) {
+    return departmentUserMapper.delete(
+        new LambdaQueryWrapper<RelationDepartmentUser>().in(RelationDepartmentUser::getUserId,
+            userId));
   }
 
 }

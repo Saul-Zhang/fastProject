@@ -1,4 +1,4 @@
-package com.fastproject.model.request.request;
+package com.fastproject.model.request.body;
 
 import java.util.List;
 import lombok.Data;
@@ -8,11 +8,8 @@ import lombok.Data;
  * @date 2023/4/22 0:24
  */
 @Data
-public class UserRequest {
-  /**
-   * 主键
-   **/
-  private String id;
+public class UserBody {
+  private Long id;
 
   /**
    * 用户账号
@@ -29,10 +26,6 @@ public class UserRequest {
    **/
   private String realName;
 
-  /**
-   * 部门id
-   **/
-  private String deptId;
 
   /**
    * 岗位id
@@ -52,5 +45,7 @@ public class UserRequest {
 
   private String email;
 
-  private List<String> roleIds;
+  private List<Long> roleIds;
+
+  private List<Long> departmentIds;
 }

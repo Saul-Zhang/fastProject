@@ -53,7 +53,7 @@
   <button sa:hasPermission="system:user:remove" class="pear-btn pear-btn-danger pear-btn-md"
           lay-event="batchRemove">
     <i class="layui-icon layui-icon-delete"></i>
-    停用
+    删除
   </button>
 </script>
 
@@ -63,9 +63,9 @@
           lay-event="edit"><i class="layui-icon layui-icon-edit"></i>
   </button>
 
-<!--  <button sa:hasPermission="system:user:remove" class="pear-btn pear-btn-danger pear-btn-sm"-->
-<!--          lay-event="remove"><i class="layui-icon layui-icon-delete"></i>-->
-<!--  </button>-->
+  <button sa:hasPermission="system:user:remove" class="pear-btn pear-btn-danger pear-btn-sm"
+          lay-event="remove"><i class="layui-icon layui-icon-delete"></i>
+  </button>
 
 
   <button sa:hasPermission="system:user:editPwd" class="pear-btn pear-btn-warming pear-btn-md"
@@ -95,12 +95,10 @@
         {title: '账号', field: 'username', align: 'center'},
         {title: '工号', field: 'employeeId', align: 'center'},
         {title: '岗位', field: 'posName', align: 'center'},
-        {title: '部门', field: 'deptName', align: 'center'},
         {title: '电话', field: 'phone', align: 'center'},
         {title: '邮箱', field: 'email', align: 'center'},
         {title: '性别', field: 'gender', align: 'center'},
         {title: '状态', field: 'status', align: 'center',templet: '#user_status'},
-        // {title: '状态', field: 'status', align: 'center',toolbar: '#user_status'},
         {title: '操作', toolbar: '#user-bar', align: 'center'}
       ]
     ]
@@ -257,17 +255,15 @@
       }
       let ids = [];
       for (let i = 0; i < data.length; i++) {
-        // ids += data[i].id + ",";
         ids.push(data[i].id);
       }
-      // ids = ids.substr(0, ids.length - 1);
-      layer.confirm('确定要停用这些用户', {icon: 3, title: '提示'}, function (index) {
+      layer.confirm('确定要删除这些用户', {icon: 3, title: '提示'}, function (index) {
         layer.close(index);
         let loading = layer.load();
         $.ajax({
-          url: MODULE_PATH + "/status?userIds=" + ids +"&status=0",
+          url: MODULE_PATH + "/remove?ids=" + ids,
           dataType: 'json',
-          type: 'PUT',
+          type: 'delete',
           success: function (result) {
             layer.close(loading);
             if (result.code === 200) {

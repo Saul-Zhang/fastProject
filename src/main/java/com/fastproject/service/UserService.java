@@ -14,6 +14,7 @@ import com.fastproject.model.RelationRoleUser;
 import com.fastproject.model.User;
 import com.fastproject.model.constant.Status;
 import com.fastproject.model.custom.RoleVo;
+import com.fastproject.model.request.body.UserBody;
 import com.fastproject.model.request.query.UserQuery;
 import com.fastproject.model.response.AjaxResult;
 import com.fastproject.model.response.UserResponse;
@@ -97,15 +98,6 @@ public class UserService {
   }
 
   /**
-   * 检查用户name
-   */
-  public int checkLoginNameUnique(String username) {
-
-    return userMapper.selectOne(new LambdaQueryWrapperX<User>()
-        .eq(User::getUsername, username)) == null ? 0 : 1;
-  }
-
-  /**
    * 获取所有权限 并且增加是否有权限字段
    */
   public List<RoleVo> getRolesByUserId(Long userId) {
@@ -140,33 +132,29 @@ public class UserService {
   }
 
 
-  /**
-   * 修改用户信息以及角色信息
-   */
   @Transactional(rollbackFor = Exception.class)
-  public AjaxResult updateUserRoles(User record, List<Long> roleIds) {
+  public AjaxResult update(UserBody body) {
     //先删除这个用户的所有角色
     roleUserMapper.delete(new LambdaQueryWrapperX<RelationRoleUser>()
-        .inIfPresent(RelationRoleUser::getRoleId, roleIds)
-        .eq(RelationRoleUser::getUserId, record.getId()));
+        .inIfPresent(RelationRoleUser::getRoleId, body.getRoleIds())
+        .eq(RelationRoleUser::getUserId, body.getId()));
     //添加新的角色信息
-    if (CollectionUtils.isNotEmpty(roleIds)) {
-      for (Long roleId : roleIds) {
+    if (CollectionUtils.isNotEmpty(body.getRoleIds())) {
+      for (Long roleId : body.getRoleIds()) {
         RelationRoleUser roleUser = new RelationRoleUser();
         roleUser.setId(SnowflakeIdWorker.getUUID());
-        roleUser.setUserId(record.getId());
+        roleUser.setUserId(body.getId());
         roleUser.setRoleId(roleId);
         roleUserMapper.insert(roleUser);
       }
     }
     // 清除此用户角色信息缓存
-    StpUtil.getSessionByLoginId(record.getId()).delete("Role_List");
+    StpUtil.getSessionByLoginId(body.getId()).delete("Role_List");
 
     //修改用户信息
-    userMapper.updateById(record);
+    userMapper.updateById(body);
     return AjaxResult.success();
   }
-
 
   public AjaxResult login(User user, String captcha, boolean rememberMe,
       HttpServletRequest request) {
@@ -198,5 +186,14 @@ public class UserService {
     SaTokenUtil.setUser(queryUser);
     StpUtil.getTokenSession().set("ip", ServletUtils.getIP(request));
     return AjaxResult.success().put("tokenInfo", StpUtil.getTokenInfo());
+  }
+
+  @Transactional(rollbackFor = Exception.class)
+  public AjaxResult deleteByIds(List<Long> userIds) {
+    userMapper.deleteBatchIds(userIds);
+    roleUserMapper.delete(
+        new LambdaQueryWrapperX<RelationRoleUser>().in(RelationRoleUser::getUserId, userIds));
+    departmentService.deleteRelDeptUser(userIds);
+    return AjaxResult.success();
   }
 }

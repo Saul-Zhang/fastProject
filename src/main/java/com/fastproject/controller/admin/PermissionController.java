@@ -2,7 +2,7 @@ package com.fastproject.controller.admin;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fastproject.model.Permission;
-import com.fastproject.model.request.request.PermissionRoleRequest;
+import com.fastproject.model.request.body.PermissionRoleBody;
 import com.fastproject.model.response.AjaxResult;
 import com.fastproject.model.response.PageResponse;
 import com.fastproject.model.response.LayUiTree;
@@ -158,7 +158,7 @@ public class PermissionController {
   @SaCheckPermission("system:role:edit")
   @PutMapping("/updateRolePermission")
   @ResponseBody
-  public AjaxResult updateRolePermission(@RequestBody PermissionRoleRequest request) {
+  public AjaxResult updateRolePermission(@RequestBody PermissionRoleBody request) {
     return permissionService.updateRolePermission(request.getRoleId(),request.getPermissionIds());
   }
 

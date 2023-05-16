@@ -5,7 +5,7 @@ import com.fastproject.common.annotation.Log;
 import com.fastproject.model.Position;
 import com.fastproject.model.Role;
 import com.fastproject.model.User;
-import com.fastproject.model.custom.RoleVo;
+import com.fastproject.model.request.body.UserBody;
 import com.fastproject.model.request.query.UserQuery;
 import com.fastproject.model.response.AjaxResult;
 import com.fastproject.model.response.LayUiTree;
@@ -17,8 +17,6 @@ import com.fastproject.service.PositionService;
 import com.fastproject.service.RoleService;
 import com.fastproject.service.UserService;
 import com.github.pagehelper.PageInfo;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -33,11 +31,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * 用户Controller
- *
  * @author fastProject
  */
-@Api(value = "用户数据")
 @Controller
 @RequestMapping("/UserController")
 @RequiredArgsConstructor
@@ -54,7 +49,6 @@ public class UserController {
   /**
    * 展示跳转页面
    */
-  @ApiOperation(value = "分页跳转", notes = "分页跳转")
   @GetMapping("/view")
   @SaCheckPermission("system:user:view")
   public String view() {
@@ -62,10 +56,6 @@ public class UserController {
   }
 
 
-  /**
-   * list集合
-   */
-  @ApiOperation(value = "分页查询", notes = "分页查询")
   @GetMapping("/list")
   @SaCheckPermission("system:user:list")
   @ResponseBody
@@ -77,7 +67,6 @@ public class UserController {
   /**
    * 新增跳转
    */
-  @ApiOperation(value = "新增跳转", notes = "新增跳转")
   @GetMapping("/add")
   public String add(ModelMap modelMap) {
     //添加角色列表
@@ -99,13 +88,22 @@ public class UserController {
    * 新增保存
    */
   @Log(title = "用户新增", action = "111")
-  @ApiOperation(value = "新增", notes = "新增")
   @PostMapping("/add")
   @SaCheckPermission("system:user:add")
   @ResponseBody
   public AjaxResult add(User user,
       @RequestParam(value = "roleIds", required = false) String roleIds) {
     return userService.add(user, roleIds);
+  }
+
+  @PutMapping("/remove")
+  @SaCheckPermission("system:user:remove")
+  @ResponseBody
+  public AjaxResult remove(@RequestParam List<Long> userIds) {
+    if (CollectionUtils.isEmpty(userIds)) {
+      return AjaxResult.error("至少选择一个用户");
+    }
+    return userService.deleteByIds(userIds);
   }
 
 
@@ -123,7 +121,6 @@ public class UserController {
   /**
    * 修改用户跳转
    */
-  @ApiOperation(value = "修改跳转", notes = "修改跳转")
   @GetMapping("/edit/{id}")
   public String edit(@PathVariable("id") Long userId, ModelMap modelMap) {
 
@@ -140,13 +137,11 @@ public class UserController {
    * 修改保存用户
    */
   //@Log(title = "修改保存用户", action = "1")
-  @ApiOperation(value = "修改保存用户", notes = "修改保存用户")
   @SaCheckPermission("system:user:edit")
   @PostMapping("/edit")
   @ResponseBody
-  public AjaxResult editSave(User user,
-      @RequestParam(value = "roleIds[]", required = false) List<Long> roleIds) {
-    return userService.updateUserRoles(user, roleIds);
+  public AjaxResult editSave(UserBody body) {
+    return userService.update(body);
   }
 
 
@@ -154,7 +149,6 @@ public class UserController {
    * 修改用户密码跳转
    */
   //@Log(title = "修改用户密码", action = "1")
-  @ApiOperation(value = "修改用户密码跳转", notes = "修改用户密码跳转")
   @GetMapping("/editPwd/{id}")
   public String editPwd(@PathVariable("id") Long id, ModelMap modelMap) {
     modelMap.put("user", userService.getUserById(id));
@@ -165,7 +159,6 @@ public class UserController {
    * 修改保存用户
    */
   //@Log(title = "修改用户密码", action = "1")
-  @ApiOperation(value = "修改用户密码", notes = "修改用户密码")
   @SaCheckPermission("system:user:editPwd")
   @PostMapping("/editPwd")
   @ResponseBody

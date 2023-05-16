@@ -1,4 +1,4 @@
-package com.fastproject.model.request.request;
+package com.fastproject.model.request.body;
 
 import java.util.List;
 import lombok.Data;
@@ -8,7 +8,7 @@ import lombok.Data;
  * @date 2023/5/5 18:47
  */
 @Data
-public class PermissionRoleRequest {
+public class PermissionRoleBody {
 
   private Long roleId;
   private List<Long> permissionIds;

@@ -159,10 +159,8 @@
     form.on('submit(user-update)', function (data) {
       let roleIds = [];
       $('input[name=roleId]:checked').each(function () {
-        // roleIds +=  + ",";
         roleIds.push($(this).val())
       });
-      // roleIds = roleIds.substr(0, roleIds.length - 1);
       data.field.roleIds = roleIds;
 
       $.ajax({
