@@ -4,7 +4,7 @@
     <th:block th:include="include :: header('角色修改')"/>
 </head>
 <body>
-<form class="layui-form" action=""  th:object="${sysRole}">
+<form class="layui-form" action=""  th:object="${role}">
     <div class="mainBox">
         <div class="main-container">
             <div class="main-container">
@@ -16,10 +16,17 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">名称</label>
+                    <label class="layui-form-label required">名称</label>
                     <div class="layui-input-block">
-                        <input type="text" th:value="*{name}" name="name" lay-verify="title"
-                               autocomplete="off" placeholder="请输入标题" class="layui-input">
+                        <input type="text" th:value="*{name}" name="name" lay-verify="required"
+                               autocomplete="off" placeholder="请输入角色名称" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">描述</label>
+                    <div class="layui-input-block">
+                        <input type="text" th:value="*{description}" name="description" lay-verify="description"
+                               autocomplete="off" placeholder="角色描述" class="layui-input">
                     </div>
                 </div>
             </div>

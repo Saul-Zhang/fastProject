@@ -4,7 +4,7 @@
     <th:block th:include="include :: header('岗位修改')"/>
 </head>
 <body>
-<form class="layui-form" action=""  th:object="${SysPosition}">
+<form class="layui-form" action=""  th:object="${position}">
     <div class="mainBox">
         <div class="main-container">
             <div class="main-container">
@@ -16,9 +16,9 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">岗位名称</label>
+                    <label class="layui-form-label required">岗位名称</label>
                     <div class="layui-input-block">
-                        <input th:value="*{postName}" type="text" name="postName" lay-verify="postName" autocomplete="off" placeholder="账号" class="layui-input">
+                        <input th:value="*{name}" type="text" name="name" lay-verify="required" autocomplete="off" placeholder="岗位名称" class="layui-input">
                     </div>
                 </div>
 
@@ -61,31 +61,7 @@
     layui.use(['form', 'jquery'], function () {
         let form = layui.form;
         let $ = layui.jquery;
-        let dtree = layui.dtree;
         let MODULE_PATH = rootPath+"/PositionController";
-        //名称验证
-        form.verify({
-            username: function(value){
-                if(value.length < 2){
-                    return '标题至少得2个字符啊';
-                }
-                var msg = "";
-                $.ajax({
-                    url: MODULE_PATH+'/checkNameUnique',
-                    data: "postName="+value,
-                    dataType: 'json',
-                    type: 'post',
-                    async:false,
-                    success: function (result) {
-                            msg=result;
-                    }
-                });
-                if (msg == 1) {
-                   return "已有相同数据";
-                }
-
-            }
-        });
 
         form.on('submit(position-update)', function (data) {
             let roleIds = "";

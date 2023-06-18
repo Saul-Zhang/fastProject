@@ -81,7 +81,7 @@ public class PositionController {
   @DeleteMapping("/remove")
   @SaCheckPermission("system:position:remove")
   @ResponseBody
-  public AjaxResult remove(List<Long> ids) {
+  public AjaxResult remove(@RequestParam List<Long> ids) {
     return positionService.delete(ids);
   }
 
@@ -92,7 +92,7 @@ public class PositionController {
   @ApiOperation(value = "修改跳转", notes = "修改跳转")
   @GetMapping("/edit/{id}")
   public String edit(@PathVariable("id") Long id, ModelMap modelMap) {
-    modelMap.put("Position", positionService.selectById(id));
+    modelMap.put("position", positionService.selectById(id));
     return prefix + "/edit";
   }
 

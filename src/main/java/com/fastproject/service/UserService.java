@@ -1,5 +1,7 @@
 package com.fastproject.service;
 
+import static com.fastproject.model.request.body.UserBody.userBody2User;
+
 import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -27,6 +29,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.wf.captcha.utils.CaptchaUtil;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -148,11 +151,16 @@ public class UserService {
         roleUserMapper.insert(roleUser);
       }
     }
+
     // 清除此用户角色信息缓存
     StpUtil.getSessionByLoginId(body.getId()).delete("Role_List");
 
     //修改用户信息
-    userMapper.updateById(body);
+    userMapper.updateById(userBody2User(body));
+
+    // 更新用户部门信息
+    departmentService.deleteRelDeptUser(Collections.singletonList(body.getId()));
+    departmentService.insertRelDeptUser(body.getId(), body.getDepartmentIds());
     return AjaxResult.success();
   }
 

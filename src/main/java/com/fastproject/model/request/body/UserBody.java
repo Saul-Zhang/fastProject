@@ -1,5 +1,6 @@
 package com.fastproject.model.request.body;
 
+import com.fastproject.model.User;
 import java.util.List;
 import lombok.Data;
 
@@ -37,15 +38,31 @@ public class UserBody {
    */
   private String employeeId;
 
-  private Integer status;
+  private Character status;
 
   private String phone;
 
-  private Integer gender;
+  private Character gender;
 
   private String email;
 
   private List<Long> roleIds;
 
   private List<Long> departmentIds;
+
+  public static User userBody2User(UserBody userBody) {
+
+    User user = new User();
+    user.setId(userBody.getId());
+    user.setUsername(userBody.getUsername());
+    user.setPassword(userBody.getPassword());
+    user.setRealName(userBody.getRealName());
+    user.setPosId(userBody.getPosId());
+    user.setEmployeeId(userBody.getEmployeeId());
+    user.setPhone(userBody.getPhone());
+    user.setGender(userBody.getGender());
+    user.setEmail(userBody.getEmail());
+    user.setStatus(userBody.getStatus());
+    return user;
+  }
 }

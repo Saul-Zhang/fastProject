@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -68,7 +69,7 @@ public class UserController {
    * 新增跳转
    */
   @GetMapping("/add")
-  public String add(ModelMap modelMap) {
+  public String add(ModelMap modelMap, @RequestParam(required = false) Long selectDepartmentVal) {
     //添加角色列表
     List<Role> roleList = roleService.getAll();
     //部门列表
@@ -79,6 +80,9 @@ public class UserController {
     modelMap.put("roles", roleList);
     //部门
     modelMap.put("departments", departments);
+    if (selectDepartmentVal != null) {
+      modelMap.put("selectDepartmentVal", selectDepartmentVal);
+    }
     modelMap.put("positions", positions);
     modelMap.put("genders", dictCacheService.getDict("gender"));
     return prefix + "/add";
@@ -96,14 +100,14 @@ public class UserController {
     return userService.add(user, roleIds);
   }
 
-  @PutMapping("/remove")
+  @DeleteMapping("/remove")
   @SaCheckPermission("system:user:remove")
   @ResponseBody
-  public AjaxResult remove(@RequestParam List<Long> userIds) {
-    if (CollectionUtils.isEmpty(userIds)) {
+  public AjaxResult remove(@RequestParam List<Long> ids) {
+    if (CollectionUtils.isEmpty(ids)) {
       return AjaxResult.error("至少选择一个用户");
     }
-    return userService.deleteByIds(userIds);
+    return userService.deleteByIds(ids);
   }
 
 

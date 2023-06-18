@@ -12,12 +12,12 @@
           <label class="layui-form-label">编号</label>
           <div class="layui-input-block">
             <input type="text" th:value="*{id}" name="id" lay-verify="title"
-                   autocomplete="off" placeholder="请输入标题" class="layui-input">
+                   autocomplete="off" class="layui-input">
           </div>
         </div>
 
         <div class="layui-form-item">
-          <label class="layui-form-label">姓名</label>
+          <label class="layui-form-label required">姓名</label>
           <div class="layui-input-block">
             <input th:value="*{realName}" type="text" name="realName" lay-verify="required|realName"
                    autocomplete="off" placeholder="请输入姓名" class="layui-input">
@@ -33,9 +33,9 @@
         </div>
 
         <div class="layui-form-item">
-          <label class="layui-form-label">工号</label>
+          <label class="layui-form-label required">工号</label>
           <div class="layui-input-block">
-            <input th:value="*{employeeId}" type="text" name="employeeId" lay-verify="employeeId"
+            <input th:value="*{employeeId}" type="text" name="employeeId" lay-verify="required"
                    autocomplete="off" placeholder="工号" class="layui-input">
           </div>
         </div>
@@ -43,7 +43,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">电话</label>
           <div class="layui-input-block">
-            <input th:value="*{phone}" type="text" name="phone" lay-verify="phone"
+            <input th:value="*{phone}" type="text" name="phone"
                    autocomplete="off" placeholder="电话" class="layui-input">
           </div>
         </div>
@@ -51,7 +51,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">邮箱</label>
           <div class="layui-input-block">
-            <input th:value="*{email}" type="text" name="email" lay-verify="email"
+            <input th:value="*{email}" type="text" name="email"
                    autocomplete="off" placeholder="邮箱" class="layui-input">
           </div>
         </div>
@@ -69,13 +69,14 @@
         <div class="layui-form-item">
           <label class="layui-form-label">部门</label>
           <div class="layui-input-block">
-            <ul id="selectParent" name="deptId" class="dtree" data-id="0"></ul>
+            <ul id="selectParent" name="deptId" class="dtree" data-id="0" ></ul>
           </div>
         </div>
         <div class="layui-form-item">
           <label class="layui-form-label">岗位</label>
           <div class="layui-input-block">
             <select id="positionId" name="posId" th:field="*{posId}">
+              <option value="">请选择</option>
               <option th:each="position : ${positions}" th:text="${position.name}"
                       th:value="${position.id}"></option>
             </select>
@@ -121,8 +122,8 @@
       elem: "#selectParent",
       url: DEPAR_PATH + "/tree?userId=" + [[${user.id}]],
       method: 'get',
-      // selectInputName: {nodeId: "deptId"},
-      skin: "layui",
+      selectInputName: {nodeId: "departmentIds"},
+      skin: "laySimple",
       dataFormat: "list",
       checkbar: true,
       checkbarType: "self",
@@ -130,31 +131,6 @@
       selectInitVal: "[[${user.departmentIds}]]"
     });
 
-    //名称验证
-    form.verify({
-      username: function (value) {
-        if (value.length < 2) {
-          return '标题至少得2个字符啊';
-        }
-        if (username != value) {
-          var msg = "";
-          $.ajax({
-            url: MODULE_PATH + '/checkLoginNameUnique',
-            data: "username=" + value,
-            dataType: 'json',
-            type: 'post',
-            async: false,
-            success: function (result) {
-              msg = result;
-            }
-          });
-          if (msg == 1) {
-            return "已有相同数据";
-          }
-        }
-
-      }
-    });
 
     form.on('submit(user-update)', function (data) {
       let roleIds = [];

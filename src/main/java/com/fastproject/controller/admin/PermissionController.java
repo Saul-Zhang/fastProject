@@ -58,7 +58,7 @@ public class PermissionController {
   @SaCheckPermission("system:permission:list")
   @ResponseBody
   public PageResponse list() {
-    return PageResponse.page(permissionService.list());
+    return PageResponse.list(permissionService.list());
   }
 
   /**

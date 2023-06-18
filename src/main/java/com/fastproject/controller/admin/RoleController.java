@@ -83,7 +83,6 @@ public class RoleController {
   /**
    * 删除角色
    */
-  @ApiOperation(value = "删除", notes = "删除")
   @DeleteMapping("/updateStatus")
   @SaCheckPermission("system:role:remove")
   @ResponseBody
@@ -94,6 +93,17 @@ public class RoleController {
     }
     return roleService.updateStatus(roleIds, status);
   }
+
+  @DeleteMapping("/remove")
+  @SaCheckPermission("system:role:remove")
+  @ResponseBody
+  public AjaxResult remove(@RequestParam List<Long> ids) {
+    if (CollectionUtils.isEmpty(ids)) {
+      return AjaxResult.error("至少选择一个用户");
+    }
+    return roleService.deleteByIds(ids);
+  }
+
 
   /**
    * 修改角色

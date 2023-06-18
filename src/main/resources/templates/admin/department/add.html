@@ -87,13 +87,13 @@
 
         dtree.renderSelect({
             elem: "#selectParent",
-            url: rootPath+"/DepartmentController/selectParent",
+            url: rootPath+"/DepartmentController/tree",
             method: 'get',
             selectInputName: {nodeId: "parentId"},
             skin: "layui",
             dataFormat: "list",
-            response: {treeId: "id", parentId: "parentId", title: "deptName"},  //修改response中返回数据的定义
-            selectInitVal: '1'
+            // response: {treeId: "id", parentId: "parentId", title: "deptName"},  //修改response中返回数据的定义
+            selectInitVal: '[[${parentId}]]'
         });
 
 

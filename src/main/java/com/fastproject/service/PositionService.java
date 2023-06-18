@@ -1,7 +1,10 @@
 package com.fastproject.service;
 
+import com.fastproject.common.mybatis.LambdaQueryWrapperX;
 import com.fastproject.mapper.PositionMapper;
 import com.fastproject.model.Position;
+import com.fastproject.model.constant.Status;
+import com.fastproject.model.request.body.UpdateStatusBody;
 import com.fastproject.model.request.query.PositionQuery;
 import com.fastproject.model.response.AjaxResult;
 import com.fastproject.util.SnowflakeIdWorker;
@@ -10,6 +13,7 @@ import com.github.pagehelper.PageInfo;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 岗位 PositionService
@@ -30,7 +34,9 @@ public class PositionService {
    */
   public PageInfo<Position> list(PositionQuery query) {
     PageHelper.startPage(query.getPage(), query.getLimit());
-    List<Position> list = positionMapper.selectList(null);
+    List<Position> list = positionMapper.selectList(
+        new LambdaQueryWrapperX<Position>().eq(Position::getStatus, Status.ENABLE)
+            .orderByAsc(Position::getOrderNum));
     return new PageInfo<>(list);
   }
 
@@ -40,6 +46,7 @@ public class PositionService {
     return AjaxResult.success();
   }
 
+  @Transactional(rollbackFor = Exception.class)
   public AjaxResult updateStatus(Long id, Character status) {
     Position entity = new Position();
     entity.setId(id);
@@ -59,7 +66,7 @@ public class PositionService {
     return positionMapper.selectById(id);
   }
 
-//  @Override
+  //  @Override
 //  public Position selectByPrimaryKey(String id) {
 //
 //    return positionMapper.selectByPrimaryKey(id);

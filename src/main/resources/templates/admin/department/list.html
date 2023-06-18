@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+>
 <head>
   <th:block th:include="include :: header('全局配置')"/>
   <style>
@@ -33,15 +33,15 @@
     /*  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.15);*/
     /*}*/
 
- /*   .button-primary {
-      background-color: #5FB878;
-      color: white;
-    }*/
+    /*   .button-primary {
+         background-color: #5FB878;
+         color: white;
+       }*/
 
-/*    .button-default {
-      color: #2f495e;
-      background-color: #edf2f7;
-    }*/
+    /*    .button-default {
+          color: #2f495e;
+          background-color: #edf2f7;
+        }*/
   </style>
   <style>
     .user-main {
@@ -54,10 +54,10 @@
       float: left;
     }
 
-   /* .user-collasped.user-main {
-      width: 100%;
-    }
-*/
+    /* .user-collasped.user-main {
+       width: 100%;
+     }
+ */
     /*.user-collasped.user-left {
       width: 0px;
     }
@@ -158,17 +158,17 @@
 </script>
 
 <script type="text/html" id="user-bar">
-<!--  <button sec:authorize="hasPermission('/system/user/edit','sys:user:edit')"-->
-<!--          class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i-->
-<!--      class="pear-icon pear-icon-edit"></i>-->
-<!--  </button>-->
-<!--  <button sec:authorize="hasPermission('/system/user/remove','sys:user:remove')"-->
-<!--          class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i-->
-<!--      class="pear-icon pear-icon-ashbin"></i>-->
-<!--  </button>-->
-<button sa:hasPermission="system:user:edit" class="pear-btn pear-btn-primary pear-btn-sm"
-        lay-event="editUser"><i class="layui-icon layui-icon-edit"></i>
-</button>
+  <!--  <button sec:authorize="hasPermission('/system/user/edit','sys:user:edit')"-->
+  <!--          class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i-->
+  <!--      class="pear-icon pear-icon-edit"></i>-->
+  <!--  </button>-->
+  <!--  <button sec:authorize="hasPermission('/system/user/remove','sys:user:remove')"-->
+  <!--          class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i-->
+  <!--      class="pear-icon pear-icon-ashbin"></i>-->
+  <!--  </button>-->
+  <button sa:hasPermission="system:user:edit" class="pear-btn pear-btn-primary pear-btn-sm"
+          lay-event="editUser"><i class="layui-icon layui-icon-edit"></i>
+  </button>
 
   <button sa:hasPermission="system:user:remove" class="pear-btn pear-btn-danger pear-btn-sm"
           lay-event="removeUser"><i class="layui-icon layui-icon-delete"></i>
@@ -190,7 +190,8 @@
     let dtree = layui.dtree;
     let MODULE_PATH = rootPath + "/DepartmentController";
     let USER_PATH = rootPath + "/UserController";
-    let departmentId =''
+    //选中的部门id
+    let departmentId = ''
     let cols = [
       [
         {type: 'checkbox'},
@@ -235,6 +236,7 @@
       icon: ["0", "-1"],
       // line: true,//开启树线
       // record: true,
+      skin: "laySimple"
     });
 
     //tree点击事件
@@ -280,7 +282,7 @@
         title: '新增',
         shade: 0.1,
         area: ['550px', '650px'],
-        content: USER_PATH + '/add'
+        content: USER_PATH + '/add?selectDepartmentVal=' + departmentId
       });
     }
     //修改
@@ -353,13 +355,13 @@
         title: '新增',
         shade: 0.1,
         area: ['450px', '500px'],
-        content: MODULE_PATH + '/add'
+        content: MODULE_PATH + '/add?parentId=' + departmentId
       });
     }
 
     window.editDepartment = function () {
       if (departmentId === '') {
-        layer.msg('请选择要操作的部门！', {icon: 5, time: 1000} );
+        layer.msg('请选择要操作的部门！', {icon: 5, time: 1000});
         return;
       }
       layer.open({
@@ -373,7 +375,7 @@
 
     window.removeDepartment = function (obj) {
       if (departmentId === '') {
-        layer.msg('请选择要操作的部门！', {icon: 5, time: 1000} );
+        layer.msg('请选择要操作的部门！', {icon: 5, time: 1000});
         return;
       }
       layer.confirm('确定要删除该部门', {icon: 3, title: '提示'}, function (index) {
@@ -385,7 +387,7 @@
           type: 'delete',
           success: function (result) {
             layer.close(loading);
-            if (result.code===200) {
+            if (result.code === 200) {
               layer.msg(result.msg, {icon: 1, time: 1000}, function () {
                 obj.del();
 
@@ -397,7 +399,6 @@
         })
       });
     }
-
 
     //查询按钮绑定
     form.on('submit(user_query)', function (data) {

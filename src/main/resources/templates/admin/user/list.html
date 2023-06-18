@@ -165,7 +165,7 @@
         type: 2,
         title: '修改',
         shade: 0.1,
-        area: ['550px', '650px'],
+        area: ['550px', '700px'],
         content: MODULE_PATH + '/edit/' + obj.data['id']
       });
     }
@@ -197,7 +197,7 @@
 
         let loading = layer.load();
         $.ajax({
-          url: MODULE_PATH + "/status?userIds=" + id+"&status=" + status,
+          url: MODULE_PATH + "/updateStatus?userIds=" + id+"&status=" + status,
           dataType: 'json',
           type: 'PUT',
           success: function (result) {

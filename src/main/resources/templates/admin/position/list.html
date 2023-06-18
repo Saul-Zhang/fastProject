@@ -118,34 +118,76 @@
         });
 
         //状态切换绑定
-        form.on('switch(position-enable)', function (obj) {
-            let operate;
+        // form.on('switch(position-enable)', function (obj) {
+        //     let operate;
+        //
+        //     if (obj.elem.checked) {
+        //         operate = 0;
+        //     } else {
+        //         operate = 1;
+        //     }
+        //
+        //     let loading = layer.load()
+        //
+        //     $.ajax({
+        //         url: MODULE_PATH+'updateStatus',
+        //         data: JSON.stringify({ids: this.value,status:operate}),
+        //         dataType: 'json',
+        //         contentType: 'application/json',
+        //         type: 'put',
+        //         success: function (result) {
+        //             layer.close(loading);
+        //             if (result.code==200) {
+        //                 layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+        //                 });
+        //             } else {
+        //                 layer.msg(result.msg, {icon: 2, time: 1000});
+        //             }
+        //         }
+        //     })
+        // });
 
-            if (obj.elem.checked) {
-                operate = 0;
-            } else {
-                operate = 1;
+        form.on('switch(position-enable)', function(obj){
+            let context = '停用';
+            let status = 0;
+            if (obj.elem.checked){
+                context = '启用';
+                status = 1;
             }
 
-            let loading = layer.load()
+            let id = this.value;
+            layer.confirm('确定要'+context+'该岗位', {icon: 3, title: '提示'}, function (index) {
+                // 用户点击了确认按钮
+                layer.close(index);
 
-            $.ajax({
-                url: MODULE_PATH+'updateStatus',
-                data: JSON.stringify({id: this.value,status:operate}),
-                dataType: 'json',
-                contentType: 'application/json',
-                type: 'put',
-                success: function (result) {
-                    layer.close(loading);
-                    if (result.code==200) {
-                        layer.msg(result.msg, {icon: 1, time: 1000}, function () {
-                        });
-                    } else {
-                        layer.msg(result.msg, {icon: 2, time: 1000});
+                let loading = layer.load();
+                $.ajax({
+                    url: MODULE_PATH + "/updateStatus?id=" + id+"&status=" + status,
+                    dataType: 'json',
+                    type: 'PUT',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.code === 200) {
+                            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                                // obj.del();
+                                table.reload('position-table');
+                            });
+                        } else {
+                            layer.msg(result.msg, {icon: 2, time: 1000});
+                        }
+                        form.render('checkbox');
                     }
-                }
-            })
-        });
+                })
+            },function (index) {
+                console.log("取消");
+                // 用户点击了取消按钮
+                layer.close(index);
+                // 恢复Switch的状态
+                // obj.elem.checked =checked
+                // form.render('checkbox');
+                table.reload('position-table');
+            });
+        })
 
 
 

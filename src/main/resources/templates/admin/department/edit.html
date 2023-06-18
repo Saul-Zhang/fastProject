@@ -4,21 +4,21 @@
     <th:block th:include="include :: header('部门修改')"/>
 </head>
 <body>
-<form class="layui-form" th:object="${SysDepartment}">
+<form class="layui-form" th:object="${department}">
     <div class="mainBox">
         <div class="main-container">
             <div class="main-container">
                  <div class="layui-form-item layui-hide">
                     <label class="layui-form-label">编号</label>
                     <div class="layui-input-block">
-                        <input type="text" th:value="*{id}" name="id" lay-verify="title" autocomplete="off" class="layui-input">
+                        <input type="text" th:value="*{id}" name="id" autocomplete="off" class="layui-input">
                     </div>
                 </div>
 
                 <div class="layui-form-item">
                     <label class="layui-form-label">部门名称</label>
                     <div class="layui-input-block">
-                        <input th:value="*{deptName}" type="text" name="deptName" lay-verify="title" autocomplete="off" placeholder="权限名称"
+                        <input th:value="*{name}" type="text" name="name" lay-verify="name" autocomplete="off" placeholder="部门名称"
                                class="layui-input">
                     </div>
                 </div>
@@ -93,13 +93,13 @@
         let MODULE_PATH = rootPath+"/DepartmentController";
         dtree.renderSelect({
             elem: "#selectParent",
-            url: MODULE_PATH+"/selectParent",
+            url: MODULE_PATH+"/tree",
             method: 'get',
             selectInputName: {nodeId: "parentId"},
             skin: "layui",
             dataFormat: "list",
-            response: {treeId: "id", parentId: "parentId", title: "deptName"},  //修改response中返回数据的定义
-            selectInitVal: '[[${SysDepartment.parentId}]]'
+            // response: {treeId: "id", parentId: "parentId", title: "deptName"},  //修改response中返回数据的定义
+            selectInitVal: '[[${department.parentId}]]'
         });
 
 

@@ -60,9 +60,9 @@ public class DepartmentService {
           tree.setId(department.getId());
           tree.setParentId(department.getParentId());
           tree.setTitle(department.getName());
-          if (departmentIds.contains(department.getId())) {
-            tree.setCheckArr("1");
-          }
+//          if (departmentIds.contains(department.getId())) {
+//            tree.setCheckArr("1");
+//          }
           return tree;
         }).collect(Collectors.toList());
   }
@@ -124,4 +124,10 @@ public class DepartmentService {
             userId));
   }
 
+  public void insertRelDeptUser(Long userId, List<Long> deptIds) {
+    deptIds.forEach(deptId -> {
+      departmentUserMapper.insert(
+          RelationDepartmentUser.builder().userId(userId).departmentId(deptId).build());
+    });
+  }
 }

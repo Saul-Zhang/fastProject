@@ -1,7 +1,9 @@
 package com.fastproject.service;
 
 import com.fastproject.common.mybatis.LambdaQueryWrapperX;
+import com.fastproject.mapper.RelationRoleUserMapper;
 import com.fastproject.mapper.RoleMapper;
+import com.fastproject.model.RelationRoleUser;
 import com.fastproject.model.Role;
 import com.fastproject.model.constant.Status;
 import com.fastproject.model.request.query.RoleQuery;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class RoleService {
 
   private final RoleMapper roleMapper;
+  private final RelationRoleUserMapper roleUserMapper;
 
 
   /**
@@ -53,6 +56,7 @@ public class RoleService {
 
   public AjaxResult insert(Role record) {
     record.setId(SnowflakeIdWorker.getUUID());
+    record.setStatus(Status.ENABLE);
     roleMapper.insert(record);
     return AjaxResult.success();
   }
@@ -64,6 +68,16 @@ public class RoleService {
 
   public AjaxResult updateById(Role record) {
     roleMapper.updateById(record);
+    return AjaxResult.success();
+  }
+
+  public AjaxResult deleteByIds(List<Long> ids) {
+    if (!roleUserMapper.selectList(
+            new LambdaQueryWrapperX<RelationRoleUser>().in(RelationRoleUser::getRoleId, ids))
+        .isEmpty()) {
+      return AjaxResult.error(500, "当前角色有关联的用户，无法删除");
+    }
+    roleMapper.deleteBatchIds(ids);
     return AjaxResult.success();
   }
   /**

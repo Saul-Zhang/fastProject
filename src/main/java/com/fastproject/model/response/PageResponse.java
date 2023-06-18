@@ -39,7 +39,7 @@ public class PageResponse {
     return pageResponse;
   }
 
-  public static PageResponse page(Object data) {
+  public static PageResponse list(Object data) {
     PageResponse pageResponse = new PageResponse();
     pageResponse.setData(data);
     pageResponse.setCode(0);

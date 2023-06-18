@@ -10,9 +10,9 @@
             <div class="main-container">
 
                 <div class="layui-form-item">
-                    <label class="layui-form-label">姓名</label>
+                    <label class="layui-form-label required" >姓名</label>
                     <div class="layui-input-block">
-                        <input  type="text" name="realName" lay-verify="realName"
+                        <input  type="text" name="realName" lay-verify="required"
                                autocomplete="off" placeholder="请输入姓名" class="layui-input">
                     </div>
                 </div>
@@ -25,13 +25,13 @@
 
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">用户密码</label>
+                    <label class="layui-form-label required">密码</label>
                     <div class="layui-input-block">
-                        <input type="password" name="password" lay-verify="password" autocomplete="off" placeholder="请输入密码" class="layui-input">
+                        <input type="password" name="password" lay-verify="required" autocomplete="off" placeholder="请输入密码" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">工号</label>
+                    <label class="layui-form-label required">工号</label>
                     <div class="layui-input-block">
                         <input   type="text" name="employeeId" lay-verify="employeeId"
                                autocomplete="off" placeholder="工号" class="layui-input">
@@ -74,6 +74,7 @@
                     <label class="layui-form-label">岗位</label>
                     <div class="layui-input-block">
                         <select id="positionId" name="posId">
+                            <option value="">请选择</option>
                             <option th:each="position : ${positions}" th:text="${position.name}" th:value="${position.id}"></option>
                         </select>
                     </div>
@@ -121,33 +122,9 @@
             checkbar: true,
             checkbarType: "self",
             // response: {treeId: "id", parentId: "parentId", title: "name"},
-            selectInitVal: "1",
-            // data:  JSON.stringify([[${departments}]])
+            selectInitVal: '[[${selectDepartmentVal}]]'
         });
 
-        //名称验证
-        form.verify({
-            username: function(value){
-                if(value.length < 2){
-                    return '标题至少得2个字符啊';
-                }
-                var msg = "";
-                $.ajax({
-                    url: MODULE_PATH+'/checkLoginNameUnique',
-                    data: "username="+value,
-                    dataType: 'json',
-                    type: 'post',
-                    async:false,
-                    success: function (result) {
-                            msg=result;
-                    }
-                });
-                if (msg == 1) {
-                   return "已有相同数据";
-                }
-
-            }
-        });
 
 
 

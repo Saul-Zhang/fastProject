@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequiredArgsConstructor
 public class DepartmentController {
 
-  private final String prefix = "admin/department" ;
+  private final String prefix = "admin/department";
   private final DepartmentService departmentService;
 
   /**
@@ -34,7 +34,7 @@ public class DepartmentController {
   @GetMapping("/view")
   @SaCheckPermission("system:department:view")
   public String view(ModelMap model) {
-    return prefix + "/list" ;
+    return prefix + "/list";
   }
 
   /**
@@ -52,8 +52,9 @@ public class DepartmentController {
    * 新增
    */
   @GetMapping("/add")
-  public String add(ModelMap modelMap) {
-    return prefix + "/add" ;
+  public String add(Long parentId, ModelMap modelMap) {
+    modelMap.put("parentId", parentId);
+    return prefix + "/add";
   }
 
   /**
@@ -86,8 +87,8 @@ public class DepartmentController {
   public String edit(@PathVariable("id") Long id, ModelMap mmap) {
     Department department = departmentService.selectById(id);
 
-    mmap.put("department" , department);
-    return prefix + "/edit" ;
+    mmap.put("department", department);
+    return prefix + "/edit";
   }
 
   /**

@@ -1,7 +1,10 @@
 package com.fastproject.model;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author fastProject
@@ -9,6 +12,9 @@ import lombok.Data;
  */
 @TableName("rel_department_user")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RelationDepartmentUser {
 
   private Long id;
@@ -16,4 +22,8 @@ public class RelationDepartmentUser {
   private Long departmentId;
 
   private Long userId;
+
+  public RelationDepartmentUser(Long departmentId) {
+    this.departmentId = departmentId;
+  }
 }
