@@ -12,6 +12,7 @@ import com.fastproject.common.utils.ConvertUtil;
 import com.fastproject.mapper.RelationRoleUserMapper;
 import com.fastproject.mapper.RoleMapper;
 import com.fastproject.mapper.UserMapper;
+import com.fastproject.model.DictData;
 import com.fastproject.model.RelationRoleUser;
 import com.fastproject.model.User;
 import com.fastproject.model.constant.Status;
@@ -52,6 +53,8 @@ public class UserService {
 
   private final DepartmentService departmentService;
 
+  private final DictDataService dictDataService;
+
   /**
    * 分页查询
    */
@@ -77,16 +80,23 @@ public class UserService {
    */
   @Transactional(rollbackFor = Exception.class)
   public AjaxResult add(User record, String roleIds) {
-    Long userid = SnowflakeIdWorker.getUUID();
-    record.setId(userid);
+    Long userId = SnowflakeIdWorker.getId();
+    record.setId(userId);
     //密码加密
     record.setPassword(MD5Util.encode(record.getPassword()));
     record.setStatus(Status.ENABLE);
     userMapper.insert(record);
+
+    DictData dictData = new DictData();
+    dictData.setCode("user");
+    dictData.setLabel(record.getRealName());
+    dictData.setValue(String.valueOf(userId));
+    dictDataService.insert(dictData);
+
     if (StringUtils.isNotEmpty(roleIds)) {
       List<Long> roleIdList = ConvertUtil.toListLongArray(roleIds);
       for (Long rolesId : roleIdList) {
-        RelationRoleUser roleUser = new RelationRoleUser(SnowflakeIdWorker.getUUID(),
+        RelationRoleUser roleUser = new RelationRoleUser(SnowflakeIdWorker.getId(),
             record.getId(), rolesId);
         roleUserMapper.insert(roleUser);
       }
@@ -145,7 +155,7 @@ public class UserService {
     if (CollectionUtils.isNotEmpty(body.getRoleIds())) {
       for (Long roleId : body.getRoleIds()) {
         RelationRoleUser roleUser = new RelationRoleUser();
-        roleUser.setId(SnowflakeIdWorker.getUUID());
+        roleUser.setId(SnowflakeIdWorker.getId());
         roleUser.setUserId(body.getId());
         roleUser.setRoleId(roleId);
         roleUserMapper.insert(roleUser);

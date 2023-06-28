@@ -4,15 +4,12 @@ import com.fastproject.common.mybatis.LambdaQueryWrapperX;
 import com.fastproject.mapper.DictDataMapper;
 import com.fastproject.mapper.DictTypeMapper;
 import com.fastproject.model.DictData;
-import com.fastproject.model.DictType;
 import com.fastproject.model.request.query.DicDataQuery;
 import com.fastproject.model.response.AjaxResult;
-import com.fastproject.satoken.SaTokenUtil;
 import com.fastproject.util.SnowflakeIdWorker;
 import com.fastproject.util.StringUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import java.util.Date;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,10 +39,14 @@ public class DictDataService {
    * 添加
    */
   public AjaxResult add(DictData record) {
-    //添加雪花主键id
-    record.setId(SnowflakeIdWorker.getUUID());
-    dictDataMapper.insert(record);
+    insert(record);
     return AjaxResult.success();
+  }
+
+  public int insert(DictData record) {
+    //添加雪花主键id
+    record.setId(SnowflakeIdWorker.getId());
+    return dictDataMapper.insert(record);
   }
 
   public DictData selectBId(Long id) {

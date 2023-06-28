@@ -23,7 +23,7 @@ public class DictData implements Serializable {
   /**
    * 字典排序
    */
-  private Integer sortNum;
+  private Integer orderNum;
 
   /**
    * 字典标签

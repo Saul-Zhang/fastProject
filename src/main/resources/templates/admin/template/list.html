@@ -6,7 +6,7 @@
 <body class="pear-container">
 <div class="layui-card">
   <div class="layui-card-body">
-    <form class="layui-form" action="" lay-filter="user_form">
+    <form class="layui-form" action="" lay-filter="template_form">
       <div class="layui-form-item">
         <label class="layui-form-label">姓名</label>
         <div class="layui-input-inline">
@@ -25,7 +25,7 @@
             <option value="0">停用</option>
           </select>
         </div>
-        <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user_query">
+        <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="template_query">
           <i class="layui-icon layui-icon-search"></i>
           查询
         </button>
@@ -39,44 +39,44 @@
 </div>
 <div class="layui-card">
   <div class="layui-card-body">
-    <table id="user-table" lay-filter="user-table"></table>
+    <table id="template-table" lay-filter="template-table"></table>
   </div>
 </div>
 </body>
 
 <script type="text/html" id="role-toolbar">
-  <button sa:hasPermission="system:user:add" class="pear-btn pear-btn-primary pear-btn-md"
+  <button sa:hasPermission="system:template:add" class="pear-btn pear-btn-primary pear-btn-md"
           lay-event="add">
     <i class="layui-icon layui-icon-add-1"></i>
     新增
   </button>
-  <button sa:hasPermission="system:user:remove" class="pear-btn pear-btn-danger pear-btn-md"
+  <button sa:hasPermission="system:template:remove" class="pear-btn pear-btn-danger pear-btn-md"
           lay-event="batchRemove">
     <i class="layui-icon layui-icon-delete"></i>
     删除
   </button>
 </script>
 
-<script type="text/html" id="user-bar">
+<script type="text/html" id="template-bar">
 
-  <button sa:hasPermission="system:user:edit" class="pear-btn pear-btn-primary pear-btn-sm"
+  <button sa:hasPermission="system:template:edit" class="pear-btn pear-btn-primary pear-btn-sm"
           lay-event="edit"><i class="layui-icon layui-icon-edit"></i>
   </button>
 
-  <button sa:hasPermission="system:user:remove" class="pear-btn pear-btn-danger pear-btn-sm"
+  <button sa:hasPermission="system:template:remove" class="pear-btn pear-btn-danger pear-btn-sm"
           lay-event="remove"><i class="layui-icon layui-icon-delete"></i>
   </button>
 
 
-  <button sa:hasPermission="system:user:editPwd" class="pear-btn pear-btn-warming pear-btn-md"
+  <button sa:hasPermission="system:template:editPwd" class="pear-btn pear-btn-warming pear-btn-md"
           lay-event="editPwd"><i class="layui-icon layui-icon-password"></i>
   </button>
 
 
 </script>
 
-<script type="text/html" id="user_status">
-  <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-filter="user_status" lay-text="启用|停用"
+<script type="text/html" id="template_status">
+  <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-filter="template_status" lay-text="启用|停用"
           {{d.status == '1' ? 'checked' : '' }} >
 </script>
 
@@ -87,29 +87,27 @@
     let form = layui.form;
     let $ = layui.jquery;
 
-    let MODULE_PATH = rootPath + "/UserController";
+    let MODULE_PATH = rootPath + "/TemplateController";
     let cols = [
       [
         {type: 'checkbox'},
-        {title: '姓名', field: 'realName', align: 'center'},
-        {title: '账号', field: 'username', align: 'center'},
-        {title: '工号', field: 'employeeId', align: 'center'},
-        {title: '岗位', field: 'posName', align: 'center'},
-        {title: '电话', field: 'phone', align: 'center'},
-        {title: '邮箱', field: 'email', align: 'center'},
-        {title: '性别', field: 'gender', align: 'center'},
-        {title: '状态', field: 'status', align: 'center',templet: '#user_status'},
-        {title: '操作', toolbar: '#user-bar', align: 'center'}
+        // {title: '字段编码', field: 'fieldKey', align: 'center'},
+        {title: '属性名称', field: 'fieldName', align: 'center'},
+        {title: '显示类型', field: 'type', align: 'center'},
+        {title: '是否必填', field: 'required', align: 'center'},
+        {title: '是否只读', field: 'readOnly', align: 'center'},
+        {title: '字典类型', field: 'dictTypeCode', align: 'center'},
+        {title: '操作', toolbar: '#template-bar', align: 'center'}
       ]
     ]
 
     //table表单列表
     table.render({
-      elem: '#user-table',
+      elem: '#template-table',
       url: MODULE_PATH + '/list',
-      page: true,
+      page: false,
       method: 'get',
-      where: form.val("user_form"),
+      where: form.val("template_form"),
       cols: cols,
       skin: 'line',
       toolbar: '#role-toolbar',
@@ -120,7 +118,7 @@
     });
 
     //table图标事件绑定
-    table.on('tool(user-table)', function (obj) {
+    table.on('tool(template-table)', function (obj) {
       if (obj.event === 'remove') {
         window.remove(obj);
       } else if (obj.event === 'edit') {
@@ -133,7 +131,7 @@
     });
 
     //table工具栏绑定
-    table.on('toolbar(user-table)', function (obj) {
+    table.on('toolbar(template-table)', function (obj) {
       if (obj.event === 'add') {
         window.add();
       } else if (obj.event === 'refresh') {
@@ -144,8 +142,8 @@
     });
 
     //查询按钮绑定
-    form.on('submit(user_query)', function (data) {
-      table.reload('user-table', {where: data.field})
+    form.on('submit(template_query)', function (data) {
+      table.reload('template-table', {where: data.field})
       return false;
     });
 
@@ -155,7 +153,7 @@
         type: 2,
         title: '新增',
         shade: 0.1,
-        area: ['550px', '650px'],
+        area: ['550px', '550px'],
         content: MODULE_PATH + '/add'
       });
     }
@@ -165,7 +163,7 @@
         type: 2,
         title: '修改',
         shade: 0.1,
-        area: ['550px', '650px'],
+        area: ['550px', '5500px'],
         content: MODULE_PATH + '/edit/' + obj.data['id']
       });
     }
@@ -182,7 +180,7 @@
     }
 
     //删除
-    form.on('switch(user_status)', function(obj){
+    form.on('switch(template_status)', function(obj){
       let context = '停用';
       let status = 0;
       if (obj.elem.checked){
@@ -197,7 +195,7 @@
 
         let loading = layer.load();
         $.ajax({
-          url: MODULE_PATH + "/updateStatus?userIds=" + id+"&status=" + status,
+          url: MODULE_PATH + "/updateStatus?templateIds=" + id+"&status=" + status,
           dataType: 'json',
           type: 'PUT',
           success: function (result) {
@@ -205,7 +203,7 @@
             if (result.code === 200) {
               layer.msg(result.msg, {icon: 1, time: 1000}, function () {
                 // obj.del();
-                table.reload('user-table');
+                table.reload('template-table');
               });
             } else {
               layer.msg(result.msg, {icon: 2, time: 1000});
@@ -220,7 +218,7 @@
         // 恢复Switch的状态
         // obj.elem.checked =checked
         // form.render('checkbox');
-        table.reload('user-table');
+        table.reload('template-table');
       });
     })
 
@@ -268,7 +266,7 @@
             layer.close(loading);
             if (result.code === 200) {
               layer.msg(result.msg, {icon: 1, time: 1000}, function () {
-                table.reload('user-table');
+                table.reload('template-table');
               });
             } else {
               layer.msg(result.msg, {icon: 2, time: 1000});
@@ -279,7 +277,7 @@
     }
     //刷新按钮
     window.refresh = function () {
-      table.reload('user-table');
+      table.reload('template-table');
     }
   })
 </script>

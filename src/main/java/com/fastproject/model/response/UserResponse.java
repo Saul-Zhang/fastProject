@@ -14,38 +14,14 @@ import lombok.Data;
 @Data
 public class UserResponse implements Serializable {
 
-  private static final long serialVersionUID = 1L;
-
-  /**
-   * 主键
-   **/
-  @ApiModelProperty(value = "主键")
   private String id;
 
-  /**
-   * 用户账号
-   **/
-  @ApiModelProperty(value = "用户账号")
   private String username;
 
-
-  /**
-   * 昵称
-   **/
-  @ApiModelProperty(value = "昵称")
   private String realName;
 
-  /**
-   * 部门id
-   **/
-  @ApiModelProperty(value = "部门id")
   private String deptId;
 
-//  private List<String> roleNames;
-
-  /**
-   * 岗位id
-   **/
   private String posId;
 
   /**

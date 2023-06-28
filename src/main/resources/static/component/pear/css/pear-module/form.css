@@ -66,5 +66,5 @@ textarea::-webkit-input-placeholder {
 .layui-textarea {
 	border-radius: 4px!important;
 	border-color: #eee!important;
-	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out!important;
+	/* transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out!important; */
 }

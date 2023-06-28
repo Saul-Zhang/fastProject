@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:include="include :: header('客户列表')"/>
+</head>
+<body class="pear-container">
+<div class="layui-card">
+  <div class="layui-card-body">
+    <form class="layui-form" action="" id="customer-form" >
+      <div class="layui-form-item" id="form-item">
+      </div>
+    </form>
+  </div>
+</div>
+<div class="layui-card">
+  <div class="layui-card-body">
+    <table id="customer-table" lay-filter="customer-table"></table>
+  </div>
+</div>
+</body>
+
+<script type="text/html" id="role-toolbar">
+  <button sa:hasPermission="system:customer:add" class="pear-btn pear-btn-primary pear-btn-md"
+          lay-event="add">
+    <i class="layui-icon layui-icon-add-1"></i>
+    新增
+  </button>
+  <button sa:hasPermission="system:customer:remove" class="pear-btn pear-btn-danger pear-btn-md"
+          lay-event="batchRemove">
+    <i class="layui-icon layui-icon-delete"></i>
+    删除
+  </button>
+</script>
+
+<script type="text/html" id="customer-bar">
+
+  <button sa:hasPermission="system:customer:edit" class="pear-btn pear-btn-primary pear-btn-sm"
+          lay-event="edit"><i class="layui-icon layui-icon-edit"></i>
+  </button>
+
+  <button sa:hasPermission="system:customer:remove" class="pear-btn pear-btn-danger pear-btn-sm"
+          lay-event="remove"><i class="layui-icon layui-icon-delete"></i>
+  </button>
+</script>
+
+<script type="text/html" id="customer_status">
+  <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch"
+         lay-filter="customer_status" lay-text="启用|停用"
+         {{d.status== '1' ? 'checked' : '' }} >
+</script>
+
+<th:block th:include="include :: footer"/>
+<script>
+  layui.use(['table', 'form', 'jquery'], function () {
+    let table = layui.table;
+    let form = layui.form;
+    let $ = layui.jquery;
+
+
+    let MODULE_PATH = rootPath + "/CustomerController";
+
+
+    let cols = []
+    let col = []
+    $.ajax({
+      url: MODULE_PATH + "/cols",
+      dataType: 'json',
+      type: 'GET',
+      success: function (result) {
+        // query
+        $.each(result, function (index, obj) {
+
+          var inlineDiv= `<div class='layui-inline' id='item-${index}'></div>`;
+          var label = `<label class="layui-form-label">${obj.fieldName}</label>`;
+          var input = ` <div class="layui-input-inline"><input type="text" name="${obj.id}" class="layui-input"></div>`
+
+          // var label = `<label class="layui-form-label">${obj.fieldName}</label>`;
+          // var input = ` <div class="layui-input-block"><input type="text" name="${obj.id}" class="layui-input" ${inputVerify}></div>`
+          if (obj.type === 'SELECT'){
+            var option = ' <option value="">请选择</option>'
+            $.each(obj.dictDataMap, function(key, value){
+              option +=  `<option value="${key}">${value}</option>`
+            })
+            input = '<div class="layui-input-block">'
+                + `<select name="${obj.id}">`
+                + option
+                + '</select>'
+                + '</div>'
+          }
+          $("#form-item").append(inlineDiv);
+          $(`#item-${index}`).append(label)
+          $(`#item-${index}`).append(input)
+        });
+        var query = '<div class="layui-inline" style="margin-left: 50px;">\n'
+            + '<button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="customer_query">\n'
+            + '\t<i class="layui-icon layui-icon-search"></i>\n'
+            + '\t查询\n'
+            + '</button>\n'
+            + '<button type="reset" class="pear-btn pear-btn-md">\n'
+            + '\t<i class="layui-icon layui-icon-refresh"></i>\n'
+            + '\t重置\n'
+            + '</button>\n'
+            + '<button type="button" class="pear-btn pear-btn-md expand">\n'
+            + '</button>\n'
+            + '</div>'
+        $("#form-item").append(query);
+        form.render();
+        formToggle({
+          elem: "#customer-form",
+        });
+
+        // table
+        col.push({type: 'checkbox',fixed: 'left'});
+        $.each(result, function (index, obj) {
+          if (index < 2){
+            // 最左两列固定
+            col.push({field: obj.id, title: obj.fieldName,fixed: 'left', width:100,align: 'center'});
+          } else {
+            col.push({field: obj.id, title: obj.fieldName, align: 'center',width:100});
+          }
+        });
+        col.push({title: '操作', toolbar: '#customer-bar',fixed: 'right', align: 'center',width:120})
+        cols.push(col);
+        //table表单列表
+        table.render({
+          elem: '#customer-table',
+          url: MODULE_PATH + '/list',
+          page: false,
+          method: 'get',
+          // where: form.val("customer-form"),
+          cols: cols,
+          cellMinWidth: 80,
+          lineStyle: 'height: 220px',
+          skin: 'line',
+          toolbar: '#role-toolbar',
+          defaultToolbar: [{
+            layEvent: 'refresh',
+            icon: 'layui-icon-refresh',
+          }, 'filter', 'print', 'exports']
+        });
+      }
+    })
+
+
+    function formToggle(options) {
+      console.log("Form toggle")
+      var defaultsOpt = {
+        isExpand: false,
+        prefixIcon: "layui-icon",
+        toggleIcon: ['layui-icon-down', 'layui-icon-up'],
+        toggleText: ['展开', '折叠'],
+      }
+      var opt = $.extend({}, defaultsOpt, options);
+      var elem = opt.elem; // 绑定的表单元素,必填
+      var min = opt.min; // 最小显示数,默认显示一行
+      var isExpand = opt.isExpand; // 初始展开
+      var prefixIcon = opt.prefixIcon + " "; // 图标前缀
+      var toggleIcon = opt.toggleIcon; // 折叠和展开时的图标类[unExpandIcon, ExpandIcon]
+      var toggleText = opt.toggleText; // 折叠和展开时的文本
+
+      var eleDOM = $(elem + " .layui-inline");
+      var firstElTop = eleDOM.first().offset().top;
+      var targetEl = eleDOM.filter(function (index) {
+        var isGtMin = (index + 1) > min;
+        var isGtFirstElTop = $(this).offset().top > firstElTop;
+        var isNeqLast = (index + 1) != eleDOM.length;
+        return min
+            ? isGtMin && isNeqLast
+            : isGtFirstElTop && isNeqLast;
+      });
+
+      var unExpandIcon = prefixIcon + toggleIcon[0];
+      var expandIcon = prefixIcon + toggleIcon[1];
+      var unExpandText = toggleText[0];
+      var expandText = toggleText[1];
+      var btnSelector = elem + " .expand";
+      $(btnSelector).append("<i></i>")
+      if (isExpand) {
+        $(btnSelector).prepend("<span>" + expandText + "</span>");
+        $(btnSelector + ">i").addClass(expandIcon);
+      } else {
+        $(btnSelector).prepend("<span>" + unExpandText + "</span>")
+        $(btnSelector + ">i").addClass(unExpandIcon)
+        targetEl.addClass("layui-hide");
+      }
+      $(btnSelector).click(function () {
+        isExpand = !isExpand;
+        if (isExpand) {
+          $(btnSelector + ">span").html(expandText);
+          $(btnSelector + ">i").removeClass(unExpandIcon).addClass(expandIcon);
+          targetEl.removeClass("layui-hide")
+        } else {
+          $(btnSelector + ">span").html(unExpandText);
+          $(btnSelector + ">i").removeClass(expandIcon).addClass(unExpandIcon);
+          targetEl.addClass("layui-hide")
+        }
+      })
+    }
+
+    //table图标事件绑定
+    table.on('tool(customer-table)', function (obj) {
+      if (obj.event === 'remove') {
+        window.remove(obj);
+      } else if (obj.event === 'edit') {
+        window.edit(obj);
+      } else if (obj.event === 'editPwd') {
+        window.editPwd(obj);
+      } else if (obj.event === 'updateStatus') {
+        window.updateStatus(obj);
+      }
+    });
+
+    //table工具栏绑定
+    table.on('toolbar(customer-table)', function (obj) {
+      if (obj.event === 'add') {
+        window.add();
+      } else if (obj.event === 'refresh') {
+        window.refresh();
+      } else if (obj.event === 'batchRemove') {
+        window.batchRemove(obj);
+      }
+    });
+
+    //查询按钮绑定
+    form.on('submit(customer_query)', function (data) {
+      table.reload('customer-table', {where: data.field})
+      return false;
+    });
+
+    //添加
+    window.add = function () {
+      layer.open({
+        type: 2,
+        title: '新增',
+        shade: 0.1,
+        area: ['550px', '600px'],
+        content: MODULE_PATH + '/add'
+      });
+    }
+    //修改
+    window.edit = function (obj) {
+      layer.open({
+        type: 2,
+        title: '修改',
+        shade: 0.1,
+        area: ['550px', '600px'],
+        content: MODULE_PATH + '/edit/' + obj.data['customerId']
+      });
+    }
+
+
+
+    //删除
+    form.on('switch(customer_status)', function (obj) {
+      let context = '停用';
+      let status = 0;
+      if (obj.elem.checked) {
+        context = '启用';
+        status = 1;
+      }
+
+      let id = this.value;
+      layer.confirm('确定要' + context + '该用户', {icon: 3, title: '提示'}, function (index) {
+        // 用户点击了确认按钮
+        layer.close(index);
+
+        let loading = layer.load();
+        $.ajax({
+          url: MODULE_PATH + "/updateStatus?customerIds=" + id + "&status=" + status,
+          dataType: 'json',
+          type: 'PUT',
+          success: function (result) {
+            layer.close(loading);
+            if (result.code === 200) {
+              layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                // obj.del();
+                table.reload('customer-table');
+              });
+            } else {
+              layer.msg(result.msg, {icon: 2, time: 1000});
+            }
+            form.render('checkbox');
+          }
+        })
+      }, function (index) {
+        console.log("取消");
+        // 用户点击了取消按钮
+        layer.close(index);
+        // 恢复Switch的状态
+        // obj.elem.checked =checked
+        // form.render('checkbox');
+        table.reload('customer-table');
+      });
+    })
+
+    window.remove = function (obj) {
+      layer.confirm('确定要删除该用户', {icon: 3, title: '提示'}, function (index) {
+        layer.close(index);
+        let loading = layer.load();
+        $.ajax({
+          url: MODULE_PATH + "/remove?ids=" + obj.data['id'],
+          dataType: 'json',
+          type: 'delete',
+          success: function (result) {
+            layer.close(loading);
+            if (result.code === 200) {
+              layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                obj.del();
+              });
+            } else {
+              layer.msg(result.msg, {icon: 2, time: 1000});
+            }
+          }
+        })
+      });
+    }
+
+    //批量删除
+    window.batchRemove = function (obj) {
+      let data = table.checkStatus(obj.config.id).data;
+      if (data.length === 0) {
+        layer.msg("未选中数据", {icon: 3, time: 1000});
+        return false;
+      }
+      let ids = [];
+      for (let i = 0; i < data.length; i++) {
+        ids.push(data[i].id);
+      }
+      layer.confirm('确定要删除这些用户', {icon: 3, title: '提示'}, function (index) {
+        layer.close(index);
+        let loading = layer.load();
+        $.ajax({
+          url: MODULE_PATH + "/remove?ids=" + ids,
+          dataType: 'json',
+          type: 'delete',
+          success: function (result) {
+            layer.close(loading);
+            if (result.code === 200) {
+              layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                table.reload('customer-table');
+              });
+            } else {
+              layer.msg(result.msg, {icon: 2, time: 1000});
+            }
+          }
+        })
+      });
+    }
+    //刷新按钮
+    window.refresh = function () {
+      table.reload('customer-table');
+    }
+  })
+</script>
+</html>

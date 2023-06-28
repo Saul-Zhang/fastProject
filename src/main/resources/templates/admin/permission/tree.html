@@ -62,7 +62,7 @@
             // data.field.roleId = [[${roleId}]];
             // data.field.permissionIds = ids;
 
-
+            let loading = layer.load();
             $.ajax({
                 url: MODULE_PATH+'/updateRolePermission',
                 data: JSON.stringify({ roleId: [[${roleId}]], permissionIds: ids }),
@@ -70,6 +70,7 @@
                 type: 'put',
                 contentType: 'application/json',
                 success: function (result) {
+                    layer.close(loading);
                     if (result.code===200) {
                         layer.msg(result.msg, {icon: 1, time: 1000}, function () {
                             parent.layer.close(parent.layer.getFrameIndex(window.name));

@@ -57,9 +57,14 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">性别</label>
                     <div class="layui-input-block">
-                        <select id="gender" name="gender">
-                            <option th:each="gender : ${genders}" th:text="${gender.value}"
-                                    th:value="${gender.key}"></option>
+<!--                        <select id="gender" name="gender">-->
+<!--                            <option th:each="gender : ${genders}" th:text="${gender.value}"-->
+<!--                                    th:value="${gender.key}"></option>-->
+<!--                        </select>-->
+
+                        <select id="gender" name="gender" th:with="type=${@dict.getDict('gender')}">
+                            <option th:each="dict : ${type}" th:text="${dict.value}"
+                                    th:value="${dict.key}"></option>
                         </select>
                     </div>
                 </div>
@@ -137,7 +142,7 @@
             });
             roleIds = roleIds.substr(0, roleIds.length - 1);
             data.field.roleIds = roleIds;
-
+            let loading = layer.load();
             $.ajax({
                 url: MODULE_PATH+'/add',
                 data: data.field,
@@ -145,6 +150,7 @@
                 contentType: 'application/x-www-form-urlencoded',
                 type: 'post',
                 success: function (result) {
+                    layer.close(loading);
                     if (result.code==200) {
                         layer.msg(result.msg, {icon: 1, time: 1000}, function () {
                             parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页

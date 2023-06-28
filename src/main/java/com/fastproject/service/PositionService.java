@@ -4,7 +4,6 @@ import com.fastproject.common.mybatis.LambdaQueryWrapperX;
 import com.fastproject.mapper.PositionMapper;
 import com.fastproject.model.Position;
 import com.fastproject.model.constant.Status;
-import com.fastproject.model.request.body.UpdateStatusBody;
 import com.fastproject.model.request.query.PositionQuery;
 import com.fastproject.model.response.AjaxResult;
 import com.fastproject.util.SnowflakeIdWorker;
@@ -41,7 +40,7 @@ public class PositionService {
   }
 
   public AjaxResult add(Position position) {
-    position.setId(SnowflakeIdWorker.getUUID());
+    position.setId(SnowflakeIdWorker.getId());
     positionMapper.insert(position);
     return AjaxResult.success();
   }

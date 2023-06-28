@@ -66,6 +66,7 @@
         });
 
         form.on('submit(user-update)', function (data) {
+            let loading = layer.load();
             $.ajax({
                 url: MODULE_PATH+'/editPwd',
                 data: data.field,
@@ -73,6 +74,7 @@
                 contentType: 'application/x-www-form-urlencoded',
                 type: 'post',
                 success: function (result) {
+                    layer.close(loading);
                     if (result.code===200) {
                         layer.msg(result.msg, {icon: 1, time: 1000}, function () {
                             parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页

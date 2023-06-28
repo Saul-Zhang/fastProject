@@ -1,5 +1,6 @@
 package com.fastproject.model.response;
 
+import com.github.pagehelper.PageInfo;
 import lombok.Data;
 
 @Data
@@ -34,6 +35,16 @@ public class PageResponse {
     pageResponse.setData(data);
     pageResponse.setCode(0);
     pageResponse.setCount(count);
+    pageResponse.setMsg("请求成功");
+
+    return pageResponse;
+  }
+
+  public static <T> PageResponse page(PageInfo<T> pageInfo) {
+    PageResponse pageResponse = new PageResponse();
+    pageResponse.setData(pageInfo.getList());
+    pageResponse.setCode(0);
+    pageResponse.setCount(pageInfo.getTotal());
     pageResponse.setMsg("请求成功");
 
     return pageResponse;

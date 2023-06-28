@@ -62,7 +62,7 @@
 
 
 <script type="text/html" id="dictData-enable">
-    <input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="dictData-enable" {{ d.status== 0 ? 'checked' : '' }}>
+    <input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="dictData-enable" {{ d.status== 1 ? 'checked' : '' }}>
 </script>
 
 
@@ -81,10 +81,10 @@
         let cols = [
             [
                 {type: 'checkbox'},
-                {title: '字典标签', field: 'dictLabel', align: 'left'},
+                {title: '字典标签', field: 'label', align: 'left'},
                 {title: '字典键值', field: 'value', align: 'left'},
                 {title: '字典编码', field: 'code', align: 'left'},
-                {title: '排序', field: 'dictSort', align: 'left'},
+                {title: '排序', field: 'orderNum', align: 'left'},
                 {title: '是否默认', field: 'isDefault', align: 'left',toolbar: '#dictData-isDefault'},
                 {title: '状态', field: 'status', align: 'left',toolbar: '#dictData-enable'},
                 // {title: '创建者', field: 'createBy', align: 'left'},

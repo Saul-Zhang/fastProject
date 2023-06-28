@@ -55,7 +55,7 @@ public class RoleService {
   }
 
   public AjaxResult insert(Role record) {
-    record.setId(SnowflakeIdWorker.getUUID());
+    record.setId(SnowflakeIdWorker.getId());
     record.setStatus(Status.ENABLE);
     roleMapper.insert(record);
     return AjaxResult.success();

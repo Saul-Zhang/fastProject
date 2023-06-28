@@ -73,7 +73,7 @@ public class DictTypeService {
       return AjaxResult.error(record.getCode() + "字典编码已经存在");
     }
     //添加雪花主键id
-    record.setId(SnowflakeIdWorker.getUUID());
+    record.setId(SnowflakeIdWorker.getId());
     dictTypeMapper.insert(record);
     return AjaxResult.success();
   }

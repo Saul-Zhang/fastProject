@@ -6,7 +6,6 @@ import com.fastproject.mapper.PermissionMapper;
 import com.fastproject.mapper.PermissionRoleMapper;
 import com.fastproject.model.Permission;
 import com.fastproject.model.PermissionRole;
-import com.fastproject.model.constant.Status;
 import com.fastproject.model.custom.Menu;
 import com.fastproject.model.response.AjaxResult;
 import com.fastproject.model.response.LayUiTree;
@@ -54,7 +53,7 @@ public class PermissionService {
 
   public AjaxResult insert(Permission record) {
     //添加雪花主键id
-    record.setId(SnowflakeIdWorker.getUUID());
+    record.setId(SnowflakeIdWorker.getId());
     //判断为目录的时候添加父id为0
 //    if (record.getType() == 0) {
 //      record.setParentId(0L);

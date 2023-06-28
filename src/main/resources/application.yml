@@ -82,6 +82,7 @@ spring:
 mybatis-plus:
   mapper-locations: classpath:/mybatis/*Mapper.xml
   type-aliases-package: com.fastproject.model
+  type-handlers-package: com.fastproject.common.mybatis
 #  global-config:
 #    db-config:
 #      logic-delete-field: status # 全局逻辑删除的实体字段名

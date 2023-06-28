@@ -108,9 +108,9 @@ public class SnowflakeIdWorker {
         lastTimestamp = timestamp;
  
         //移位并通过或运算拼到一起组成64位的ID
-        return ((timestamp - twepoch) << timestampLeftShift) //
-                | (dataCenterId << dataCenterIdShift) //
-                | (workerId << workerIdShift) //
+        return ((timestamp - twepoch) << timestampLeftShift)
+                | (dataCenterId << dataCenterIdShift)
+                | (workerId << workerIdShift)
                 | sequence;
     }
  
@@ -148,7 +148,7 @@ public class SnowflakeIdWorker {
         System.out.println((System.nanoTime()-startTime)/1000000+"ms");
     }
     
-    public static long getUUID() {
+    public static long getId() {
     	return idWorker.nextId();
     }
 }
