@@ -11,13 +11,13 @@ import lombok.Data;
 @TableName(value = "rel_audit_user")
 @Data
 @Builder
-public class AuditUser extends DefinedField {
+public class RelationAuditUser extends DefinedField {
 
   private Long id;
 
   private AuditStatus status;
 
-  private Long approvedBy;
+  private Long auditBy;
 
   private Long auditId;
 }

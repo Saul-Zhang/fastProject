@@ -24,7 +24,6 @@ public class ColsResponse extends DefinedField {
   private FieldType type;
 
   private Boolean required;
-  private Boolean readOnly;
   private String dictTypeCode;
 
   private Map<String, String> dictDataMap;
@@ -37,7 +36,6 @@ public class ColsResponse extends DefinedField {
         .fieldName(template.getFieldName())
         .type(template.getType())
         .required(template.getRequired())
-        .readOnly(template.getReadOnly())
         .dictTypeCode(template.getDictTypeCode())
         .build();
   }

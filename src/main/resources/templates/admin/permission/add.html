@@ -136,6 +136,7 @@
 
         form.on('submit(power-save)', function (data) {
             data.field.icon = "layui-icon " + data.field.icon;
+            let loading = layer.load();
             $.ajax({
                 url: MODULE_PATH+'/add',
                 data: JSON.stringify(data.field),
@@ -143,6 +144,7 @@
                 contentType: 'application/json',
                 type: 'post',
                 success: function (result) {
+                    layer.close(loading);
                     if (result.code===200) {
                         layer.msg(result.msg, {icon: 1, time: 1000}, function () {
                             parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页

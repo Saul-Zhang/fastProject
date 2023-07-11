@@ -31,12 +31,12 @@
 </div>
 </body>
 
-<script type="text/html" id="role-toolbar">
-    <button sa:hasPermission="system:log:remove" class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
-        <i class="layui-icon layui-icon-delete"></i>
-        删除
-    </button>
-</script>
+<!--<script type="text/html" id="role-toolbar">-->
+<!--    <button sa:hasPermission="system:log:remove" class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">-->
+<!--        <i class="layui-icon layui-icon-delete"></i>-->
+<!--        删除-->
+<!--    </button>-->
+<!--</script>-->
 
 <script type="text/html" id="log-bar">
     <button sa:hasPermission="system:log:remove" class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove" title="删除"><i class="layui-icon layui-icon-delete"></i>
@@ -55,12 +55,11 @@
         let MODULE_PATH = rootPath+"/LogController";
         let cols = [
             [
-                {type: 'checkbox'},
-                {title: 'ID', field: 'id', align: 'left'},
+                // {type: 'checkbox'},
                 {title: '日志名称', field: 'title', align: 'left'},
                 {title: '方法', field: 'method', align: 'left'},
-                {title: '时间', field: 'operTime', align: 'center'},
-                {title: '用户', field: 'operName', align: 'center'},
+                {title: '时间', field: 'createAt', align: 'center'},
+                {title: '操作人员', field: 'operator', align: 'center'},
                 {title: '操作', toolbar: '#log-bar', align: 'center'}
             ]
         ]

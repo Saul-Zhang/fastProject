@@ -81,7 +81,7 @@
             $.each(obj.dictDataMap, function(key, value){
               option +=  `<option value="${key}">${value}</option>`
             })
-            input = '<div class="layui-input-block">'
+            input = '<div class="layui-input-inline">'
                 + `<select name="${obj.id}">`
                 + option
                 + '</select>'
@@ -231,7 +231,7 @@
     window.add = function () {
       layer.open({
         type: 2,
-        title: '新增',
+        title: '新增客户',
         shade: 0.1,
         area: ['550px', '600px'],
         content: MODULE_PATH + '/add'
@@ -239,12 +239,13 @@
     }
     //修改
     window.edit = function (obj) {
+      var path = MODULE_PATH + "/edit/" + obj.data["customerId"]
       layer.open({
         type: 2,
-        title: '修改',
+        title: '修改客户信息',
         shade: 0.1,
         area: ['550px', '600px'],
-        content: MODULE_PATH + '/edit/' + obj.data['customerId']
+        content: path
       });
     }
 
@@ -283,7 +284,6 @@
           }
         })
       }, function (index) {
-        console.log("取消");
         // 用户点击了取消按钮
         layer.close(index);
         // 恢复Switch的状态
@@ -294,25 +294,55 @@
     })
 
     window.remove = function (obj) {
-      layer.confirm('确定要删除该用户', {icon: 3, title: '提示'}, function (index) {
-        layer.close(index);
-        let loading = layer.load();
-        $.ajax({
-          url: MODULE_PATH + "/remove?ids=" + obj.data['id'],
-          dataType: 'json',
-          type: 'delete',
-          success: function (result) {
-            layer.close(loading);
-            if (result.code === 200) {
-              layer.msg(result.msg, {icon: 1, time: 1000}, function () {
-                obj.del();
-              });
-            } else {
-              layer.msg(result.msg, {icon: 2, time: 1000});
+      layer.prompt({
+        formType: 2,
+        // value: '初始值',
+        title: '请注明删除原因',
+        // area: ['800px', '350px'] //自定义文本域宽高
+      }, function(value, index, elem){
+        if (value.trim().length === 0){
+          return false;
+        }
+          let loading = layer.load();
+          $.ajax({
+            url: MODULE_PATH + "/remove?ids=" + obj.data['customerId'] + "&description=" + value,
+            dataType: 'json',
+            type: 'delete',
+            success: function (result) {
+              layer.close(loading);
+              if (result.code === 200) {
+                layer.msg(result.msg, {icon: 1, time: 1000});
+              } else {
+                layer.msg(result.msg, {icon: 2, time: 1000});
+              }
             }
-          }
-        })
+          })
+        layer.close(index);
       });
+
+      // layer.prompt({title: '请输入文本'}, function(value, index, elem){
+      //   if(value === '') return elem.focus();
+      //   layer.msg('获得：'+ util.escape(value)); // 显示 value
+      //   // 关闭 prompt
+      //   layer.close(index);
+      // });
+      // layer.confirm('确定要提交审批删除该客户', {icon: 3, title: '提示'}, function (index) {
+      //   layer.close(index);
+      //   let loading = layer.load();
+      //   $.ajax({
+      //     url: MODULE_PATH + "/remove?ids=" + obj.data['customerId'],
+      //     dataType: 'json',
+      //     type: 'delete',
+      //     success: function (result) {
+      //       layer.close(loading);
+      //       if (result.code === 200) {
+      //         layer.msg(result.msg, {icon: 1, time: 1000});
+      //       } else {
+      //         layer.msg(result.msg, {icon: 2, time: 1000});
+      //       }
+      //     }
+      //   })
+      // });
     }
 
     //批量删除

@@ -6,8 +6,8 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class AuditQuery extends AbstractPageQuery {
+public class LogQuery extends AbstractPageQuery {
 
-  private String status;
-  private String type;
+  private String title;
+  private String operator;
 }

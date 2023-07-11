@@ -149,7 +149,6 @@ public class UserService {
   public AjaxResult update(UserBody body) {
     //先删除这个用户的所有角色
     roleUserMapper.delete(new LambdaQueryWrapperX<RelationRoleUser>()
-        .inIfPresent(RelationRoleUser::getRoleId, body.getRoleIds())
         .eq(RelationRoleUser::getUserId, body.getId()));
     //添加新的角色信息
     if (CollectionUtils.isNotEmpty(body.getRoleIds())) {

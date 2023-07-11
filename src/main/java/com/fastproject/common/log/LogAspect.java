@@ -3,49 +3,58 @@ package com.fastproject.common.log;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fastproject.common.annotation.Log;
-import com.fastproject.model.TsysOperLog;
+import com.fastproject.model.OperationLog;
 import com.fastproject.model.User;
 import com.fastproject.satoken.SaTokenUtil;
-import com.fastproject.service.SysOperLogService;
+import com.fastproject.service.OperationLogService;
 import com.fastproject.util.ServletUtils;
 import com.fastproject.util.StringUtils;
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.NamedThreadLocal;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 
-/**
- * 操作日志记录处理
- *
- * @author fuce
- * @date: 2018年9月30日 下午1:40:33
- */
 //@Aspect
 //@Component
 //@EnableAsync
+@RequiredArgsConstructor
 public class LogAspect {
 
   private static final Logger log = LoggerFactory.getLogger(LogAspect.class);
 
-  @Autowired
-  private ObjectMapper objectMapper;
+  /** 计算操作消耗时间 */
+  private static final ThreadLocal<Long> TIME_THREAD_LOCAL = new NamedThreadLocal<Long>("Cost Time");
 
-  @Autowired
-  private SysOperLogService operLogService;
 
-  // 配置织入点
+  private final ObjectMapper objectMapper;
+
+  private final OperationLogService operationLogService;
+
+
+  /**
+   * 处理请求前执行
+   */
+  @Before(value = "@annotation(com.fastproject.common.annotation.Log)")
+  public void boBefore(JoinPoint joinPoint, Log controllerLog)
+  {
+    TIME_THREAD_LOCAL.set(System.currentTimeMillis());
+  }
+
+
   @Pointcut("@annotation(com.fastproject.common.annotation.Log)")
   public void logPointCut() {
   }
@@ -62,9 +71,6 @@ public class LogAspect {
 
   /**
    * 拦截异常操作
-   *
-   * @param joinPoint
-   * @param e
    */
   @AfterThrowing(value = "logPointCut()", throwing = "e")
   public void doAfter(JoinPoint joinPoint, Exception e) {
@@ -84,18 +90,12 @@ public class LogAspect {
       User currentUser = SaTokenUtil.getUser();
 
       // *========数据库日志=========*//
-      TsysOperLog operLog = new TsysOperLog();
+      OperationLog operationLog = new OperationLog();
 
-      //赋值操作
-            /*String ip = SaTokenUtil.getIp();
-            operLog.setOperIp(ip);*/
-      // 操作地点
-      //operLog.setOperLocation(AddressUtils.getRealAddressByIP(ip));
-      // 请求的地址
-      operLog.setOperUrl(ServletUtils.getRequest().getRequestURI());
+      operationLog.setUrl(ServletUtils.getRequest().getRequestURI());
       if (currentUser != null) {
 //            	//操作人
-        operLog.setOperName(currentUser.getUsername());
+        operationLog.setOperator(currentUser.getUsername());
 //                if (StringUtils.isNotNull(currentUser.getDept())
 //                        && StringUtils.isNotEmpty(currentUser.getDept().getDeptName()))
 //                {
@@ -105,20 +105,22 @@ public class LogAspect {
 
       if (e != null) {
         //错误日志
-        operLog.setErrorMsg(StringUtils.substring(e.getMessage(), 0, 2000));
+        operationLog.setErrorMsg(StringUtils.substring(e.getMessage(), 0, 2000));
       }
       // 设置方法名称
       String className = joinPoint.getTarget().getClass().getName();
       String methodName = joinPoint.getSignature().getName();
-      operLog.setMethod(className + "." + methodName + "()");
-      operLog.setOperTime(new Date());
+      operationLog.setMethod(className + "." + methodName + "()");
+      operationLog.setCreateAt(new Date());
+      // 设置消耗时间
+      operationLog.setCostTime(System.currentTimeMillis() - TIME_THREAD_LOCAL.get());
       // 处理设置注解上的参数
-      getControllerMethodDescription(controllerLog, operLog);
+      getControllerMethodDescription(controllerLog, operationLog);
       // 保存数据库
       //System.out.println("-----------------");
       //System.out.println(new Gson().toJson(operLog));
       //System.out.println("-----------------");
-//      operLogService.insertSelective(operLog);
+      operationLogService.add(operationLog);
     } catch (Exception exp) {
       // 记录本地异常日志
       log.error("==前置通知异常==");
@@ -134,7 +136,7 @@ public class LogAspect {
    * @return 方法描述
    * @throws Exception
    */
-  public void getControllerMethodDescription(Log log, TsysOperLog operLog) throws Exception {
+  public void getControllerMethodDescription(Log log, OperationLog operLog) throws Exception {
     // 设置action动作
     // operLog.setAction(log.action());
     // 设置标题
@@ -151,12 +153,12 @@ public class LogAspect {
   /**
    * 获取请求的参数，放到log中
    */
-  private void setRequestValue(TsysOperLog operLog) throws JsonProcessingException {
+  private void setRequestValue(OperationLog operLog) throws JsonProcessingException {
     Map<String, String[]> map = ServletUtils.getRequest().getParameterMap();
 //    Gson gson = new Gson();
 //    String params = gson.toJson(map);
     String params = objectMapper.writeValueAsString(map);
-    operLog.setOperParam(StringUtils.substring(params, 0, 255));
+    operLog.setParam(StringUtils.substring(params, 0, 255));
   }
 
   /**

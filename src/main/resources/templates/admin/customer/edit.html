@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <th:block th:include="include :: header('模板新增')"/>
+  <th:block th:include="include :: header('客户修改新增')"/>
 </head>
 <body>
 <form class="layui-form" action="">
@@ -20,10 +20,13 @@
   </div>
   <div class="bottom">
     <div class="button-container">
-      <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit=""
-              lay-filter="customer-save">
+      <button   class="layui-btn layui-btn-normal layui-btn-sm" lay-submit
+              lay-filter="customer-update">
+
+<!--        <button  class="layui-btn layui-btn-normal layui-btn-sm" lay-event="customer-update"-->
+<!--                 lay-filter="customer-update">-->
         <i class="layui-icon layui-icon-ok"></i>
-        提交
+        提交审批
       </button>
       <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">
         <i class="layui-icon layui-icon-refresh"></i>
@@ -39,17 +42,42 @@
     let $ = layui.jquery;
     let MODULE_PATH = rootPath + "/CustomerController";
 
-    var customerId = [[${customerId}]]
-
     $.ajax({
-      url: MODULE_PATH + "/"+ customerId,
+      url: MODULE_PATH + "/"+ '[[${customerId}]]',
       dataType: 'json',
       type: 'GET',
       success: function (customer) {
         $.each(customer, function (index, obj) {
+
+          var labelClass;
+          var inputVerify;
+          if (obj.required == true) {
+            labelClass = "layui-form-label required"
+            inputVerify = 'lay-verify="required"'
+          } else {
+            labelClass = "layui-form-label"
+          }
           var formItem= `<div class='layui-form-item' id='item-${index}'></div>`;
-          var label = `<label class="layui-form-label">${obj.fieldName}</label>`;
-          var input = ` <div class="layui-input-block"><input type="text" name="${obj.fieldId}" value="${obj.value}" class="layui-input"></div>`
+          var label = `<label class="${labelClass}">${obj.fieldName}</label>`;
+
+          var input = ` <div class="layui-input-block"><input type="text" name="${obj.fieldId}" value="${obj.value}" class="layui-input" ${inputVerify}></div>`
+
+          if (obj.dictDataMap != null){
+            var option = ' <option value="">请选择</option>'
+            $.each(obj.dictDataMap, function(key, value){
+              option +=  `<option value="${key}" >${value}</option>`
+              if (key == obj.value){
+                option +=  `<option value="${key}" selected>${value}</option>`
+              }
+
+            })
+            input = ' <div class="layui-input-block">\n'
+                + `<select name="${obj.fieldId}" field="${obj.value}" ${inputVerify}>`
+                + option
+                + '</select>'
+                + '</div>'
+          }
+
           $("#form-container").append(formItem);
           $(`#item-${index}`).append(label)
           $(`#item-${index}`).append(input)
@@ -58,24 +86,38 @@
       }
     })
 
-    form.on('submit(customer-save)', function (data) {
-      $.ajax({
-        url: MODULE_PATH + '/add',
-        data: JSON.stringify(data.field),
-        dataType: 'json',
-        contentType: 'application/json',
-        type: 'post',
-        success: function (result) {
-          if (result.code == 200) {
-            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
-              parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页
-              parent.layui.table.reload("customer-table");
-            });
-          } else {
-            layer.msg(result.msg, {icon: 2, time: 1000});
+    form.on('submit(customer-update)', function (data) {
+        layer.prompt({
+          formType: 2,
+          title: '请添加说明',
+          // area: ['800px', '350px'] //自定义文本域宽高
+        }, function(value, index, elem){
+          if (value.trim().length === 0){
+            return false;
           }
-        }
-      })
+          data.field.description = value.trim();
+          let loading = layer.load();
+          $.ajax({
+            url: MODULE_PATH + '/edit/'+ '[[${customerId}]]',
+            data: JSON.stringify(data.field),
+            dataType: 'json',
+            contentType: 'application/json',
+            type: 'PUT',
+            success: function (result) {
+              layer.close(loading);
+              if (result.code == 200) {
+                layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                  parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页
+                  // parent.layui.table.reload("customer-table");
+                });
+              } else {
+                layer.msg(result.msg, {icon: 2, time: 1000});
+              }
+            }
+          })
+
+        })
+
       return false;
     });
   })

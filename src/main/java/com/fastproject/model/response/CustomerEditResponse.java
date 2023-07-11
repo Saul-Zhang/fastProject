@@ -1,5 +1,6 @@
 package com.fastproject.model.response;
 
+import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,7 +10,7 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class CustomerResponse {
+public class CustomerEditResponse {
 
 
 //  private Long customerId;
@@ -20,4 +21,8 @@ public class CustomerResponse {
   private String fieldName;
 
   private String value;
+
+  private Map<String, String> dictDataMap;
+
+  private Boolean required;
 }

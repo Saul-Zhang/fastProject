@@ -1,21 +1,18 @@
 package com.fastproject.controller.admin;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.fastproject.model.Role;
-import com.fastproject.model.Template;
+import com.fastproject.common.annotation.Log;
 import com.fastproject.model.response.AjaxResult;
 import com.fastproject.model.response.ColsResponse;
-import com.fastproject.model.response.CustomColsResponse;
-import com.fastproject.model.response.CustomerResponse;
+import com.fastproject.model.response.CustomerEditResponse;
 import com.fastproject.model.response.PageResponse;
-import com.fastproject.model.response.TemplateResponse;
 import com.fastproject.service.CustomerService;
-import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,7 +36,7 @@ public class CustomerController {
   private final CustomerService customerService;
 
   @GetMapping("/view")
-  @SaCheckPermission("system:customer:view")
+  @SaCheckPermission("system:customer:list")
   public String view() {
     return prefix + "/list";
   }
@@ -66,17 +63,18 @@ public class CustomerController {
   }
 
 
+  @Log(title = "新增客户审批", action = "111")
   @PostMapping("/add")
   @SaCheckPermission("system:customer:add")
   @ResponseBody
-  public AjaxResult add(@RequestBody Map<Long,String> map) {
+  public AjaxResult add(@RequestBody Map<String,String> map) {
     return customerService.applyAuditAddCustomer(map);
   }
 
 
   @GetMapping("/edit/{customerId}")
   @SaCheckPermission("system:customer:edit")
-  public String edit(@PathVariable("customerId") Long customerId, ModelMap modelMap) {
+  public String edit(@PathVariable("customerId") String customerId, ModelMap modelMap) {
     modelMap.put("customerId", customerId);
     return prefix + "/edit";
   }
@@ -84,15 +82,22 @@ public class CustomerController {
   @GetMapping("/{customerId}")
   @SaCheckPermission("system:customer:edit")
   @ResponseBody
-  public List<CustomerResponse> getDetail(@PathVariable("customerId") Long customerId) {
+  public List<CustomerEditResponse> getDetail(@PathVariable("customerId") Long customerId) {
    return customerService.selectByCustomerId(customerId);
   }
 
-
   @SaCheckPermission("system:customer:edit")
-  @PutMapping("/edit")
+  @PutMapping("/edit/{customerId}")
   @ResponseBody
-  public AjaxResult editSave(@RequestBody Map<Long,String> map) {
-    return customerService.update(map);
+  public AjaxResult editSave(@RequestBody Map<String,String> map, @PathVariable("customerId") Long customerId) {
+    return customerService.applyAuditUpdateCustomer(map, customerId);
   }
+
+  @SaCheckPermission("system:customer:remove")
+  @DeleteMapping("/remove")
+  @ResponseBody
+  public AjaxResult remove(@RequestParam List<Long> ids, @RequestParam String description) {
+    return customerService.applyAuditRemoveCustomer(ids, description);
+  }
+
 }

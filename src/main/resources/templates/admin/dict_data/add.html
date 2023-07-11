@@ -65,7 +65,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">状态</label>
                     <div class="layui-input-block">
-                        <select name="dataStatus" id="dataStatus">
+                        <select name="status" id="status">
                             <option value="1">启用</option>
 							<option value="0">停用</option>
                         </select>
@@ -128,6 +128,7 @@
 
         //保存
         form.on('submit(dictData-save)', function (data) {
+            let loading = layer.load();
             $.ajax({
                 url: MODULE_PATH+'/add',
                 data: data.field,
@@ -135,6 +136,7 @@
                 contentType: 'application/x-www-form-urlencoded',
                 type: 'post',
                 success: function (result) {
+                    layer.close(loading);
                     if (result.code==200) {
                         layer.msg(result.msg, {icon: 1, time: 1000}, function () {
                             parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页

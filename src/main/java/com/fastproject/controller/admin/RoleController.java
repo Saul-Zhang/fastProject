@@ -99,7 +99,7 @@ public class RoleController {
   @ResponseBody
   public AjaxResult remove(@RequestParam List<Long> ids) {
     if (CollectionUtils.isEmpty(ids)) {
-      return AjaxResult.error("至少选择一个用户");
+      return AjaxResult.error("至少选择一个角色");
     }
     return roleService.deleteByIds(ids);
   }

@@ -18,6 +18,5 @@ public class Template extends DefinedField {
   private String fieldName;
   private FieldType type;
   private Boolean required;
-  private Boolean readOnly;
   private String dictTypeCode;
 }

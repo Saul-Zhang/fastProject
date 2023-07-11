@@ -70,24 +70,35 @@
     })
 
     form.on('submit(customer-save)', function (data) {
-      let loading = layer.load();
-      $.ajax({
-        url: MODULE_PATH + '/add',
-        data: JSON.stringify(data.field),
-        dataType: 'json',
-        contentType: 'application/json',
-        type: 'post',
-        success: function (result) {
-          layer.close(loading);
-          if (result.code == 200) {
-            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
-              parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页
-              parent.layui.table.reload("customer-table");
-            });
-          } else {
-            layer.msg(result.msg, {icon: 2, time: 1000});
-          }
+      layer.prompt({
+        formType: 2,
+        title: '请添加说明',
+        // area: ['800px', '350px'] //自定义文本域宽高
+      }, function(value, index, elem){
+        if (value.trim().length === 0){
+          return false;
         }
+        data.field.description = value.trim();
+        let loading = layer.load();
+        $.ajax({
+          url: MODULE_PATH + '/add',
+          data: JSON.stringify(data.field),
+          dataType: 'json',
+          contentType: 'application/json',
+          type: 'post',
+          success: function (result) {
+            layer.close(loading);
+            if (result.code == 200) {
+              layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页
+                parent.layui.table.reload("customer-table");
+              });
+            } else {
+              layer.msg(result.msg, {icon: 2, time: 1000});
+            }
+          }
+        })
+        // return false;
       })
       return false;
     });

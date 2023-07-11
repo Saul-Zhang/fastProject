@@ -38,6 +38,15 @@ public class TemplateService {
 
   public Map<Long, Template> getTemplateMap() {
     return getTemplateList().stream()
-        .collect(Collectors.toMap(Template::getId, t->t));
+        .collect(Collectors.toMap(Template::getId, t -> t));
+  }
+
+  public Template selectById(Long id) {
+    return templateMapper.selectById(id);
+  }
+
+  public AjaxResult updateById(Template template) {
+    templateMapper.updateById(template);
+    return AjaxResult.success();
   }
 }

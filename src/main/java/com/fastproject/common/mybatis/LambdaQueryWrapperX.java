@@ -39,6 +39,9 @@ public class LambdaQueryWrapperX<T> extends LambdaQueryWrapper<T> {
   }
 
   public LambdaQueryWrapperX<T> eqIfPresent(SFunction<T, ?> column, Object val) {
+    if (val instanceof String && !StringUtils.hasText((String) val)){
+      return this;
+    }
     if (val != null) {
       return (LambdaQueryWrapperX<T>) super.eq(column, val);
     }

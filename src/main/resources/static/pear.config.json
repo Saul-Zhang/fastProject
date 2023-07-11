@@ -14,9 +14,9 @@
 		"keepState": true,
 		"tabMax": 30,
 		"index": {
-			"id": "451003242072117248",
-			"href": "/ServiceController/view",
-			"title": "首页"
+			"id": "831828755528945664",
+			"href": "/CustomerController/view",
+			"title": "客户信息"
 		}
 	},
 	"theme": {

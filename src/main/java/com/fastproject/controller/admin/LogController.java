@@ -1,51 +1,41 @@
 package com.fastproject.controller.admin;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.fastproject.model.OperationLog;
+import com.fastproject.model.request.query.LogQuery;
+import com.fastproject.model.response.PageResponse;
+import com.fastproject.service.OperationLogService;
 import io.swagger.annotations.Api;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-/**
- * 日志记录controller
- *
- * @author fuce
- * @date: 2018年9月30日 下午9:28:31
- */
 @Controller
-@Api(value = "日志记录")
 @RequestMapping("/LogController")
+@RequiredArgsConstructor
 public class LogController {
+
+  private final OperationLogService operationLogService;
 
   //跳转页面参数
   private final String prefix = "admin/log";
 
-//	/**
-//	 * 日志记录展示页面
-//	 * @param model
-//	 * @return
-//	 */
-//	@ApiOperation(value = "分页跳转", notes = "分页跳转")
-//	@GetMapping("/view")
-//	@SaCheckPermission("system:log:view")
-//    public String view(ModelMap model)
-//    {
-//        return prefix + "/list";
-//    }
-//
-//	/**
-//	 * 文件列表
-//	 * @param tablepar
-//	 * @param searchText 搜索字符
-//	 * @return
-//	 */
-//	@ApiOperation(value = "分页查询", notes = "分页查询")
-//	@GetMapping("/list")
-//	@SaCheckPermission("system:log:list")
-//	@ResponseBody
-//	public PageResult list(Tablepar tablepar, String searchText){
-//		PageInfo<TsysOperLog> page=sysOperLogService.list(tablepar,searchText) ;
-//		return pageTable(page.getList(),page.getTotal());
-//	}
-//
+  @GetMapping("/view")
+  @SaCheckPermission("system:log:view")
+  public String view(ModelMap model) {
+    return prefix + "/list";
+  }
+
+	@GetMapping("/list")
+	@SaCheckPermission("system:log:list")
+	@ResponseBody
+	public PageResponse list(LogQuery query){
+    return PageResponse.page(operationLogService.list(query));
+	}
+
 //
 //	/**
 //	 * 删除日志

@@ -25,7 +25,7 @@
                     th:value="${dict.key}"></option>
           </select>
         </div>
-        <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="audit-query">
+        <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="apply-query">
           <i class="layui-icon layui-icon-search"></i>
           查询
         </button>
@@ -39,45 +39,31 @@
 </div>
 <div class="layui-card">
   <div class="layui-card-body">
-    <table id="audit-table" lay-filter="audit-table"></table>
+    <table id="apply-table" lay-filter="apply-table"></table>
   </div>
 </div>
 </body>
 
-<script type="text/html" id="audit-toolbar">
-  <button sa:hasPermission="system:audit:add" class="pear-btn pear-btn-primary pear-btn-md"
+<script type="text/html" id="apply-toolbar">
+  <button sa:hasPermission="system:apply:add" class="pear-btn pear-btn-primary pear-btn-md"
           lay-event="add">
     <i class="layui-icon layui-icon-add-1"></i>
     新增
   </button>
-  <button sa:hasPermission="system:audit:remove" class="pear-btn pear-btn-danger pear-btn-md"
+  <button sa:hasPermission="system:apply:remove" class="pear-btn pear-btn-danger pear-btn-md"
           lay-event="batchRemove">
     <i class="layui-icon layui-icon-delete"></i>
     删除
   </button>
 </script>
 
-<script type="text/html" id="audit-bar">
-
-  <!--  <button sa:hasPermission="system:audit:edit" class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>
-    </button>-->
-  <button sa:hasPermission="system:audit:view" class="pear-btn pear-btn-primary pear-btn-sm"
+<script type="text/html" id="apply-bar">
+  <button sa:hasPermission="system:apply:view" class="pear-btn pear-btn-primary pear-btn-sm"
           lay-event="viewDetail" title="查看详情"><i class="layui-icon layui-icon-template-1"></i>
-  </button>
-  {{# if(d.status == 'WAITING'){ }}
-  <button sa:hasPermission="system:audit:view" class="pear-btn pear-btn-warming pear-btn-sm"
-          lay-event="approve" title="通过"><i class="layui-icon layui-icon-ok"></i>
-  </button>
-  <button sa:hasPermission="system:audit:view" class="pear-btn pear-btn-danger pear-btn-sm"
-          lay-event="reject" title="拒绝"><i class="layui-icon layui-icon-close"></i>
-  </button>
-  {{# } }}
 
-</script>
+    <button sa:hasPermission="system:apply:view" class="pear-btn pear-btn-primary pear-btn-sm"
+            lay-event="viewProgress" title="查看详情"><i class="layui-icon layui-icon-template-1"></i>
 
-<script type="text/html" id="audit-enable">
-  <input type="checkbox" name="enable" value="{{d.auditId}}" lay-skin="switch" lay-text="启用|禁用"
-         lay-filter="audit-enable" {{d.enable== '0' ? 'checked' : '' }} >
 </script>
 
 <th:block th:include="include :: footer"/>
@@ -88,44 +74,42 @@
     let $ = layui.jquery;
 
     let MODULE_PATH = rootPath + "/AuditController/";
-    let PERMISSION_PATH = rootPath + "/PermissionController/";
     let cols = [
       [
         // {type: 'checkbox'},
         {title: '审批对象', field: 'type', align: 'center'},
         {title: '审批状态', field: 'status', align: 'center'},
-        {title: '发起人', field: 'createBy', align: 'center'},
         {title: '发起时间', field: 'createAt', align: 'center'},
         {title: '说明', field: 'description', align: 'center'},
-        {title: '操作', toolbar: '#audit-bar', align: 'center'}
+        {title: '操作', toolbar: '#apply-bar', align: 'center'}
       ]
     ]
 
     table.render({
-      elem: '#audit-table',
-      url: MODULE_PATH + 'list',
+      elem: '#apply-table',
+      url: MODULE_PATH + 'apply-list',
       page: true,
       method: 'get',
       cols: cols,
       skin: 'line',
-      toolbar: '#audit-toolbar',
+      toolbar: '#apply-toolbar',
       defaultToolbar: [{
         layEvent: 'refresh',
         icon: 'layui-icon-refresh',
       }, 'filter', 'print', 'exports']
     });
 
-    table.on('tool(audit-table)', function (obj) {
+    table.on('tool(apply-table)', function (obj) {
       if (obj.event === 'approve') {
         window.approve(obj);
-      } else if (obj.event === 'reject') {
-        window.reject(obj);
+      } else if (obj.event === 'viewProgress') {
+        window.viewProgress(obj);
       } else if (obj.event === 'viewDetail') {
         window.viewDetail(obj);
       }
     });
 
-    table.on('toolbar(audit-table)', function (obj) {
+    table.on('toolbar(apply-table)', function (obj) {
       if (obj.event === 'add') {
         window.add();
       } else if (obj.event === 'refresh') {
@@ -135,18 +119,20 @@
       }
     });
 
-    form.on('submit(audit-query)', function (data) {
-      table.reload('audit-table', {where: data.field})
+    form.on('submit(apply-query)', function (data) {
+      table.reload('apply-table', {where: data.field})
       return false;
     });
-    //添加
-    window.add = function () {
+
+
+
+    window.viewProgress = function (obj) {
       layer.open({
         type: 2,
-        title: '新增',
+        title: '审批详情',
         shade: 0.1,
-        area: ['500px', '600px'],
-        content: MODULE_PATH + 'add'
+        area: ['650px', '600px'],
+        content: MODULE_PATH + 'apply/progress/' + obj.data['id']
       });
     }
 
@@ -171,52 +157,8 @@
       });
     }
 
-    window.approve = function (obj) {
-      layer.confirm('确定审批通过', {icon: 3, title: '提示'}, function (index) {
-        layer.close(index);
-        let loading = layer.load();
-        $.ajax({
-          url: MODULE_PATH + "approve?auditId=" + obj.data['id'],
-          dataType: 'json',
-          type: 'get',
-          success: function (result) {
-            layer.close(loading);
-            if (result.code == 200) {
-              layer.msg(result.msg, {icon: 1, time: 1000}, function () {
-              });
-              table.reload('audit-table');
-            } else {
-              layer.msg(result.msg, {icon: 2, time: 1000});
-            }
-          }
-        })
-      });
-    }
-
-    window.reject = function (obj) {
-      layer.confirm('确定拒绝此审批', {icon: 3, title: '提示'}, function (index) {
-        layer.close(index);
-        let loading = layer.load();
-        $.ajax({
-          url: MODULE_PATH + "reject?auditId=" + obj.data['id'],
-          dataType: 'json',
-          type: 'get',
-          success: function (result) {
-            layer.close(loading);
-            if (result.code == 200) {
-              layer.msg(result.msg, {icon: 1, time: 1000}, function () {
-              });
-              table.reload('audit-table');
-            } else {
-              layer.msg(result.msg, {icon: 2, time: 1000});
-            }
-          }
-        })
-      });
-    }
-
     window.refresh = function () {
-      table.reload('audit-table');
+      table.reload('apply-table');
     }
   })
 </script>

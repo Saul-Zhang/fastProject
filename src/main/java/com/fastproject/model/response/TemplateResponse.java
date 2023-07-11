@@ -25,8 +25,6 @@ public class TemplateResponse extends DefinedField {
 
   @Dict(dictCode = "true_or_false")
   private Boolean required;
-  @Dict(dictCode = "true_or_false")
-  private Boolean readOnly;
   private String dictTypeCode;
 
   public static TemplateResponse fromTemplate(Template template) {
@@ -36,7 +34,6 @@ public class TemplateResponse extends DefinedField {
         .fieldName(template.getFieldName())
         .type(template.getType())
         .required(template.getRequired())
-        .readOnly(template.getReadOnly())
         .dictTypeCode(template.getDictTypeCode())
         .build();
   }

@@ -4,39 +4,10 @@
   <th:block th:include="include :: header('用户列表')"/>
 </head>
 <body class="pear-container">
-<div class="layui-card">
-  <div class="layui-card-body">
-    <form class="layui-form" action="" lay-filter="template_form">
-      <div class="layui-form-item">
-        <label class="layui-form-label">姓名</label>
-        <div class="layui-input-inline">
-          <input type="text" name="realName" placeholder="" class="layui-input">
-        </div>
-
-        <label class="layui-form-label">工号</label>
-        <div class="layui-input-inline">
-          <input type="text" name="employeeId" placeholder="" class="layui-input">
-        </div>
-        <label class="layui-form-label">状态</label>
-        <div class="layui-input-inline">
-          <select id="status" name="status" >
-            <option value="">全部</option>
-            <option value="1" selected="selected">启用</option>
-            <option value="0">停用</option>
-          </select>
-        </div>
-        <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="template_query">
-          <i class="layui-icon layui-icon-search"></i>
-          查询
-        </button>
-        <button type="reset" class="pear-btn pear-btn-md">
-          <i class="layui-icon layui-icon-refresh"></i>
-          重置
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
+<!--<div class="layui-card">-->
+<!--  <div class="layui-card-body">-->
+<!--  </div>-->
+<!--</div>-->
 <div class="layui-card">
   <div class="layui-card-body">
     <table id="template-table" lay-filter="template-table"></table>
@@ -75,11 +46,6 @@
 
 </script>
 
-<script type="text/html" id="template_status">
-  <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-filter="template_status" lay-text="启用|停用"
-          {{d.status == '1' ? 'checked' : '' }} >
-</script>
-
 <th:block th:include="include :: footer"/>
 <script>
   layui.use(['table', 'form', 'jquery'], function () {
@@ -95,7 +61,6 @@
         {title: '属性名称', field: 'fieldName', align: 'center'},
         {title: '显示类型', field: 'type', align: 'center'},
         {title: '是否必填', field: 'required', align: 'center'},
-        {title: '是否只读', field: 'readOnly', align: 'center'},
         {title: '字典类型', field: 'dictTypeCode', align: 'center'},
         {title: '操作', toolbar: '#template-bar', align: 'center'}
       ]
@@ -163,67 +128,16 @@
         type: 2,
         title: '修改',
         shade: 0.1,
-        area: ['550px', '5500px'],
+        area: ['550px', '550px'],
         content: MODULE_PATH + '/edit/' + obj.data['id']
       });
     }
 
-    //修改密码
-    window.editPwd = function (obj) {
-      layer.open({
-        type: 2,
-        title: '修改密码',
-        shade: 0.1,
-        area: ['500px', '500px'],
-        content: MODULE_PATH + '/editPwd/' + obj.data['id']
-      });
-    }
 
-    //删除
-    form.on('switch(template_status)', function(obj){
-      let context = '停用';
-      let status = 0;
-      if (obj.elem.checked){
-        context = '启用';
-        status = 1;
-      }
 
-      let id = this.value;
-      layer.confirm('确定要'+context+'该用户', {icon: 3, title: '提示'}, function (index) {
-        // 用户点击了确认按钮
-        layer.close(index);
-
-        let loading = layer.load();
-        $.ajax({
-          url: MODULE_PATH + "/updateStatus?templateIds=" + id+"&status=" + status,
-          dataType: 'json',
-          type: 'PUT',
-          success: function (result) {
-            layer.close(loading);
-            if (result.code === 200) {
-              layer.msg(result.msg, {icon: 1, time: 1000}, function () {
-                // obj.del();
-                table.reload('template-table');
-              });
-            } else {
-              layer.msg(result.msg, {icon: 2, time: 1000});
-            }
-            form.render('checkbox');
-          }
-        })
-      },function (index) {
-        console.log("取消");
-        // 用户点击了取消按钮
-        layer.close(index);
-        // 恢复Switch的状态
-        // obj.elem.checked =checked
-        // form.render('checkbox');
-        table.reload('template-table');
-      });
-    })
 
     window.remove = function (obj) {
-      layer.confirm('确定要删除该用户', {icon: 3, title: '提示'}, function (index) {
+      layer.confirm('确定要删除该属性', {icon: 3, title: '提示'}, function (index) {
         layer.close(index);
         let loading = layer.load();
         $.ajax({

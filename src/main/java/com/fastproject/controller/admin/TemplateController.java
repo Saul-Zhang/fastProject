@@ -7,8 +7,11 @@ import com.fastproject.model.response.PageResponse;
 import com.fastproject.service.TemplateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -54,4 +57,18 @@ public class TemplateController {
     return templateService.add(template);
   }
 
+
+  @SaCheckPermission("system:template:edit")
+  @GetMapping("/edit/{id}")
+  public String edit(@PathVariable("id") Long id, ModelMap modelMap) {
+    modelMap.put("template", templateService.selectById(id));
+    return prefix + "/edit";
+  }
+
+  @SaCheckPermission("system:template:edit")
+  @PutMapping("/edit")
+  @ResponseBody
+  public AjaxResult editSave(@RequestBody Template template) {
+    return templateService.updateById(template);
+  }
 }

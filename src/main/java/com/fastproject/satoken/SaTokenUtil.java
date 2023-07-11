@@ -18,13 +18,13 @@ public class SaTokenUtil {
 	 */
 	public static User getUser() {
 
-		Object object = StpUtil.getSession().get("user");
-		if (object != null) {
-			User user = new User();
-			BeanUtils.copyBeanProp(user, object);
-			return user;
-		}
-		return null;
+//		Object object = StpUtil.getSession().get("user");
+//		if (object != null) {
+//			User user = new User();
+//			BeanUtils.copyBeanProp(user, object);
+//			return user;
+//		}
+		return (User) StpUtil.getSession().get("user");
 	}
 
 	/**

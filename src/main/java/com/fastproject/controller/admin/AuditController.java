@@ -3,12 +3,16 @@ package com.fastproject.controller.admin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fastproject.model.Audit;
 import com.fastproject.model.request.query.AuditQuery;
+import com.fastproject.model.response.AjaxResult;
+import com.fastproject.model.response.AuditResponse;
 import com.fastproject.model.response.PageResponse;
 import com.fastproject.service.AuditService;
 import com.github.pagehelper.PageInfo;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,15 +38,18 @@ public class AuditController {
   }
 
 
+  /**
+   * 获取“我审批的”列表
+   */
   @GetMapping("/list")
-  @SaCheckPermission("system:audit:list")
+  @SaCheckPermission("system:audit:view")
   @ResponseBody
   public PageResponse list(AuditQuery query) {
     return PageResponse.page(auditService.list(query));
   }
 
   @GetMapping("/detail-view/{auditId}")
-  @SaCheckPermission("system:audit:audit")
+  @SaCheckPermission("system:audit:view")
   public String detail(ModelMap modelMap, @PathVariable String auditId) {
     modelMap.put("auditId", auditId);
     return prefix + "/detail";
@@ -50,23 +57,29 @@ public class AuditController {
 
 
   @GetMapping("/detail/{auditId}")
-  @SaCheckPermission("system:audit:audit")
+  @SaCheckPermission("system:audit:view")
   @ResponseBody
   public PageResponse detail(@PathVariable Long auditId) {
     return PageResponse.list(auditService.detail(auditId));
   }
 
-  @GetMapping("/add")
-  @SaCheckPermission("system:audit:add")
-  public String add() {
-    return prefix + "/add";
+  @GetMapping("/approve")
+  @SaCheckPermission("system:audit:view")
+  @ResponseBody
+  public AjaxResult approve(Long auditId) {
+    return auditService.approve(auditId);
   }
 
-//  @PostMapping("/add")
-//  @SaCheckPermission("system:audit:add")
-//  @ResponseBody
-//  public AjaxResult add(@RequestBody Template template) {
-//    return templateService.add(template);
-//  }
+  @GetMapping("/apply-view")
+  @SaCheckPermission("system:apply:view")
+  public String applyView() {
+    return prefix + "/apply/view";
+  }
 
+  @GetMapping("/apply-list")
+  @SaCheckPermission("system:apply:view")
+  @ResponseBody
+  public PageResponse getApplyList(AuditQuery query) {
+    return PageResponse.page(auditService.getApplyList(query));
+  }
 }

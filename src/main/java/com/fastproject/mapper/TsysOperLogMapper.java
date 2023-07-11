@@ -1,20 +1,20 @@
 package com.fastproject.mapper;
 
-import com.fastproject.model.TsysOperLog;
+import com.fastproject.model.OperationLog;
 
 public interface TsysOperLogMapper {
 
 
   int deleteByPrimaryKey(String id);
 
-  int insert(TsysOperLog record);
+  int insert(OperationLog record);
 
-  int insertSelective(TsysOperLog record);
+  int insertSelective(OperationLog record);
 
 
-  TsysOperLog selectByPrimaryKey(String id);
+  OperationLog selectByPrimaryKey(String id);
 
-  int updateByPrimaryKeySelective(TsysOperLog record);
+  int updateByPrimaryKeySelective(OperationLog record);
 
-  int updateByPrimaryKey(TsysOperLog record);
+  int updateByPrimaryKey(OperationLog record);
 }
