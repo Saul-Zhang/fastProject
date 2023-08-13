@@ -10,7 +10,7 @@ public interface DictTypeMapper extends BaseMapper<DictType> {
 
   int deleteByPrimaryKey(String id);
 
-  int insert(DictType record);
+//  int insert(DictType record);
 
   int insertSelective(DictType record);
 

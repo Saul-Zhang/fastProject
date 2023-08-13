@@ -25,6 +25,7 @@ public class DictTypeService {
 
   private final DictTypeMapper dictTypeMapper;
   private final DictDataMapper dictDataMapper;
+  private final DictService dictService;
 
   /**
    * 分页查询
@@ -56,6 +57,7 @@ public class DictTypeService {
           new LambdaQueryWrapperX<DictData>().eq(DictData::getCode, record.getCode()));
     }
     dictTypeMapper.updateById(record);
+    dictService.clear();
     return AjaxResult.success();
   }
 
@@ -75,6 +77,7 @@ public class DictTypeService {
     //添加雪花主键id
     record.setId(SnowflakeIdWorker.getId());
     dictTypeMapper.insert(record);
+    dictService.clear();
     return AjaxResult.success();
   }
 
@@ -85,14 +88,15 @@ public class DictTypeService {
         .forEach(dictType -> dictDataMapper.delete(new LambdaQueryWrapperX<DictData>()
             .eq(DictData::getCode, dictType.getCode())));
     dictTypeMapper.deleteBatchIds(ids);
+    dictService.clear();
     return AjaxResult.success();
   }
 
-  public AjaxResult updateStatus(Long id, Character status) {
-    DictType entity = new DictType();
-    entity.setStatus(status);
-    entity.setId(id);
-    dictTypeMapper.updateById(entity);
-    return AjaxResult.success();
-  }
+//  public AjaxResult updateStatus(Long id, Character status) {
+//    DictType entity = new DictType();
+//    entity.setHidden(status);
+//    entity.setId(id);
+//    dictTypeMapper.updateById(entity);
+//    return AjaxResult.success();
+//  }
 }

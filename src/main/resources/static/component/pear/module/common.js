@@ -1,10 +1,21 @@
-;
-"use strict";
-layui.define(["layer", "jquery","table"], function (exports) {
-    var $ = layui.jquery;
-    var table = layui.table;
-    var obj = {
-        checkField: function(obj) {
+layui.define(['jquery', 'element', 'table'], function (exports) {
+    "use strict";
+
+    /**
+     * 常用封装类
+     * */
+    var MOD_NAME = 'common',
+        $ = layui.jquery,
+        table = layui.table,
+        element = layui.element;
+
+    var common = new function () {
+
+        /**
+         * 获取当前表格选中字段
+         * @param obj 表格回调参数
+         * */
+        this.checkField = function (obj) {
             let data = table.checkStatus(obj.config.id).data;
             if (data.length === 0) {
                 layer.msg("未选中数据", {icon: 3, time: 1000});
@@ -23,203 +34,90 @@ layui.define(["layer", "jquery","table"], function (exports) {
             // for (let i = 0; i < data.length; i++) {
             //     ids += data[i][field] + ",";
             // }
-            // ids = ids.substr(0, ids.length - 1);
+            // ids = ids.substring(0, ids.length - 1);
             // return ids;
-        },
-        resizeTable:function(tableId){
-            layui.table.resize(tableId);
         }
-        ,sprintf: function (str) {
-            var args = arguments, flag = true, i = 1;
-            str = str.replace(/%s/g, function () {
-                var arg = args[i++];
-                if (typeof arg === 'undefined') {
-                    flag = false;
-                    return '';
-                }
-                return arg;
-            });
-            return flag ? str : '';
-        },
-        equals: function (str, that) {
-            return str == that;
-        },
-        equalsIgnoreCase: function (str, that) {
-            return String(str).toUpperCase() === String(that).toUpperCase();
-        },
-        isEmpty: function (value) {
-            if (typeof (value) === "undefined" || value == null || this.trim(value) == "") {
-                return true;
-            }
-            return false;
-        },
-        formatNullStr: function (o) {
-            if (this.isEmpty(o)) {
-                return "";
+
+        /**
+         * 当前是否为与移动端
+         * */
+        this.isModile = function () {
+            return $(window).width() <= 768;
+        }
+
+
+        /**
+         * 提交 json 数据
+         * @param href        必选 提交接口
+         * @param data        可选 提交数据
+         * @param ajaxtype    可选 提交方式(默认为get)
+         * @param table    可选 刷新父级表
+         * @param callback    可选 自定义回调函数
+         * @param dataType    可选 返回数据类型 智能猜测（可以是xml, json, script, 或 html）
+         * @param is_async    可选 请求是否异步处理。默认是 true
+         * @param is_cache    可选 浏览器是否缓存被请求页面。默认是 true
+         * */
+        this.submit = function (href, data, ajaxtype, table, callback, dataType, is_async, is_cache) {
+            if (data !== undefined) {
+                $.ajaxSetup({data: JSON.stringify(data)});
             } else {
-                return o;
+                $.ajaxSetup({data: ''});
             }
-        },
-        getJsonArrayValue: function (array, key, keyChecked, keyId) {
-            var aa = [];
-            for (var a in array) {
-                var _item = array[a];
-                if (_item[keyChecked]) {
-                    aa.push(_item[keyId]);
-                }
-                if (typeof (_item[key]) != "undefined" && _item[key].length > 0) {
-                    var _aa = this.getJsonArrayValue(_item[key], key, keyChecked, keyId);
-                    if (_aa != null && _aa.length > 0) {
-                        for (var _a in _aa) {
-                            aa.push(_aa[_a]);
-                        }
+            if (dataType !== undefined) {
+                $.ajaxSetup({dataType: dataType});
+            }
+            if (is_async !== undefined) {
+                $.ajaxSetup({async: is_async});
+            }
+            if (is_cache !== undefined) {
+                $.ajaxSetup({cache: is_cache});
+            }
+            $.ajax({
+                url: href,
+                contentType: 'application/json',
+                type: ajaxtype || 'get',
+                success: callback != null ? callback : function (result) {
+                    if (result.code === 1) {
+                        layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                            let frameIndex = parent.layer.getFrameIndex(window.name);
+                            if (frameIndex) {
+                                parent.layer.close(frameIndex);//关闭当前页
+                            }
+                            table && parent.layui.table.reload(table);
+                        });
+                    } else {
+                        layer.msg(result.msg, {icon: 2, time: 1000});
+                    }
+                },
+                error: function (xhr) {
+                    if (xhr.status === 401) {
+                        layer.msg('权限不足，您无法访问受限资源或数据', {icon: 5});
+                        return;
+                    }
+                    if (xhr.status === 404) {
+                        layer.msg('请求url地址错误，请确认后刷新重试', {icon: 5});
+                        return;
+                    }
+                    if (xhr.status === 419) {
+                        layer.msg('长时间未操作，自动刷新后重试！', {icon: 5});
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 2000);
+                        return;
+                    }
+                    if (xhr.status === 429) {
+                        layer.msg('尝试次数太多，请一分钟后再试', {icon: 5});
+                        return;
+                    }
+                    if (xhr.status === 500) {
+                        layer.msg(xhr.responseJSON.message, {icon: 5});
                     }
                 }
-            }
-            return aa;
-        },
-        trim: function (value) {
-            if (value == null) {
-                return "";
-            }
-            return value.toString().replace(/(^\s*)|(\s*$)|\r|\n/g, "");
-        },
-        random: function (min, max) {
-            return Math.floor((Math.random() * max) + min);
-        },
-        getCheckValues: function (name) {
-            var _items = $('input:checkbox[name*="' + name + '"]:checked');
-            var _itemsStr = "";
-            layui.each(_items, function (i, n) {
-                _itemsStr += "," + $(n).val();
-            });
-            if (_itemsStr.length > 0) {
-                return _itemsStr.substr(1, _itemsStr.length);
-            }
-            return "";
-        },
-        joinArray: function (array, key) {
-            var _itemsStr = "";
-            layui.each(array, function (i, n) {
-                _itemsStr += "," + n[key];
-            });
-            if (_itemsStr.length > 0) {
-                return _itemsStr.substr(1, _itemsStr.length);
-            }
-            return "";
-        },
-        getDictLabel: function (array, value) {
-            var actions = [];
-            layui.each(array, function (i, n) {
-                if (n.dictValue === value) {
-                    actions.push(n.dictLabel);
+                , complete: function (xhr, status) {
+
                 }
-            });
-            return actions.join('');
-        },
-        ajaxRemove: function (removeUrl, id, cb) {
-            if(id=='' || id==undefined){
-                layui.layer.alert('请选择删除数据！');
-                return;
-            }
-            var url = this.isEmpty(id) ? removeUrl : removeUrl.replace("{id}", id);
-            var msg = (id.length > 0 && id.indexOf(",") > 0) ? "是否确认删除这些项？" : "是否确认删除该项？";
-            layer.confirm(msg, function (index) {
-                $.ajax({
-                    type: "POST",
-                    url: url,
-                    async: true,
-                    cache: false,
-                    dataType: "json",
-                    data: {"ids": id},
-                    success: function (res) {
-                        if (typeof (cb) === "function") {
-                            cb(res);
-                        }
-                        layer.close(index);
-                    }
-                });
-            });
-        },
-        ajax: {
-            submit: function (url, type, dataType, data, cb) {
-                var config = {
-                    url: url,
-                    type: type,
-                    dataType: dataType,
-                    data: data,
-                    beforeSend: function () {
-                        //layer.loading("正在处理中，请稍后...");
-                        layer.load(2);
-                    },
-                    success: function (result) {
-                        layer.closeAll('loading');
-                        if (typeof (cb) === "function") {
-                            cb(result);
-                        }
-                    }
-                };
-                $.ajax(config)
-            },
-            post: function (url, data, cb) {
-                obj.ajax.submit(url, "post", "json", data, cb);
-            },
-            get: function (url, cb) {
-                obj.ajax.submit(url, "get", "json", "", cb);
-            }
-        },
-        verify: {
-            roleKey: function (value, item) {
-                var msg;
-                if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
-                    msg = 'roleKey不能有特殊字符';
-                }
-                $.ajax({
-                    type: "POST",
-                    url: "/system/role/checkRoleKeyUnique",
-                    async: false,
-                    cache: false,
-                    dataType: "json",
-                    data: {
-                        roleKey: $("[name='roleKey']").val()
-                    },
-                    success: function (res) {
-                        if (res != "0") {
-                            msg = "roleKey已存在，请修改！";
-                        }
-                    },
-                    error: function () {
-                        msg = "验证roleKey出错！";
-                    }
-                });
-                return msg;
-            },
-            roleName: function (value, item) {
-                var msg;
-                if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
-                    msg = 'roleName不能有特殊字符';
-                }
-                $.ajax({
-                    type: "POST",
-                    url: "/system/role/checkRoleNameUnique",
-                    async: false,
-                    cache: false,
-                    dataType: "json",
-                    data: {
-                        roleName: $("[name='roleName']").val()
-                    },
-                    success: function (res) {
-                        if (res != "0") {
-                            msg = "roleName已存在，请修改！";
-                        }
-                    },
-                    error: function () {
-                        msg = "验证roleName出错！";
-                    }
-                });
-                return msg;
-            }
+            })
         }
-    };
-    exports('common', obj);
+    }
+    exports(MOD_NAME, common);
 });

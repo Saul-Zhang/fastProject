@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequiredArgsConstructor
 public class DepartmentController {
 
-  private final String prefix = "admin/department";
+  private final String prefix = "view/department";
   private final DepartmentService departmentService;
 
   /**

@@ -5,12 +5,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 字典数据表
  */
 @TableName("def_dict_data")
 @Data
+@Accessors(chain = true)
 public class DictData implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -40,6 +42,8 @@ public class DictData implements Serializable {
    */
   private String code;
 
+  private Boolean isUser;
+
   /**
    * 样式属性（其他样式扩展）
    */
@@ -50,10 +54,10 @@ public class DictData implements Serializable {
    */
   private String listClass;
 
-  /**
-   * 是否默认（Y是 N否）
-   */
-  private String isDefault;
+//  /**
+//   * 是否默认（Y是 N否）
+//   */
+//  private String isDefault;
 
   /**
    * 状态（1正常 0停用）

@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ServiceController {
 
   // 跳转页面参数
-  private final String prefix = "admin/service";
+  private final String prefix = "view/service";
 
   @Resource
   private OshiMonitor oshiMonitor;

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/SysQuartzJobLogController")
 public class QuartzJobLogController{
 
-    private final String prefix = "admin/sysQuartzJobLog";
+    private final String prefix = "view/sysQuartzJobLog";
     @Autowired
     private SysQuartzJobLogService sysQuartzJobLogService;
 

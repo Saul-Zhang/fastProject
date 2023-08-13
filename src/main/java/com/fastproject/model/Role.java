@@ -1,6 +1,7 @@
 package com.fastproject.model;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fastproject.model.constant.RoleCode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,8 @@ public class Role {
   private String description;
 
   private Character status;
+
+  private RoleCode code;
 
   public Role(Long id, String name) {
     this.id = id;

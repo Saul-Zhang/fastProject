@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:include="include :: header('配置列表')"/>
+</head>
+<body class="pear-container">
+
+<div class="layui-card">
+  <div class="layui-card-body">
+    <table id="env-table" lay-filter="env-table"></table>
+  </div>
+</div>
+</body>
+
+<th:block th:include="include :: footer"/>
+<script>
+  layui.use(['table', 'form', 'jquery'], function () {
+    let table = layui.table;
+    let form = layui.form;
+    let $ = layui.jquery;
+
+    let MODULE_PATH = rootPath + "/EnvConfigController";
+    let cols = [
+      [
+        {title: '配置名称', field: 'name', align: 'left'},
+        {title: '配置的值', field: 'value', align: 'left', edit:"value"},
+        {title: '说明', field: 'description', align: 'center'},
+        {title: '修改时间', field: 'updateAt', align: 'center'},
+      ]
+    ]
+
+    //table表单列表
+    table.render({
+      elem: '#env-table',
+      url: MODULE_PATH + '/list',
+      page: true,
+      method: 'get',
+      cols: cols,
+      skin: 'line',
+      // toolbar: '#role-toolbar',
+      // defaultToolbar: [{
+      //   layEvent: 'refresh',
+      //   icon: 'layui-icon-refresh',
+      // }, 'filter']
+    });
+
+    //刷新按钮
+    window.refresh = function () {
+      table.reload('env-table');
+    }
+
+    table.on('edit(env-table)', function(obj){ //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
+      // console.log(obj.value); //得到修改后的值
+      // console.log(obj.field); //当前编辑的字段名
+      // console.log(obj.data); //所在行的所有相关数据
+
+      $.ajax({
+        url: MODULE_PATH + "/edit",
+        data: JSON.stringify(obj.data),
+        dataType: 'json',
+        contentType: 'application/json',
+        type: 'PUT',
+        success: function (result) {
+          // layer.close(loading);
+          if (result.code==200) {
+            layer.msg(result.msg, {icon: 1, time: 1000});
+          } else {
+            layer.msg(result.msg, {icon: 2, time: 1000});
+          }
+          table.reload('log-table');
+        }
+      })
+    });
+  })
+</script>
+</html>

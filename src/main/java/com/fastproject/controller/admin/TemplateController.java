@@ -1,19 +1,24 @@
 package com.fastproject.controller.admin;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import com.fastproject.common.annotation.Log;
 import com.fastproject.model.Template;
 import com.fastproject.model.response.AjaxResult;
 import com.fastproject.model.response.PageResponse;
 import com.fastproject.service.TemplateService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -25,7 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/TemplateController")
 public class TemplateController {
 
-  private final String prefix = "admin/template";
+  private final String prefix = "view/template";
 
   private final TemplateService templateService;
 
@@ -49,7 +54,7 @@ public class TemplateController {
     return prefix + "/add";
   }
 
-
+  @Log(title = "添加模板属性")
   @PostMapping("/add")
   @SaCheckPermission("system:user:add")
   @ResponseBody
@@ -65,10 +70,22 @@ public class TemplateController {
     return prefix + "/edit";
   }
 
+  @Log(title = "编辑模板属性")
   @SaCheckPermission("system:template:edit")
   @PutMapping("/edit")
   @ResponseBody
   public AjaxResult editSave(@RequestBody Template template) {
     return templateService.updateById(template);
+  }
+
+  @Log(title = "删除模板属性")
+  @SaCheckPermission("system:template:remove")
+  @DeleteMapping("/remove")
+  @ResponseBody
+  public AjaxResult remove(@RequestParam List<Long> ids) {
+    if (CollectionUtils.isEmpty(ids)) {
+      return AjaxResult.error("至少选择一个属性");
+    }
+    return templateService.deleteByIds(ids);
   }
 }

@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/DictDataController")
 public class DictDataController {
 
-  private final String prefix = "admin/dict_data";
+  private final String prefix = "view/dict_data";
   @Autowired
   private DictDataService dictDataService;
   @Autowired

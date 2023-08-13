@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequiredArgsConstructor
 public class RoleController {
 
-  private final String prefix = "admin/role";
+  private final String prefix = "view/role";
 
   private final RoleService roleService;
 

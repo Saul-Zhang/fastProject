@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequiredArgsConstructor
 public class DictTypeController {
 
-  private final String prefix = "admin/dict_type";
+  private final String prefix = "view/dict_type";
 
   private final DictTypeService dictTypeService;
 
@@ -100,12 +100,12 @@ public class DictTypeController {
     return dictTypeService.updateById(record);
   }
 
-  /**
-   * 修改是否启用
-   */
-  @PutMapping("/updateStatus")
-  @ResponseBody
-  public AjaxResult updateStatus(@RequestParam Long id, @RequestParam Character status) {
-    return dictTypeService.updateStatus(id, status);
-  }
+//  /**
+//   * 修改是否启用
+//   */
+//  @PutMapping("/updateStatus")
+//  @ResponseBody
+//  public AjaxResult updateStatus(@RequestParam Long id, @RequestParam Character status) {
+//    return dictTypeService.updateStatus(id, status);
+//  }
 }

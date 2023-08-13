@@ -7,15 +7,15 @@ import lombok.Data;
 
 @TableName(value = "def_operation_log")
 @Data
-public class OperationLog {
+public class OperationLog{
 
-  private String id;
+  private Long id;
 
   private String title;
 
   private String method;
 
-  private String operator;
+  private Long operator;
 
   private String url;
 

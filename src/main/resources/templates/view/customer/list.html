@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:include="include :: header('客户列表')"/>
+</head>
+<body class="pear-container">
+<div class="layui-card">
+  <div class="layui-card-body">
+    <form class="layui-form" action="" id="customer-form" >
+      <div class="layui-form-item" id="form-item">
+      </div>
+    </form>
+  </div>
+</div>
+<div class="layui-card">
+  <div class="layui-card-body">
+    <table id="customer-table" lay-filter="customer-table"></table>
+  </div>
+</div>
+</body>
+<button type="button" class="layui-btn layui-btn-sm" id="importFile" value="导入" style="display: none"/>
+<script type="text/html" id="customer-toolbar">
+  <button sa:hasPermission="system:customer:add" class="pear-btn pear-btn-primary pear-btn-md"
+          lay-event="add">
+    <i class="layui-icon layui-icon-add-1"></i>
+    新增
+  </button>
+<!--  <button sa:hasPermission="system:customer:remove" class="pear-btn pear-btn-danger pear-btn-md"-->
+<!--          lay-event="batchRemove">-->
+<!--    <i class="layui-icon layui-icon-delete"></i>-->
+<!--    删除-->
+<!--  </button>-->
+  <button sa:hasPermission="system:customer:upload" type="button" class="pear-btn pear-btn-primary pear-btn-md"  lay-options="{accept: 'file'}"
+          lay-event="upload">
+    <i class="layui-icon layui-icon-upload"></i>
+    导入
+  </button>
+  <button sa:hasPermission="system:customer:upload" type="button" class="pear-btn pear-btn-primary pear-btn-md"
+          lay-event="downloadTemplate">
+    <i class="layui-icon layui-icon-export"></i>
+    模板下载
+  </button>
+  <button sa:hasPermission="system:customer:export" class="pear-btn pear-btn-primary pear-btn-md" lay-submit lay-event="exportCustomer">
+    <i class="layui-icon layui-icon-export" ></i>导出</button>
+</script>
+
+<script type="text/html" id="customer-bar">
+
+  <button sa:hasPermission="system:customer:edit" class="pear-btn pear-btn-primary pear-btn-sm"
+          lay-event="edit"><i class="layui-icon layui-icon-edit"></i>
+  </button>
+
+  <button sa:hasPermission="system:customer:remove" class="pear-btn pear-btn-danger pear-btn-sm"
+          lay-event="remove"><i class="layui-icon layui-icon-delete"></i>
+  </button>
+</script>
+
+<th:block th:include="include :: footer"/>
+<script>
+
+  layui.use(['table', 'form', 'jquery','upload'], function () {
+    let table = layui.table;
+    let form = layui.form;
+    let $ = layui.jquery
+    let upload = layui.upload
+
+    let MODULE_PATH = rootPath + "/CustomerController";
+
+    upload.render({
+      elem: '#importFile'
+      , url: MODULE_PATH + "/upload"
+      , accept: 'file' //普通文件
+      , done: function (res) {
+        if (res.code === 200){
+          if ([[${session.admin}]]) {
+            layer.msg('上传成功');
+            table.reload('customer-table');
+          }else {
+            layer.msg('上传成功，已发起审批');
+          }
+        }else {
+          layer.alert(res.msg);
+        }
+
+      }, error: function () {
+        layer.alert('上传失败');
+        //请求异常回调
+      }
+    });
+
+    let cols = []
+    let col = []
+    $.ajax({
+      url: MODULE_PATH + "/cols",
+      dataType: 'json',
+      type: 'GET',
+      success: function (result) {
+        // query
+        $.each(result, function (index, obj) {
+
+          var inlineDiv= `<div class='layui-inline' id='item-${index}'></div>`;
+          var label = `<label class="layui-form-label">${obj.fieldName}</label>`;
+          var input = ` <div class="layui-input-inline"><input type="text" name="${obj.id}" class="layui-input"></div>`
+
+          // var label = `<label class="layui-form-label">${obj.fieldName}</label>`;
+          // var input = ` <div class="layui-input-block"><input type="text" name="${obj.id}" class="layui-input" ${inputVerify}></div>`
+          if (obj.type === 'SELECT'){
+            var option = ' <option value="">请选择</option>'
+            $.each(obj.dictDataMap, function(key, value){
+              option +=  `<option value="${key}">${value}</option>`
+            })
+            input = '<div class="layui-input-inline">'
+                + `<select name="${obj.id}">`
+                + option
+                + '</select>'
+                + '</div>'
+          }
+          $("#form-item").append(inlineDiv);
+          $(`#item-${index}`).append(label)
+          $(`#item-${index}`).append(input)
+        });
+        var query = '<div class="layui-inline" style="margin-left: 50px;">\n'
+            + '<button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="customer_query">\n'
+            + '\t<i class="layui-icon layui-icon-search"></i>\n'
+            + '\t查询\n'
+            + '</button>\n'
+            + '<button type="reset" class="pear-btn pear-btn-md">\n'
+            + '\t<i class="layui-icon layui-icon-refresh"></i>\n'
+            + '\t重置\n'
+            + '</button>\n'
+            + '<button type="button" class="pear-btn pear-btn-md expand">\n'
+            + '</button>\n'
+            + '</div>'
+        $("#form-item").append(query);
+        form.render();
+        formToggle({
+          elem: "#customer-form",
+        });
+
+        // table
+        col.push({type: 'checkbox',fixed: 'left'});
+        $.each(result, function (index, obj) {
+          if (index < 2){
+            // 最左两列固定
+            col.push({field: obj.id, title: obj.fieldName,fixed: 'left', width:100,align: 'center'});
+          } else {
+            col.push({field: obj.id, title: obj.fieldName, align: 'center',width:100});
+          }
+        });
+        col.push({title: '操作', toolbar: '#customer-bar',fixed: 'right', align: 'center',width:120})
+        cols.push(col);
+        //table表单列表
+        table.render({
+          elem: '#customer-table',
+          url: MODULE_PATH + '/list',
+          page: false,
+          method: 'get',
+          // where: form.val("customer-form"),
+          cols: cols,
+          cellMinWidth: 80,
+          // lineStyle: 'height: 120px',
+          // skin: 'line',
+          toolbar: '#customer-toolbar',
+          title: '客户信息清单',
+          defaultToolbar: [{
+            layEvent: 'refresh',
+            icon: 'layui-icon-refresh',
+          }, 'filter']
+        });
+      }
+    })
+
+
+    function formToggle(options) {
+      var defaultsOpt = {
+        isExpand: false,
+        prefixIcon: "layui-icon",
+        toggleIcon: ['layui-icon-down', 'layui-icon-up'],
+        toggleText: ['展开', '折叠'],
+      }
+      var opt = $.extend({}, defaultsOpt, options);
+      var elem = opt.elem; // 绑定的表单元素,必填
+      var min = opt.min; // 最小显示数,默认显示一行
+      var isExpand = opt.isExpand; // 初始展开
+      var prefixIcon = opt.prefixIcon + " "; // 图标前缀
+      var toggleIcon = opt.toggleIcon; // 折叠和展开时的图标类[unExpandIcon, ExpandIcon]
+      var toggleText = opt.toggleText; // 折叠和展开时的文本
+
+      var eleDOM = $(elem + " .layui-inline");
+      var firstElTop = eleDOM.first().offset().top;
+      var targetEl = eleDOM.filter(function (index) {
+        var isGtMin = (index + 1) > min;
+        var isGtFirstElTop = $(this).offset().top > firstElTop;
+        var isNeqLast = (index + 1) != eleDOM.length;
+        return min
+            ? isGtMin && isNeqLast
+            : isGtFirstElTop && isNeqLast;
+      });
+
+      var unExpandIcon = prefixIcon + toggleIcon[0];
+      var expandIcon = prefixIcon + toggleIcon[1];
+      var unExpandText = toggleText[0];
+      var expandText = toggleText[1];
+      var btnSelector = elem + " .expand";
+      $(btnSelector).append("<i></i>")
+      if (isExpand) {
+        $(btnSelector).prepend("<span>" + expandText + "</span>");
+        $(btnSelector + ">i").addClass(expandIcon);
+      } else {
+        $(btnSelector).prepend("<span>" + unExpandText + "</span>")
+        $(btnSelector + ">i").addClass(unExpandIcon)
+        targetEl.addClass("layui-hide");
+      }
+      $(btnSelector).click(function () {
+        isExpand = !isExpand;
+        if (isExpand) {
+          $(btnSelector + ">span").html(expandText);
+          $(btnSelector + ">i").removeClass(unExpandIcon).addClass(expandIcon);
+          targetEl.removeClass("layui-hide")
+        } else {
+          $(btnSelector + ">span").html(unExpandText);
+          $(btnSelector + ">i").removeClass(expandIcon).addClass(unExpandIcon);
+          targetEl.addClass("layui-hide")
+        }
+      })
+    }
+
+    //table图标事件绑定
+    table.on('tool(customer-table)', function (obj) {
+      if (obj.event === 'remove') {
+        window.remove(obj);
+      } else if (obj.event === 'edit') {
+        window.edit(obj);
+      } else if (obj.event === 'editPwd') {
+        window.editPwd(obj);
+      } else if (obj.event === 'updateStatus') {
+        window.updateStatus(obj);
+      }
+    });
+
+    //table工具栏绑定
+    table.on('toolbar(customer-table)', function (obj) {
+      if (obj.event === 'add') {
+        window.add();
+      } else if (obj.event === 'refresh') {
+        window.refresh();
+      } else if (obj.event === 'upload') {
+        window.upload(obj);
+      } else if (obj.event === 'exportCustomer'){
+        window.exportCustomer(obj)
+      }else if (obj.event === 'downloadTemplate'){
+        window.downloadTemplate(obj);
+      }
+    });
+
+    //查询按钮绑定
+    form.on('submit(customer_query)', function (data) {
+      table.reload('customer-table', {where: data.field})
+      return false;
+    });
+
+    //添加
+    window.add = function () {
+      layer.open({
+        type: 2,
+        title: '新增客户',
+        shade: 0.1,
+        area: ['600px', '600px'],
+        content: MODULE_PATH + '/add'
+      });
+    }
+    //修改
+    window.edit = function (obj) {
+      var path = MODULE_PATH + "/edit/" + obj.data["customerId"]
+      layer.open({
+        type: 2,
+        title: '修改客户信息',
+        shade: 0.1,
+        area: ['600px', '600px'],
+        content: path
+      });
+    }
+
+    window.exportCustomer = function(obj){
+      let data = table.checkStatus(obj.config.id).data;
+      if (data.length === 0) {
+         data = table.getData(obj.config.id)
+      }
+      table.exportFile(obj.config.id, data, 'xls');
+    }
+
+    window.downloadTemplate = function(obj) {
+      let data = [];
+      $.ajax({
+        url: MODULE_PATH + "/cols",
+        dataType: 'json',
+        type: 'GET',
+        success: function (result) {
+          $.each(result, function (index, d) {
+            data.push(d.fieldName)
+          });
+          // table.exportFile(obj.config.id, data, 'xls');
+          var rows =[];
+          var row = [];
+          rows.push(row);
+
+          table.exportFile(data, rows,'xls');
+        }
+        })
+    }
+
+
+    window.remove = function (obj) {
+      if ([[${session.admin}]]) {
+        layer.confirm('确定要删除该客户', {icon: 3, title: '提示'}, function (index) {
+          layer.close(index);
+
+          removeAjax(obj.data['customerId'],"");
+        });
+        return;
+      }
+      layer.prompt({
+        formType: 2,
+        // value: '初始值',
+        title: '请注明删除原因',
+        // area: ['800px', '350px'] //自定义文本域宽高
+      }, function(value, index, elem){
+        if (value.trim().length === 0){
+          return false;
+        }
+        removeAjax(obj.data['customerId'],value )
+        layer.close(index);
+      });
+    }
+
+    function removeAjax(ids, description){
+      let loading = layer.load();
+      $.ajax({
+        url: MODULE_PATH + "/remove?ids=" + ids + "&description=" + description,
+        dataType: 'json',
+        type: 'delete',
+        success: function (result) {
+          layer.close(loading);
+          if (result.code === 200) {
+            layer.msg(result.msg, {icon: 1, time: 1000});
+            table.reload('customer-table');
+          } else {
+            layer.msg(result.msg, {icon: 2, time: 1000});
+          }
+        }
+      })
+    }
+
+    window.upload = function (){
+      $("#importFile").click();
+    }
+
+    //刷新按钮
+    window.refresh = function () {
+      table.reload('customer-table');
+    }
+  })
+</script>
+</html>

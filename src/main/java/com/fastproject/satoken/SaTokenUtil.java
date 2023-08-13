@@ -24,7 +24,14 @@ public class SaTokenUtil {
 //			BeanUtils.copyBeanProp(user, object);
 //			return user;
 //		}
-		return (User) StpUtil.getSession().get("user");
+//		return (User) StpUtil.getSession().get("user");
+		Object object = StpUtil.getSession().get("user");
+		if (object != null) {
+			User user = new User();
+			BeanUtils.copyBeanProp(user, object);
+			return user;
+		}
+		return null;
 	}
 
 	/**
@@ -66,5 +73,4 @@ public class SaTokenUtil {
 	public static boolean isLogin() {
 		return StpUtil.isLogin();
 	}
-
 }

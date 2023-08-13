@@ -175,7 +175,7 @@
             defaultToolbar: [{
                 layEvent: 'refresh',
                 icon: 'layui-icon-refresh',
-            }, 'filter', 'print', 'exports']
+            }, 'filter']
         });
 
         //table图标事件绑定

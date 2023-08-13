@@ -1,11 +1,3 @@
-/**
- *@Name dtree 树形组件
- *@Author 智慧的小西瓜
- *@DOCS http://www.wisdomelon.com/DTreeHelper/
- *@License https://www.layui.com/
- *@LASTTIME 2020/03/31
- *@VERSION v2.5.8
- */
 layui.define(['jquery','layer','form'], function(exports) {
     var $ = layui.$,
         layer = layui.layer,
@@ -2267,10 +2259,10 @@ layui.define(['jquery','layer','form'], function(exports) {
                     _this.getNodeDom($div).snode().next("div").replaceWith($(result));
                 }
             },
-            text: function(title,fmtTitle) {	// 文字显示
+            text: function(title) {	// 文字显示
                 var disClass = "";
                 if(disabled){disClass = NAV_DIS;}
-                var cite = "<cite class='"+LI_DIV_TEXT_CLASS+" "+disClass+"' data-title='"+title+"' data-id='"+treeId+"' data-leaf='"+(last ? "leaf" : "node")+"' dtree-disabled='"+disabled+"' >"+fmtTitle || title+"</cite>"
+                var cite = "<cite class='"+LI_DIV_TEXT_CLASS+" "+disClass+"' data-id='"+treeId+"' data-leaf='"+(last ? "leaf" : "node")+"' dtree-disabled='"+disabled+"' >"+title+"</cite>"
                 _this.getNodeDom($div).cite().replaceWith($(cite));
             },
             ul: function() {	//子节点ul
@@ -2824,7 +2816,7 @@ layui.define(['jquery','layer','form'], function(exports) {
                     replaceDom.div();
                     replaceDom.node(parseData.iconClass());
                     replaceDom.checkbox(parseData.checkArr());
-                    replaceDom.text(parseData.title(),parseData.fmtTitle());
+                    replaceDom.text(parseData.title());
                     replaceDom.ul();
                     replaceDom.basicData(parseData.basicData());
                     replaceDom.recordData(parseData.recordData());
@@ -4541,13 +4533,13 @@ layui.define(['jquery','layer','form'], function(exports) {
         var flag = false;
         if(returnID){
             if(typeof returnID === "object"){
-                var parseData = _this.parseData(returnID);
+                var parseData = _this.parseData(data);
 
                 if(parseData.treeId()){
                     var replaceDom = _this.replaceDom($div, parseData.treeId(), parseData.last(0), parseData.spread(), parseData.disabled(), parseData.hide());
                     replaceDom.node(parseData.iconClass());
                     replaceDom.checkbox(parseData.checkArr());
-                    replaceDom.text(parseData.title(),parseData.fmtTitle());
+                    replaceDom.text(parseData.title());
                     replaceDom.ul();
                     replaceDom.basicData(parseData.basicData());
                     replaceDom.recordData(parseData.recordData());

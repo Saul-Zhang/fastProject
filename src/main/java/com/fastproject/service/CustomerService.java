@@ -2,11 +2,15 @@ package com.fastproject.service;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.poi.excel.ExcelReader;
+import cn.hutool.poi.excel.ExcelUtil;
 import com.fastproject.common.mybatis.LambdaQueryWrapperX;
+import com.fastproject.common.mybatis.QueryWrapperX;
 import com.fastproject.mapper.AuditMapper;
 import com.fastproject.mapper.AuditUserMapper;
 import com.fastproject.mapper.CustomerMapper;
 import com.fastproject.mapper.TemplateMapper;
+import com.fastproject.mapper.UserMapper;
 import com.fastproject.model.Audit;
 import com.fastproject.model.AuditContent;
 import com.fastproject.model.AuditStatus;
@@ -15,14 +19,17 @@ import com.fastproject.model.Customer;
 import com.fastproject.model.FieldType;
 import com.fastproject.model.RelationAuditUser;
 import com.fastproject.model.Template;
+import com.fastproject.model.User;
 import com.fastproject.model.response.AjaxResult;
 import com.fastproject.model.response.ColsResponse;
 import com.fastproject.model.response.CustomerEditResponse;
 import com.fastproject.satoken.SaTokenUtil;
 import com.fastproject.util.SnowflakeIdWorker;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -30,8 +37,11 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author fastProject
@@ -47,15 +57,19 @@ public class CustomerService {
   private final DictService dictService;
   private final AuditMapper auditMapper;
   private final AuditUserMapper auditUserMapper;
+  private final UserService userService;
+  private final RoleService roleService;
+  private final EnvConfigService envConfigService;
+  private final UserMapper userMapper;
 
   public List<ColsResponse> cols() {
     return templateService.getTemplateList().stream().map(template -> {
       ColsResponse response = ColsResponse.fromTemplate(template);
       if (StrUtil.isNotBlank(template.getDictTypeCode())) {
         // 处理上级销售经理
-        if ("sales_manager".equals(template.getDictTypeCode())){
-          response.setDictDataMap(dictService.getDict(SaTokenUtil.getUser().getEmployeeId()));
-        }else {
+        if ("sales_manager".equals(template.getDictTypeCode())) {
+          response.setDictDataMap(dictService.getSalesManager());
+        } else {
           response.setDictDataMap(dictService.getDict(template.getDictTypeCode()));
         }
       }
@@ -64,9 +78,26 @@ public class CustomerService {
   }
 
   public List<Map<String, String>> list(Map<String, String> map) {
+
     Map<String, Template> templateMap = templateService.getTemplateList().stream()
         .collect(Collectors.toMap(template -> String.valueOf(template.getId()), t -> t));
     List<Long> ids = null;
+
+    if (!roleService.isAdmin(SaTokenUtil.getUserId())) {
+      ids = customerMapper.selectList(new LambdaQueryWrapperX<Customer>()
+              .eq(Customer::getFieldId, "1672265362920390658")
+              .eq(Customer::getValue, SaTokenUtil.getUserId())
+              .or()
+              .eq(Customer::getFieldId, "1672265408768327681")
+              .eq(Customer::getValue, SaTokenUtil.getUserId())).stream()
+          .map(Customer::getCustomerId).collect(Collectors.toList());
+
+      if (CollectionUtils.isEmpty(ids)){
+        return null;
+      }
+    }
+
+
     if (CollectionUtil.isNotEmpty(map)) {
       for (Entry<String, String> entry : map.entrySet()) {
         if (StrUtil.isBlank(entry.getValue()) || !templateMap.containsKey(entry.getKey())) {
@@ -84,6 +115,7 @@ public class CustomerService {
         if (ids == null) {
           ids = customerIds;
         } else {
+          // 求交集
           ids.retainAll(customerIds);
         }
       }
@@ -114,12 +146,18 @@ public class CustomerService {
 
   @Transactional(rollbackFor = Exception.class)
   public AjaxResult applyAuditAddCustomer(Map<String, String> map) {
+
     List<AuditContent> contentList = new ArrayList<>();
     String description = null;
+    Long auditor = -1L;
     for (Entry<String, String> entry : map.entrySet()) {
       if ("description".equals(entry.getKey())) {
         description = entry.getValue();
         continue;
+      }
+      // 获取所属销售
+      if ("1672265362920390658".equals(entry.getKey())) {
+        auditor = Long.valueOf(entry.getValue());
       }
       AuditContent auditContent = new AuditContent();
       auditContent.setFiledId(Long.valueOf(entry.getKey()));
@@ -127,6 +165,11 @@ public class CustomerService {
       auditContent.setBefore(null);
       contentList.add(auditContent);
     }
+
+    if (roleService.isAdmin(SaTokenUtil.getUserId())) {
+      return add(contentList,SnowflakeIdWorker.getId());
+    }
+
     Audit audit = Audit.builder()
         .id(SnowflakeIdWorker.getId())
         .entityId(SnowflakeIdWorker.getId())
@@ -136,9 +179,12 @@ public class CustomerService {
         .type(AuditType.ADD_CUSTOMER).build();
     auditMapper.insert(audit);
 
+    if (!envConfigService.isMultiLevelAudit()) {
+      auditor = userService.getSalesManager();
+    }
     RelationAuditUser auditUser = RelationAuditUser.builder()
         .auditId(audit.getId())
-        .auditBy(1L)
+        .auditBy(auditor)
         .status(AuditStatus.WAITING).build();
     auditUserMapper.insert(auditUser);
     return AjaxResult.success();
@@ -169,6 +215,21 @@ public class CustomerService {
     return AjaxResult.success();
   }
 
+  @Transactional(rollbackFor = Exception.class)
+  public AjaxResult update(List<AuditContent> contentList, Long customerId) {
+    contentList
+        .forEach(content -> {
+          if (!StringUtils.equals(content.getAfter(), content.getBefore())) {
+            Customer customer = Customer.builder().customerId(customerId)
+                .fieldId(content.getFiledId()).value(content.getAfter()).build();
+            customerMapper.update(customer, new LambdaQueryWrapperX<Customer>().eq(Customer::getCustomerId, customerId)
+                .eq(Customer::getFieldId,content.getFiledId()).eq(Customer::getValue, content.getBefore()));
+          }
+
+        });
+    return AjaxResult.success();
+  }
+
   public List<CustomerEditResponse> selectByCustomerId(Long customerId) {
     Map<Long, Template> templateMap = templateService.getTemplateList().stream()
         .collect(Collectors.toMap(Template::getId, Function.identity()));
@@ -185,9 +246,9 @@ public class CustomerService {
               .required(template.getRequired()).build();
           if (FieldType.SELECT.equals(template.getType())) {
             // 处理上级销售经理
-            if ("sales_manager".equals(template.getDictTypeCode())){
-              customerEditResponse.setDictDataMap(dictService.getDict(SaTokenUtil.getUser().getEmployeeId()));
-            }else {
+            if ("sales_manager".equals(template.getDictTypeCode())) {
+              customerEditResponse.setDictDataMap(dictService.getSalesManager());
+            } else {
               customerEditResponse.setDictDataMap(dictService.getDict(template.getDictTypeCode()));
             }
           }
@@ -203,10 +264,15 @@ public class CustomerService {
     Map<Long, String> customMap = getCustomMap(customerId);
     List<AuditContent> contentList = new ArrayList<>();
     String description = null;
+    Long auditor = -1L;
     for (Entry<String, String> entry : map.entrySet()) {
       if ("description".equals(entry.getKey())) {
         description = entry.getValue();
         continue;
+      }
+      // 获取所属销售
+      if ("1672265362920390658".equals(entry.getKey())) {
+        auditor = Long.valueOf(entry.getValue());
       }
       Long fieldId = Long.valueOf(entry.getKey());
       AuditContent auditContent = new AuditContent();
@@ -215,18 +281,25 @@ public class CustomerService {
       auditContent.setBefore(customMap.get(fieldId));
       contentList.add(auditContent);
     }
+    if (roleService.isAdmin(SaTokenUtil.getUserId())) {
+      return update(contentList,customerId);
+    }
+
     Audit audit = Audit.builder()
         .id(SnowflakeIdWorker.getId())
-        .entityId(SnowflakeIdWorker.getId())
+        .entityId(customerId)
         .content(contentList)
         .status(AuditStatus.WAITING)
         .description(description)
         .type(AuditType.UPDATE_CUSTOMER).build();
     auditMapper.insert(audit);
 
+    if (!envConfigService.isMultiLevelAudit()) {
+      auditor = userService.getSalesManager();
+    }
     RelationAuditUser auditUser = RelationAuditUser.builder()
         .auditId(audit.getId())
-        .auditBy(1L)
+        .auditBy(auditor)
         .status(AuditStatus.WAITING).build();
     auditUserMapper.insert(auditUser);
     return AjaxResult.success();
@@ -239,6 +312,10 @@ public class CustomerService {
   }
 
   public AjaxResult applyAuditRemoveCustomer(List<Long> ids, String description) {
+    if (roleService.isAdmin(SaTokenUtil.getUserId())) {
+      ids.forEach(this::remove);
+      return AjaxResult.success();
+    }
     List<AuditContent> contentList = new ArrayList<>();
     ids.forEach(id -> {
       AtomicLong auditBy = new AtomicLong();
@@ -255,13 +332,16 @@ public class CustomerService {
           });
       Audit audit = Audit.builder()
           .id(SnowflakeIdWorker.getId())
-          .entityId(SnowflakeIdWorker.getId())
+          .entityId(id)
           .content(contentList)
           .status(AuditStatus.WAITING)
           .description(description)
           .type(AuditType.DELETE_CUSTOMER).build();
       auditMapper.insert(audit);
 
+      if (!envConfigService.isMultiLevelAudit()) {
+        auditBy.set(userService.getSalesManager());
+      }
       RelationAuditUser auditUser = RelationAuditUser.builder()
           .auditId(audit.getId())
           .auditBy(auditBy.get())
@@ -274,5 +354,60 @@ public class CustomerService {
   public void remove(Long entityId) {
     customerMapper.delete(new LambdaQueryWrapperX<Customer>()
         .eq(Customer::getCustomerId, entityId));
+  }
+
+
+  @Transactional
+  public AjaxResult applyAuditUpload(MultipartFile multipartFile) throws IOException {
+    ExcelReader reader = ExcelUtil.getReader(multipartFile.getInputStream());
+    List<Map<String, Object>> all = reader.readAll();
+    if (CollectionUtil.isEmpty(all)) {
+      return AjaxResult.error("上传的是空文件");
+    }
+    Map<String, Template> templateNameMap = templateService.getTemplateNameMap();
+    List<Map<String, String>> customerList = new ArrayList<>();
+    int line = 0;
+    for (Map<String, Object> map : all) {
+      line++;
+      Map<String, String> customerMap = new LinkedHashMap<>();
+      for (Entry<String, Object> entry : map.entrySet()) {
+        String key = entry.getKey();
+        Template template = templateNameMap.get(key);
+        String value = String.valueOf(entry.getValue());
+        if (template == null) {
+          return AjaxResult.error("模板中不存在属性:" + entry.getKey());
+        }
+        if (template.getRequired() && StringUtils.isBlank(value)) {
+          return AjaxResult.error("第"+ line +"行，"+key + "不能为空");
+        }
+        if (StringUtils.isNotBlank(template.getDictTypeCode())) {
+          if (dictService.isUser(template.getDictTypeCode()) || "所属销售".equals(key)) {
+            User user = userMapper.selectOne(
+                new LambdaQueryWrapperX<User>().eq(User::getRealName, value));
+            if (user == null) {
+              return AjaxResult.error("第"+ line +"行，用户" + value + "不存在");
+            }
+            value = String.valueOf(user.getId());
+          } else {
+            Map<String, String> dict = dictService.getDict(template.getDictTypeCode());
+            boolean found = false;
+            for (String s : dict.keySet()) {
+              if (dict.get(s).equals(value)) {
+                value = s;
+                found = true;
+              }
+            }
+            if (!found) {
+              return AjaxResult.error("第"+ line +"行，"+key + "中不存在字典值：" + value);
+            }
+          }
+        }
+        customerMap.put(template.getId().toString(), value);
+      }
+      customerMap.put("description", "批量导入");
+      customerList.add(customerMap);
+    }
+    customerList.forEach(this::applyAuditAddCustomer);
+    return AjaxResult.success();
   }
 }

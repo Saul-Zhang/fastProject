@@ -5,6 +5,6 @@ package com.fastproject.model;
  * @date 2023/6/24 22:38
  */
 public enum AuditStatus {
-  // 等待审批，通过，拒绝
-  WAITING, APPROVED, REJECTION
+  // 等待审批，二级审批，通过，拒绝
+  WAITING, WAITING_SECOND, APPROVED, REJECTION
 }

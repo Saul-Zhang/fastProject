@@ -5,14 +5,15 @@ import static com.fastproject.model.request.body.UserBody.userBody2User;
 import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.fastproject.common.conf.FastProperties;
 import com.fastproject.common.mybatis.LambdaQueryWrapperX;
+import com.fastproject.common.mybatis.QueryWrapperX;
 import com.fastproject.common.utils.ConvertUtil;
+import com.fastproject.mapper.CustomerMapper;
 import com.fastproject.mapper.RelationRoleUserMapper;
 import com.fastproject.mapper.RoleMapper;
 import com.fastproject.mapper.UserMapper;
-import com.fastproject.model.DictData;
+import com.fastproject.model.Customer;
 import com.fastproject.model.RelationRoleUser;
 import com.fastproject.model.User;
 import com.fastproject.model.constant.Status;
@@ -35,6 +36,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,6 +56,10 @@ public class UserService {
   private final DepartmentService departmentService;
 
   private final DictDataService dictDataService;
+
+  private final DictService dictService;
+
+  private final CustomerMapper customerMapper;
 
   /**
    * 分页查询
@@ -79,29 +85,35 @@ public class UserService {
    * 添加用户跟角色信息
    */
   @Transactional(rollbackFor = Exception.class)
-  public AjaxResult add(User record, String roleIds) {
+  public AjaxResult add(UserBody userBody, String roleIds) {
+    List<User> users = userMapper.selectList(new LambdaQueryWrapperX<User>()
+        .eq(User::getEmployeeId, userBody.getEmployeeId())
+        .or()
+        .eq(User::getRealName, userBody.getRealName()));
+    if (users.size() > 0) {
+      return AjaxResult.error("用户名或工号已存在");
+    }
     Long userId = SnowflakeIdWorker.getId();
-    record.setId(userId);
+    User user = userBody2User(userBody);
+    user.setId(userId);
     //密码加密
-    record.setPassword(MD5Util.encode(record.getPassword()));
-    record.setStatus(Status.ENABLE);
-    userMapper.insert(record);
+    user.setPassword(MD5Util.encode(user.getPassword()));
+    user.setStatus(Status.ENABLE);
+    userMapper.insert(user);
 
-    DictData dictData = new DictData();
-    dictData.setCode("user");
-    dictData.setLabel(record.getRealName());
-    dictData.setValue(String.valueOf(userId));
-    dictDataService.insert(dictData);
+    dictService.updateUserDictData();
 
     if (StringUtils.isNotEmpty(roleIds)) {
       List<Long> roleIdList = ConvertUtil.toListLongArray(roleIds);
       for (Long rolesId : roleIdList) {
         RelationRoleUser roleUser = new RelationRoleUser(SnowflakeIdWorker.getId(),
-            record.getId(), rolesId);
+            user.getId(), rolesId);
         roleUserMapper.insert(roleUser);
       }
     }
-
+    // 更新用户部门信息
+    departmentService.deleteRelDeptUser(Collections.singletonList(userBody.getId()));
+    departmentService.insertRelDeptUser(user.getId(), userBody.getDepartmentIds());
     return AjaxResult.success();
   }
 
@@ -170,6 +182,8 @@ public class UserService {
     // 更新用户部门信息
     departmentService.deleteRelDeptUser(Collections.singletonList(body.getId()));
     departmentService.insertRelDeptUser(body.getId(), body.getDepartmentIds());
+
+    dictService.updateUserDictData();
     return AjaxResult.success();
   }
 
@@ -207,10 +221,31 @@ public class UserService {
 
   @Transactional(rollbackFor = Exception.class)
   public AjaxResult deleteByIds(List<Long> userIds) {
+    List<Customer> customers =customerMapper.selectList(new LambdaQueryWrapperX<Customer>()
+        .eq(Customer::getFieldId, "1672265362920390658")
+        .in(Customer::getValue, userIds)
+        .or()
+        .eq(Customer::getFieldId, "1672265408768327681")
+        .in(Customer::getValue, userIds));
+    if (CollectionUtils.isNotEmpty(customers)) {
+      return AjaxResult.error("员工名下挂载有客户归属，无法删除");
+    }
+
     userMapper.deleteBatchIds(userIds);
     roleUserMapper.delete(
         new LambdaQueryWrapperX<RelationRoleUser>().in(RelationRoleUser::getUserId, userIds));
     departmentService.deleteRelDeptUser(userIds);
+
+    dictService.updateUserDictData();
     return AjaxResult.success();
+  }
+
+  public Long getSalesManager() {
+    List<User> users = userMapper.selectList(
+        new LambdaQueryWrapperX<User>().eq(User::getPosId, "838384939610279936"));
+    if (CollectionUtils.isEmpty(users)) {
+      throw new RuntimeException("当前系统中不存在销售部总经理，请添加");
+    }
+    return users.stream().findFirst().get().getId();
   }
 }

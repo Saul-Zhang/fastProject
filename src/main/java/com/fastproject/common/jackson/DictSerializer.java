@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.fastproject.common.annotation.Dict;
 import com.fastproject.common.utils.SpringUtils;
 import com.fastproject.service.DictCacheService;
+import com.fastproject.service.DictService;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -38,7 +39,7 @@ public class DictSerializer extends StdSerializer<Object> implements ContextualS
     if (dictCode != null) {
       String obj = String.valueOf(o);
       String str = Optional.ofNullable(
-          SpringUtils.getBean(DictCacheService.class).getData(dictCode, obj)).orElse(obj);
+          SpringUtils.getBean(DictService.class).getData(dictCode, obj)).orElse(obj);
       jsonGenerator.writeString(str);
     }
   }

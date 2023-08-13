@@ -36,7 +36,7 @@ public class DictType implements Serializable {
   /**
    * 状态（1正常 0停用）
    **/
-  private Character status;
+  private Character hidden;
 
   /**
    * 创建时间

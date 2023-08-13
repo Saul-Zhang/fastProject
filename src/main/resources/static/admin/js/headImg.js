@@ -11,8 +11,13 @@ function makeHeadImgByUserName(name) {
     if (canvas) {
         canvas.remove();
     } else {
-        var html = "<canvas id='canvas' style='display:none'></canvas>";
-        $("body").append(html);
+        // var html = "<canvas id='canvas' style='display:none'></canvas>";
+        // $("body").append(html);
+        // create a canvas element
+        var canvasElement = document.createElement("canvas");
+        canvasElement.id = "canvas";
+        canvasElement.style.display = "none";
+        document.body.appendChild(canvasElement);
         canvas = document.getElementById('canvas');
     }
     canvas.width = 28;

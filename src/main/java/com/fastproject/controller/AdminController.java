@@ -2,6 +2,7 @@ package com.fastproject.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.stp.StpUtil;
+import com.fastproject.common.annotation.Log;
 import com.fastproject.common.conf.FastProperties;
 import com.fastproject.model.Notice;
 import com.fastproject.model.User;
@@ -10,6 +11,7 @@ import com.fastproject.model.response.AjaxResult;
 import com.fastproject.satoken.SaTokenUtil;
 import com.fastproject.service.NoticeService;
 import com.fastproject.service.PermissionService;
+import com.fastproject.service.RoleService;
 import com.fastproject.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import java.util.ArrayList;
@@ -37,10 +39,10 @@ public class AdminController {
 
   private final UserService userService;
   private final PermissionService permissionService;
-  private final NoticeService noticeService;
+  private final RoleService roleService;
   private final FastProperties fastProperties;
 
-  private final String prefix = "admin";
+  private final String prefix = "view";
 
 
   @ApiOperation(value = "首页", notes = "首页")
@@ -50,7 +52,8 @@ public class AdminController {
     // 获取公告信息
 //    List<Notice> notices = noticeService.getNotice(SaTokenUtil.getUser(), null);
 //    request.getSession().setAttribute("notices", notices);
-    request.getSession().setAttribute("notices", new ArrayList<Notice>());
+//    request.getSession().setAttribute("notices", new ArrayList<Notice>());
+    request.getSession().setAttribute("admin",roleService.isAdmin(SaTokenUtil.getUserId()));
     return prefix + "/index";
   }
 
@@ -79,7 +82,6 @@ public class AdminController {
   /**
    * 用户登陆验证
    */
-  @ApiOperation(value = "用户登陆验证", notes = "用户登陆验证")
   @PostMapping("/login")
   @ResponseBody
   public AjaxResult login(User user, String captcha, RedirectAttributes redirectAttributes,

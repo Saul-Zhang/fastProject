@@ -9,5 +9,5 @@ import lombok.EqualsAndHashCode;
 public class LogQuery extends AbstractPageQuery {
 
   private String title;
-  private String operator;
+  private Long operator;
 }

@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequiredArgsConstructor
 public class PermissionController {
 
-  private final String prefix = "admin/permission";
+  private final String prefix = "view/permission";
 
   private final PermissionService permissionService;
 

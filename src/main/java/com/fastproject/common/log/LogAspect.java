@@ -1,5 +1,6 @@
 package com.fastproject.common.log;
 
+import cn.hutool.json.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fastproject.common.annotation.Log;
@@ -10,8 +11,11 @@ import com.fastproject.service.OperationLogService;
 import com.fastproject.util.ServletUtils;
 import com.fastproject.util.StringUtils;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
@@ -27,10 +31,12 @@ import org.springframework.core.NamedThreadLocal;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 
-//@Aspect
-//@Component
-//@EnableAsync
+@Aspect
+@Component
+@EnableAsync
 @RequiredArgsConstructor
 public class LogAspect {
 
@@ -49,7 +55,7 @@ public class LogAspect {
    * 处理请求前执行
    */
   @Before(value = "@annotation(com.fastproject.common.annotation.Log)")
-  public void boBefore(JoinPoint joinPoint, Log controllerLog)
+  public void boBefore(JoinPoint joinPoint)
   {
     TIME_THREAD_LOCAL.set(System.currentTimeMillis());
   }
@@ -95,7 +101,7 @@ public class LogAspect {
       operationLog.setUrl(ServletUtils.getRequest().getRequestURI());
       if (currentUser != null) {
 //            	//操作人
-        operationLog.setOperator(currentUser.getUsername());
+        operationLog.setOperator(currentUser.getId());
 //                if (StringUtils.isNotNull(currentUser.getDept())
 //                        && StringUtils.isNotEmpty(currentUser.getDept().getDeptName()))
 //                {
@@ -115,11 +121,10 @@ public class LogAspect {
       // 设置消耗时间
       operationLog.setCostTime(System.currentTimeMillis() - TIME_THREAD_LOCAL.get());
       // 处理设置注解上的参数
-      getControllerMethodDescription(controllerLog, operationLog);
-      // 保存数据库
-      //System.out.println("-----------------");
-      //System.out.println(new Gson().toJson(operLog));
-      //System.out.println("-----------------");
+//      getControllerMethodDescription(controllerLog, operationLog);
+      // 设置标题
+      operationLog.setTitle(controllerLog.title());
+      setRequestValue(joinPoint, operationLog);
       operationLogService.add(operationLog);
     } catch (Exception exp) {
       // 记录本地异常日志
@@ -129,12 +134,91 @@ public class LogAspect {
     }
   }
 
+  private void setRequestValue(JoinPoint joinPoint, OperationLog operaLog) throws Exception
+  {
+    Map<String, String[]> map = ServletUtils.getRequest().getParameterMap();
+    if (StringUtils.isNotEmpty(map))
+    {
+      String params = objectMapper.writeValueAsString(map);
+      operaLog.setParam(StringUtils.substring(params, 0, 2000));
+    }
+    else
+    {
+      Object args = joinPoint.getArgs();
+      if (StringUtils.isNotNull(args))
+      {
+        String params = argsArrayToString(joinPoint.getArgs());
+        operaLog.setParam(StringUtils.substring(params, 0, 2000));
+      }
+    }
+  }
+
+  /**
+   * 参数拼装
+   */
+  private String argsArrayToString(Object[] paramsArray)
+  {
+    String params = "";
+    if (paramsArray != null && paramsArray.length > 0)
+    {
+      for (Object o : paramsArray)
+      {
+        if (StringUtils.isNotNull(o) && !isFilterObject(o))
+        {
+          try
+          {
+            String jsonObj = objectMapper.writeValueAsString(o);
+//            Object jsonObj = JSONObject.toJSONString(o, excludePropertyPreFilter(excludeParamNames));
+            params += jsonObj + " ";
+          }
+          catch (Exception e)
+          {
+          }
+        }
+      }
+    }
+    return params.trim();
+  }
+
+  /**
+   * 判断是否需要过滤的对象。
+   *
+   * @param o 对象信息。
+   * @return 如果是需要过滤的对象，则返回true；否则返回false。
+   */
+  @SuppressWarnings("rawtypes")
+  public boolean isFilterObject(final Object o)
+  {
+    Class<?> clazz = o.getClass();
+    if (clazz.isArray())
+    {
+      return clazz.getComponentType().isAssignableFrom(MultipartFile.class);
+    }
+    else if (Collection.class.isAssignableFrom(clazz))
+    {
+      Collection collection = (Collection) o;
+      for (Object value : collection)
+      {
+        return value instanceof MultipartFile;
+      }
+    }
+    else if (Map.class.isAssignableFrom(clazz))
+    {
+      Map map = (Map) o;
+      for (Object value : map.entrySet())
+      {
+        Map.Entry entry = (Map.Entry) value;
+        return entry.getValue() instanceof MultipartFile;
+      }
+    }
+    return o instanceof MultipartFile || o instanceof HttpServletRequest
+        || o instanceof HttpServletResponse
+        || o instanceof BindingResult;
+  }
+
   /**
    * 获取注解中对方法的描述信息 用于Controller层注解
    *
-   * @param joinPoint 切点
-   * @return 方法描述
-   * @throws Exception
    */
   public void getControllerMethodDescription(Log log, OperationLog operLog) throws Exception {
     // 设置action动作
@@ -153,12 +237,10 @@ public class LogAspect {
   /**
    * 获取请求的参数，放到log中
    */
-  private void setRequestValue(OperationLog operLog) throws JsonProcessingException {
+  private void setRequestValue(OperationLog operaLog) throws JsonProcessingException {
     Map<String, String[]> map = ServletUtils.getRequest().getParameterMap();
-//    Gson gson = new Gson();
-//    String params = gson.toJson(map);
     String params = objectMapper.writeValueAsString(map);
-    operLog.setParam(StringUtils.substring(params, 0, 255));
+    operaLog.setParam(StringUtils.substring(params, 0, 255));
   }
 
   /**

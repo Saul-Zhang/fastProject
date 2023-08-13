@@ -41,12 +41,22 @@ public class TemplateService {
         .collect(Collectors.toMap(Template::getId, t -> t));
   }
 
+  public Map<String, Template> getTemplateNameMap() {
+    return getTemplateList().stream()
+        .collect(Collectors.toMap(Template::getFieldName, t -> t));
+  }
+
   public Template selectById(Long id) {
     return templateMapper.selectById(id);
   }
 
   public AjaxResult updateById(Template template) {
     templateMapper.updateById(template);
+    return AjaxResult.success();
+  }
+
+  public AjaxResult deleteByIds(List<Long> ids) {
+    templateMapper.deleteBatchIds(ids);
     return AjaxResult.success();
   }
 }

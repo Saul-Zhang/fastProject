@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Api(value = "岗位表")
 public class PositionController {
 
-  private final String prefix = "admin/position";
+  private final String prefix = "view/position";
   @Autowired
   private PositionService positionService;
 

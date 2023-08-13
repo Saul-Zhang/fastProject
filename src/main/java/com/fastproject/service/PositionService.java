@@ -2,6 +2,7 @@ package com.fastproject.service;
 
 import com.fastproject.common.mybatis.LambdaQueryWrapperX;
 import com.fastproject.mapper.PositionMapper;
+import com.fastproject.mapper.UserMapper;
 import com.fastproject.model.Position;
 import com.fastproject.model.constant.Status;
 import com.fastproject.model.request.query.PositionQuery;

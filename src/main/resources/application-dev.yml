@@ -1,4 +1,10 @@
 #dev环境  mysql7.0
+# 项目相关配置
+fast:
+  #  是否开启验证码
+  captcha-enabled: false
+  #是否使用滚动验证码，false普通验证码、true滚动验证码
+  roll-verification: false
 spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -125,6 +126,9 @@ public class DepartmentService {
   }
 
   public void insertRelDeptUser(Long userId, List<Long> deptIds) {
+    if (CollectionUtils.isEmpty(deptIds)){
+      return;
+    }
     deptIds.forEach(deptId -> {
       departmentUserMapper.insert(
           RelationDepartmentUser.builder().userId(userId).departmentId(deptId).build());

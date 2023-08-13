@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequiredArgsConstructor
 public class UserController {
 
-  private final String prefix = "admin/user";
+  private final String prefix = "view/user";
 
   private final DepartmentService departmentService;
   private final PositionService positionService;
@@ -91,13 +91,13 @@ public class UserController {
   /**
    * 新增保存
    */
-  @Log(title = "用户新增", action = "111")
+  @Log(title = "新增用户")
   @PostMapping("/add")
   @SaCheckPermission("system:user:add")
   @ResponseBody
-  public AjaxResult add(User user,
+  public AjaxResult add(UserBody body,
       @RequestParam(value = "roleIds", required = false) String roleIds) {
-    return userService.add(user, roleIds);
+    return userService.add(body, roleIds);
   }
 
   @DeleteMapping("/remove")

@@ -44,7 +44,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequiredArgsConstructor
 public class AutoCodeController {
 
-  private final String prefix = "admin/autoCode";
+  private final String prefix = "view/autoCode";
   private final GeneratorService generatorService;
 
   private final DictTypeService tDictTypeService;
