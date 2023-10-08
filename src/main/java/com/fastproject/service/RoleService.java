@@ -79,6 +79,12 @@ public class RoleService {
         .isEmpty()) {
       return AjaxResult.error(500, "当前角色有关联的用户，无法删除");
     }
+    List<Role> roles = roleMapper.selectList(new LambdaQueryWrapperX<Role>().in(Role::getId, ids));
+    for (Role role : roles) {
+        if(role.getCode() != null){
+          return AjaxResult.error(500, "默认角色，无法删除");
+        }
+    }
     roleMapper.deleteBatchIds(ids);
     return AjaxResult.success();
   }

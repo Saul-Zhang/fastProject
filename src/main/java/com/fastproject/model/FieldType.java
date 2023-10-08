@@ -9,5 +9,5 @@ public enum FieldType {
   /**
    * 下拉列表，输入框
    */
-  SELECT, INPUT
+  SELECT, INPUT, TEXTAREA
 }

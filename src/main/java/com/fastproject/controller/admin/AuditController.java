@@ -1,6 +1,7 @@
 package com.fastproject.controller.admin;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.annotation.SaMode;
 import com.fastproject.common.annotation.Log;
 import com.fastproject.model.request.query.AuditQuery;
 import com.fastproject.model.response.AjaxResult;
@@ -46,8 +47,14 @@ public class AuditController {
     return PageResponse.page(auditService.list(query));
   }
 
+  @GetMapping("/pendingCount")
+  @ResponseBody
+  public AjaxResult getPendingCount() {
+    return auditService.getPendingCount();
+  }
+
   @GetMapping("/detail-view/{auditId}")
-  @SaCheckPermission("system:audit:view")
+  @SaCheckPermission(value = {"system:audit:view", "system:apply:view"}, mode= SaMode.OR)
   public String detail(ModelMap modelMap, @PathVariable String auditId) {
     modelMap.put("auditId", auditId);
     return prefix + "/detail";
@@ -55,7 +62,7 @@ public class AuditController {
 
 
   @GetMapping("/detail/{auditId}")
-  @SaCheckPermission("system:audit:view")
+  @SaCheckPermission(value = {"system:audit:view", "system:apply:view"}, mode= SaMode.OR)
   @ResponseBody
   public PageResponse detail(@PathVariable Long auditId) {
     return PageResponse.list(auditService.detail(auditId));

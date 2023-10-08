@@ -50,6 +50,10 @@
           }
           var label = `<label class="${labelClass}">${obj.fieldName}</label>`;
           var input = ` <div class="layui-input-block"><input type="text" name="${obj.id}" class="layui-input" ${inputVerify}></div>`
+          if (obj.type === 'TEXTAREA'){
+            input = ` <div class="layui-input-block"><textarea name="${obj.id}" class="layui-input" ${inputVerify}></textarea></div>`
+          }
+
           if (obj.type === 'SELECT') {
             var option = ' <option value="">请选择</option>'
             $.each(obj.dictDataMap, function (key, value) {

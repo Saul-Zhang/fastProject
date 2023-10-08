@@ -52,7 +52,9 @@
           var label = `<label class="${labelClass}">${obj.fieldName}</label>`;
 
           var input = ` <div class="layui-input-block"><input type="text" name="${obj.fieldId}" value="${obj.value}" class="layui-input" ${inputVerify}></div>`
-
+          if (obj.type === 'TEXTAREA'){
+            input = ` <div class="layui-input-block"><textarea name="${obj.fieldId}" class="layui-textarea" ${inputVerify}>${obj.value}</textarea></div>`
+          }
           if (obj.dictDataMap != null){
             var option = ' <option value="">请选择</option>'
             $.each(obj.dictDataMap, function(key, value){

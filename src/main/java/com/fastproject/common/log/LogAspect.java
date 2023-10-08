@@ -1,6 +1,5 @@
 package com.fastproject.common.log;
 
-import cn.hutool.json.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fastproject.common.annotation.Log;
@@ -42,8 +41,11 @@ public class LogAspect {
 
   private static final Logger log = LoggerFactory.getLogger(LogAspect.class);
 
-  /** 计算操作消耗时间 */
-  private static final ThreadLocal<Long> TIME_THREAD_LOCAL = new NamedThreadLocal<Long>("Cost Time");
+  /**
+   * 计算操作消耗时间
+   */
+  private static final ThreadLocal<Long> TIME_THREAD_LOCAL = new NamedThreadLocal<Long>(
+      "Cost Time");
 
 
   private final ObjectMapper objectMapper;
@@ -55,8 +57,7 @@ public class LogAspect {
    * 处理请求前执行
    */
   @Before(value = "@annotation(com.fastproject.common.annotation.Log)")
-  public void boBefore(JoinPoint joinPoint)
-  {
+  public void boBefore(JoinPoint joinPoint) {
     TIME_THREAD_LOCAL.set(System.currentTimeMillis());
   }
 
@@ -134,19 +135,14 @@ public class LogAspect {
     }
   }
 
-  private void setRequestValue(JoinPoint joinPoint, OperationLog operaLog) throws Exception
-  {
+  private void setRequestValue(JoinPoint joinPoint, OperationLog operaLog) throws Exception {
     Map<String, String[]> map = ServletUtils.getRequest().getParameterMap();
-    if (StringUtils.isNotEmpty(map))
-    {
+    if (StringUtils.isNotEmpty(map)) {
       String params = objectMapper.writeValueAsString(map);
       operaLog.setParam(StringUtils.substring(params, 0, 2000));
-    }
-    else
-    {
+    } else {
       Object args = joinPoint.getArgs();
-      if (StringUtils.isNotNull(args))
-      {
+      if (StringUtils.isNotNull(args)) {
         String params = argsArrayToString(joinPoint.getArgs());
         operaLog.setParam(StringUtils.substring(params, 0, 2000));
       }
@@ -156,23 +152,16 @@ public class LogAspect {
   /**
    * 参数拼装
    */
-  private String argsArrayToString(Object[] paramsArray)
-  {
+  private String argsArrayToString(Object[] paramsArray) {
     String params = "";
-    if (paramsArray != null && paramsArray.length > 0)
-    {
-      for (Object o : paramsArray)
-      {
-        if (StringUtils.isNotNull(o) && !isFilterObject(o))
-        {
-          try
-          {
+    if (paramsArray != null && paramsArray.length > 0) {
+      for (Object o : paramsArray) {
+        if (StringUtils.isNotNull(o) && !isFilterObject(o)) {
+          try {
             String jsonObj = objectMapper.writeValueAsString(o);
 //            Object jsonObj = JSONObject.toJSONString(o, excludePropertyPreFilter(excludeParamNames));
             params += jsonObj + " ";
-          }
-          catch (Exception e)
-          {
+          } catch (Exception e) {
           }
         }
       }
@@ -187,26 +176,18 @@ public class LogAspect {
    * @return 如果是需要过滤的对象，则返回true；否则返回false。
    */
   @SuppressWarnings("rawtypes")
-  public boolean isFilterObject(final Object o)
-  {
+  public boolean isFilterObject(final Object o) {
     Class<?> clazz = o.getClass();
-    if (clazz.isArray())
-    {
+    if (clazz.isArray()) {
       return clazz.getComponentType().isAssignableFrom(MultipartFile.class);
-    }
-    else if (Collection.class.isAssignableFrom(clazz))
-    {
+    } else if (Collection.class.isAssignableFrom(clazz)) {
       Collection collection = (Collection) o;
-      for (Object value : collection)
-      {
+      for (Object value : collection) {
         return value instanceof MultipartFile;
       }
-    }
-    else if (Map.class.isAssignableFrom(clazz))
-    {
+    } else if (Map.class.isAssignableFrom(clazz)) {
       Map map = (Map) o;
-      for (Object value : map.entrySet())
-      {
+      for (Object value : map.entrySet()) {
         Map.Entry entry = (Map.Entry) value;
         return entry.getValue() instanceof MultipartFile;
       }
@@ -218,7 +199,6 @@ public class LogAspect {
 
   /**
    * 获取注解中对方法的描述信息 用于Controller层注解
-   *
    */
   public void getControllerMethodDescription(Log log, OperationLog operLog) throws Exception {
     // 设置action动作

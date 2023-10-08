@@ -45,14 +45,13 @@ public class AdminController {
   private final String prefix = "view";
 
 
-  @ApiOperation(value = "首页", notes = "首页")
   @GetMapping({"", "/index"})
   public String index(HttpServletRequest request) {
     request.getSession().setAttribute("sessionUserName", SaTokenUtil.getUser().getRealName());
     // 获取公告信息
 //    List<Notice> notices = noticeService.getNotice(SaTokenUtil.getUser(), null);
 //    request.getSession().setAttribute("notices", notices);
-//    request.getSession().setAttribute("notices", new ArrayList<Notice>());
+    request.getSession().setAttribute("notices", new ArrayList<Notice>());
     request.getSession().setAttribute("admin",roleService.isAdmin(SaTokenUtil.getUserId()));
     return prefix + "/index";
   }
@@ -72,7 +71,7 @@ public class AdminController {
   @GetMapping("/login")
   public String login(ModelMap modelMap) {
     if (StpUtil.isLogin()) {
-      return "redirect:/" + prefix + "/index";
+      return "redirect:/admin/index";
     } else {
       modelMap.put("captchaEnabled", fastProperties.getCaptchaEnabled());
       return "login";

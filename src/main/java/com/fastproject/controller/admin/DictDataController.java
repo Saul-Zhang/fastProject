@@ -93,7 +93,7 @@ public class DictDataController {
   @DeleteMapping("/remove")
   @SaCheckPermission("system:dictData:remove")
   @ResponseBody
-  public AjaxResult remove(List<Long> ids) {
+  public AjaxResult remove(@RequestParam List<Long> ids) {
     return dictDataService.deleteByIds(ids);
   }
 

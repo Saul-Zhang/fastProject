@@ -10,6 +10,7 @@ import com.fastproject.service.CustomerService;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -47,8 +48,9 @@ public class CustomerController {
   @GetMapping("/list")
   @SaCheckPermission("system:customer:list")
   @ResponseBody
-  public PageResponse list(@RequestParam Map<String, String> query) {
-    return PageResponse.list(customerService.list(query));
+  public PageResponse page(@RequestParam Map<String, String> query) {
+//    return PageResponse.list(customerService.list(query));
+    return PageResponse.page(customerService.page(query));
   }
 
   @GetMapping("/cols")
@@ -69,7 +71,7 @@ public class CustomerController {
   @PostMapping("/add")
   @SaCheckPermission("system:customer:add")
   @ResponseBody
-  public AjaxResult add(@RequestBody Map<String,String> map) {
+  public AjaxResult add(@RequestBody Map<String, String> map) {
     return customerService.applyAuditAddCustomer(map);
   }
 
@@ -86,14 +88,15 @@ public class CustomerController {
   @SaCheckPermission("system:customer:edit")
   @ResponseBody
   public List<CustomerEditResponse> getDetail(@PathVariable("customerId") Long customerId) {
-   return customerService.selectByCustomerId(customerId);
+    return customerService.selectByCustomerId(customerId);
   }
 
   @Log(title = "编辑客户")
   @SaCheckPermission("system:customer:edit")
   @PutMapping("/edit/{customerId}")
   @ResponseBody
-  public AjaxResult editSave(@RequestBody Map<String,String> map, @PathVariable("customerId") Long customerId) {
+  public AjaxResult editSave(@RequestBody Map<String, String> map,
+      @PathVariable("customerId") Long customerId) {
     return customerService.applyAuditUpdateCustomer(map, customerId);
   }
 
@@ -111,6 +114,21 @@ public class CustomerController {
   @ResponseBody
   public AjaxResult upload(MultipartFile file) throws IOException {
     return customerService.applyAuditUpload(file);
+  }
+
+  @Log(title = "导出客户")
+  @SaCheckPermission("system:customer:export")
+  @GetMapping("/export")
+  @ResponseBody
+  public void export(HttpServletResponse response, @RequestParam List<Long> ids,
+      @RequestParam Map<String, String> query) throws IOException {
+    customerService.export(response, ids, query);
+  }
+
+  @GetMapping("/template")
+  @ResponseBody
+  public void downloadTemplate(HttpServletResponse response) throws IOException {
+    customerService.downloadTemplate(response);
   }
 
 }

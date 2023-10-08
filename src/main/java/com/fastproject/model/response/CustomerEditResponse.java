@@ -1,5 +1,6 @@
 package com.fastproject.model.response;
 
+import com.fastproject.model.FieldType;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
@@ -25,4 +26,6 @@ public class CustomerEditResponse {
   private Map<String, String> dictDataMap;
 
   private Boolean required;
+
+  private FieldType type;
 }

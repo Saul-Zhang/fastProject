@@ -2,16 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.fastproject.mapper.UserMapper">
-  <resultMap id="UserDetailMap" type="User">
-    <id column="id" property="id"/>
+  <resultMap id="UserRoleMap" type="UserRoleVo">
     <result column="real_name" property="realName"/>
-    <result column="email" property="email"/>
-    <result column="status" property="status"/>
-    <result column="password" property="password"/>
-    <!--    <collection property="roles" ofType="Role">-->
-    <!--      <result column="rid" property="id"/>-->
-    <!--      <result column="rname" property="name"/>-->
-    <!--    </collection>-->
+    <result column="employee_id" property="employeeId"/>
+        <collection property="roles" ofType="Role">
+          <result column="id" property="id"/>
+          <result column="name" property="name"/>
+          <result column="code" property="code"/>
+        </collection>
     <!--    <collection property="departments" ofType="Department">-->
     <!--      <result column="did" property="id"/>-->
     <!--      <result column="dname" property="name"/>-->
@@ -66,5 +64,19 @@
   </select>
   <select id="selectById" resultType="UserResponse">
     select * from def_user where id=#{id}
+  </select>
+
+  <select id="getAllUserRole" resultMap="UserRoleMap">
+    SELECT
+      u.id,
+      u.username,
+      u.real_name,
+      r.id,
+      r.CODE,
+      u.employee_id
+    FROM
+      def_user u
+        LEFT JOIN rel_role_user ur ON u.id = ur.user_id
+        LEFT JOIN def_role r ON ur.role_id = r.id
   </select>
 </mapper>

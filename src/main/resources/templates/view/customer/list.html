@@ -58,11 +58,12 @@
 <th:block th:include="include :: footer"/>
 <script>
 
-  layui.use(['table', 'form', 'jquery','upload'], function () {
+  layui.use(['table', 'form', 'jquery','upload', 'common'], function () {
     let table = layui.table;
     let form = layui.form;
     let $ = layui.jquery
     let upload = layui.upload
+    let common = layui.common;
 
     let MODULE_PATH = rootPath + "/CustomerController";
 
@@ -79,6 +80,11 @@
             layer.msg('上传成功，已发起审批');
           }
         }else {
+          // layer.open({
+          //   type: 1,
+          //   // area: ['420px', '240px'], // 宽高
+          //   content: res.msg
+          // });
           layer.alert(res.msg);
         }
 
@@ -142,9 +148,10 @@
         $.each(result, function (index, obj) {
           if (index < 2){
             // 最左两列固定
-            col.push({field: obj.id, title: obj.fieldName,fixed: 'left', width:100,align: 'center'});
+            col.push({field: obj.id, title: obj.fieldName,fixed: 'left', width:100});
           } else {
-            col.push({field: obj.id, title: obj.fieldName, align: 'center',width:100});
+            col.push({field: obj.id, title: obj.fieldName, expandedWidth: 200
+            });
           }
         });
         col.push({title: '操作', toolbar: '#customer-bar',fixed: 'right', align: 'center',width:120})
@@ -153,13 +160,15 @@
         table.render({
           elem: '#customer-table',
           url: MODULE_PATH + '/list',
-          page: false,
+          page: true,
+          limit: 90,
           method: 'get',
           // where: form.val("customer-form"),
           cols: cols,
           cellMinWidth: 80,
           // lineStyle: 'height: 120px',
           // skin: 'line',
+            height: 'full-200', // 最大高度减去其他容器已占有的高度差
           toolbar: '#customer-toolbar',
           title: '客户信息清单',
           defaultToolbar: [{
@@ -282,31 +291,34 @@
     }
 
     window.exportCustomer = function(obj){
+      var query=''
+      var t = $('#customer-form [name]').serializeArray();
+      $.each(t, function() {
+        query+="&"+ this.name +"=" +this.value;
+      });
+
+      let ids = [];
       let data = table.checkStatus(obj.config.id).data;
-      if (data.length === 0) {
-         data = table.getData(obj.config.id)
+      for (let i = 0; i < data.length; i++) {
+        ids.push(data[i].customerId);
       }
-      table.exportFile(obj.config.id, data, 'xls');
+        let domA = document.createElement('a'); // js创建a标签
+        domA.setAttribute('download', ''); // 给a标签设置download属性
+        // var path = MODULE_PATH + "/export?ids="+ids
+        var path = MODULE_PATH + "/export?ids="+ids+query
+        domA.setAttribute('href', path); // 给a标签href属性赋值为要下载文件的路径
+        domA.click(); // 点击下载
+        // return;
+      // }
+      // table.exportFile(obj.config.id, data, 'xlsx');
     }
 
     window.downloadTemplate = function(obj) {
-      let data = [];
-      $.ajax({
-        url: MODULE_PATH + "/cols",
-        dataType: 'json',
-        type: 'GET',
-        success: function (result) {
-          $.each(result, function (index, d) {
-            data.push(d.fieldName)
-          });
-          // table.exportFile(obj.config.id, data, 'xls');
-          var rows =[];
-          var row = [];
-          rows.push(row);
-
-          table.exportFile(data, rows,'xls');
-        }
-        })
+      let domA = document.createElement('a'); // js创建a标签
+      domA.setAttribute('download', ''); // 给a标签设置download属性
+      var path = MODULE_PATH + "/template"
+      domA.setAttribute('href', path); // 给a标签href属性赋值为要下载文件的路径
+      domA.click(); // 点击下载
     }
 
 

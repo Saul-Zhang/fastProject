@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:include="include :: header('fastProject 开发平台')"/>
+    <th:block th:include="include :: header('上海仪能客户管理系统')"/>
     <link rel="stylesheet" th:href="@{/static/admin/css/loader.css}"/>
     <link rel="stylesheet" th:href="@{/static/admin/css/admin.css}"/>
     <!-- 主 题 更 换 -->
@@ -27,10 +27,9 @@
                     <span class="layui-badge" th:text="${session.notices.size()}"></span>
                 </a>-->
 
-
-<!--                <a id="menu-msg" class="layui-icon layui-icon-notice" menu-type="1" th:menu-url="@{/SysNoticeController/viewUser}" menu-id="n4" href="javascript:;">-->
-<!--                    <span class="layui-badge" th:text="${session.notices.size()}"></span>-->
-<!--                </a>-->
+                <a id="menu-msg" class="layui-icon layui-icon-notice" menu-type="1" >
+                    <span id="notice-badge" class="layui-badge" >0</span>
+                </a>
 
             </li>
             <li class="layui-nav-item">
@@ -84,8 +83,12 @@
         $('#headImg').attr("src",makeHeadImgByUserName([[${session.sessionUserName}]]));
 
          $("#menu-msg").click(function(){
-
-            layui.tab.addTabOnlyByElem("content",{id:$(this).attr("menu-id"),title:"公告展示",url:$(this).attr("menu-url"),close:"允许关闭"})
+             if ( $("#notice-badge").text() != '0'){
+                // layui.tab.addTabOnlyByElem("content",{id:$(this).attr("menu-id"),title:"公告展示",url:$(this).attr("menu-url"),close:"允许关闭"})
+                layui.tab.addTabOnlyByElem("content",{id:"832576319278682113",title:"我审批的",url:"/AuditController/view",close:"允许关闭"})
+             }else {
+                 layer.msg("暂无新消息");
+             }
         })
         
         // 注销实现
@@ -106,9 +109,29 @@
      		})
      		 return true;
         })
-        			
-		
-        
+
+        let MODULE_PATH = rootPath+"/AuditController";
+        function updateNotificationBadge() {
+            $.ajax({
+                url: MODULE_PATH + "/pendingCount",
+                dataType: 'json',
+                type: 'get',
+                success: function (result) {
+                    if (result.code == 200) {
+                        $("#notice-badge").text(result.msg);
+                    }
+                }
+            })
+        }
+
+        // Set the update interval (e.g., 1 minute)
+        var updateInterval = 10000 * 5; // 5 minute in milliseconds
+
+        // Update the content initially
+        updateNotificationBadge();
+
+        // Schedule periodic updates
+        setInterval(updateNotificationBadge, updateInterval);
 
     })
 

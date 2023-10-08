@@ -6,8 +6,12 @@ import com.fastproject.mapper.DictTypeMapper;
 import com.fastproject.mapper.UserMapper;
 import com.fastproject.model.DictData;
 import com.fastproject.model.DictType;
+import com.fastproject.model.Role;
 import com.fastproject.model.User;
+import com.fastproject.model.constant.RoleCode;
 import com.fastproject.model.constant.Status;
+import com.fastproject.model.custom.UserRoleVo;
+import com.fastproject.model.response.UserResponse;
 import com.fastproject.satoken.SaTokenUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,7 +58,11 @@ public class DictService {
     loadLocalCache();
     // 处理销售经理
     if ("sales_manager".equals(code) && StringUtils.isNotBlank(value)) {
-      return userMapper.selectById(Long.parseLong(value)).getRealName();
+      UserResponse userResponse = userMapper.selectById(Long.parseLong(value));
+      if (userResponse == null) {
+        return "已删除";
+      }
+      return userResponse.getRealName();
     }
     return Optional.ofNullable(DICT_DATA_CACHE.get(code)).map(m -> m.get(value)).orElse(null);
   }
@@ -93,12 +101,36 @@ public class DictService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  public void updateUserDictData(){
+  public void updateUserDictData() {
     dictDataMapper.delete(new LambdaQueryWrapperX<DictData>()
         .eq(DictData::getCode, "user"));
-    userMapper.selectList(null).stream()
-        .map(user -> new DictData().setIsUser(true).setCode("user").setLabel(user.getRealName())
-            .setValue(user.getEmployeeId()).setStatus(Status.ENABLE)).forEach(dictDataMapper::insert);
+    dictDataMapper.delete(new LambdaQueryWrapperX<DictData>()
+        .eq(DictData::getCode, "business_sales"));
+    dictDataMapper.delete(new LambdaQueryWrapperX<DictData>()
+        .eq(DictData::getCode, "sales_manager"));
+    List<UserRoleVo> allUserRole = userMapper.getAllUserRole();
+    for (UserRoleVo userRoleVo : allUserRole) {
+      DictData userRoleDictData = new DictData().setIsUser(true).setCode("user")
+          .setLabel(userRoleVo.getRealName()).setValue(userRoleVo.getEmployeeId())
+          .setStatus(Status.ENABLE);
+      dictDataMapper.insert(userRoleDictData);
+      List<Role> roles = userRoleVo.getRoles();
+      for (Role role : roles) {
+        if (RoleCode.BUSINESS_SALES == role.getCode()) {
+          DictData businessSalesDictData = new DictData().setIsUser(true).setCode("business_sales")
+              .setLabel(userRoleVo.getRealName()).setValue(userRoleVo.getEmployeeId())
+              .setStatus(Status.ENABLE);
+          dictDataMapper.insert(businessSalesDictData);
+        }
+        if (RoleCode.SALES_MANAGER == role.getCode()) {
+          DictData salesManagerDictData = new DictData().setIsUser(true).setCode("sales_manager")
+              .setLabel(userRoleVo.getRealName()).setValue(userRoleVo.getEmployeeId())
+              .setStatus(Status.ENABLE);
+          dictDataMapper.insert(salesManagerDictData);
+        }
+      }
+    }
+
     clear();
   }
 

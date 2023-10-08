@@ -20,6 +20,7 @@ import com.fastproject.model.response.AuditResponse;
 import com.fastproject.satoken.SaTokenUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -50,7 +51,7 @@ public class AuditService {
     Map<Long, Boolean> auditDoneMap = relationAuditUsers.stream()
         .collect(Collectors.toMap(RelationAuditUser::getAuditId,
             t -> AuditStatus.APPROVED.equals(t.getStatus()) || AuditStatus.REJECTION.equals(
-                t.getStatus())));
+                t.getStatus()), (t1, t2) -> t2));
     List<Long> auditIds = auditUserMapper.selectList(
             new LambdaQueryWrapperX<RelationAuditUser>().eq(RelationAuditUser::getAuditBy,
                 SaTokenUtil.getUserId()))
@@ -154,5 +155,15 @@ public class AuditService {
             .eq(RelationAuditUser::getAuditId, auditId)).stream()
         .map(ApplyProgressResponse::fromRelationAuditUser).collect(
             Collectors.toList());
+  }
+
+  public AjaxResult getPendingCount() {
+    List<AuditStatus> pendingStatus = new ArrayList<>();
+    pendingStatus.add(AuditStatus.WAITING);
+    pendingStatus.add(AuditStatus.WAITING_SECOND);
+    Long aLong = auditUserMapper.selectCount(
+        new LambdaQueryWrapperX<RelationAuditUser>().eq(RelationAuditUser::getAuditBy,
+            SaTokenUtil.getUserId()).in(RelationAuditUser::getStatus, pendingStatus));
+    return AjaxResult.success(aLong.toString());
   }
 }

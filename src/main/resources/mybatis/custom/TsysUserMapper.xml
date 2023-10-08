@@ -19,11 +19,11 @@
  
  
  <select id="queryUserInfo" resultMap="BaseResultMap" parameterType="String">
-   	select id, username, password, nickname, 
-	(select dept_name from t_sys_department dep where dep.id=tsu.dep_id)as dep_name,
-	(select post_name from t_sys_position pos where pos.id=tsu.pos_id)as pos_name,
-	dep_id, pos_id
-	from t_sys_user tsu 
+      select id, username, password, nickname,
+    (select dept_name from t_sys_department dep where dep.id=tsu.dep_id)as dep_name,
+    (select post_name from t_sys_position pos where pos.id=tsu.pos_id)as pos_name,
+    dep_id, pos_id
+    from t_sys_user tsu
 	<if test="_parameter != null and _parameter!=''" >
        where  username= #{_parameter}
     </if>

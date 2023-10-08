@@ -51,7 +51,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">键值是否是工号</label>
                     <div class="layui-input-block">
-                        <select name="isUser" id="isUser">
+                        <select name="isUser" id="isUser" th:field="*{isUser}">
                             <option value="0">否</option>
                             <option value="1">是</option>
                         </select>
