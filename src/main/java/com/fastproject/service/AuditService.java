@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author fastProject
@@ -89,6 +90,7 @@ public class AuditService {
         }).collect(Collectors.toList());
   }
 
+  @Transactional
   public AjaxResult approve(Long auditId) {
     Audit audit = auditMapper.selectById(auditId);
     updateRelAuditUsers(audit, AuditStatus.APPROVED);
@@ -118,15 +120,16 @@ public class AuditService {
   }
 
   private void updateRelAuditUsers(Audit audit, AuditStatus status) {
-    List<RelationAuditUser> relationAuditUsers = auditUserMapper.selectList(
+    RelationAuditUser relationAuditUser = auditUserMapper.selectOne(
         new LambdaQueryWrapperX<RelationAuditUser>()
             .eq(RelationAuditUser::getAuditId, audit.getId())
-            .eq(RelationAuditUser::getAuditBy, SaTokenUtil.getUserId()));
-    if (CollectionUtils.isNotEmpty(relationAuditUsers)) {
-      RelationAuditUser relationAuditUser = relationAuditUsers.get(0);
+            .eq(RelationAuditUser::getAuditBy, SaTokenUtil.getUserId())
+            .eq(RelationAuditUser::getStatus, audit.getStatus()));
+//    if (CollectionUtils.isNotEmpty(relationAuditUsers)) {
+//      RelationAuditUser relationAuditUser = relationAuditUsers.get(0);
       relationAuditUser.setStatus(status);
       auditUserMapper.updateById(relationAuditUser);
-    }
+//    }
   }
 
   public AjaxResult reject(Long auditId) {

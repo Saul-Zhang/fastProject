@@ -2,6 +2,7 @@ package com.fastproject.controller.admin;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fastproject.common.annotation.Log;
+import com.fastproject.model.request.body.BatchUpdateCustomerBody;
 import com.fastproject.model.response.AjaxResult;
 import com.fastproject.model.response.ColsResponse;
 import com.fastproject.model.response.CustomerEditResponse;
@@ -10,6 +11,7 @@ import com.fastproject.service.CustomerService;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -98,6 +100,22 @@ public class CustomerController {
   public AjaxResult editSave(@RequestBody Map<String, String> map,
       @PathVariable("customerId") Long customerId) {
     return customerService.applyAuditUpdateCustomer(map, customerId);
+  }
+
+  @GetMapping("/batchEdit")
+  @SaCheckPermission("system:customer:edit")
+  public String batchEdit(@RequestParam List<String> ids, ModelMap modelMap) {
+    modelMap.put("ids", String.join(",",ids));
+    modelMap.put("count",ids.size());
+    return prefix + "/batchEdit";
+  }
+
+  @Log(title = "批量编辑客户")
+  @PutMapping("/batchEdit")
+  @SaCheckPermission("system:customer:edit")
+  @ResponseBody
+  public AjaxResult batchUpdate(BatchUpdateCustomerBody body){
+    return customerService.applyAuditBatchUpdateCustomer(body);
   }
 
   @Log(title = "删除客户")

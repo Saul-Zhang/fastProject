@@ -1,34 +1,47 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:include="include :: header('用户修改')"/>
+    <th:block th:include="include :: header('客户数据修改')"/>
 </head>
 <body>
-<form class="layui-form" action=""  th:object="${user}">
+<form class="layui-form" action="">
     <div class="mainBox">
         <div class="main-container">
             <div class="main-container">
                 <div class="layui-form-item layui-hide">
                     <label class="layui-form-label">编号</label>
                     <div class="layui-input-block">
-                        <input type="text" th:value="*{id}" name="id" lay-verify="title"
-                               autocomplete="off"  class="layui-input">
+                        <input type="text" th:value="*{ids}" name="ids"
+                               autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">修改密码</label>
+                    <label class="layui-form-label">选中客户总数</label>
                     <div class="layui-input-block">
-                        <input type="password" name="password" lay-verify="password" autocomplete="off" placeholder="请输入新密码" class="layui-input">
+                        <input th:value="*{count}" type="text"  disabled    autocomplete="off"  class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">所属销售</label>
+                    <div class="layui-input-block">
+                        <select id="salesManager" name="salesManager" th:with="type=${@dict.getDict('sales_manager')}">
+                            <option value="">不修改</option>
+                            <option th:each="dict : ${type}" th:text="${dict.value}"
+                                    th:value="${dict.key}"></option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="layui-form-item">
-                    <label class="layui-form-label">确认密码</label>
+                    <label class="layui-form-label">配合商务</label>
                     <div class="layui-input-block">
-                        <input type="password" name="confirm" lay-verify="confirm" autocomplete="off" placeholder="请输入确认密码" class="layui-input">
+                        <select id="businessSales" name="businessSales" th:with="type=${@dict.getDict('business_sales')}">
+                            <option value="">不修改</option>
+                            <option th:each="dict : ${type}" th:text="${dict.value}"
+                                    th:value="${dict.key}"></option>
+                        </select>
                     </div>
                 </div>
-
 
             </div>
         </div>
@@ -36,7 +49,7 @@
     <div class="bottom">
         <div class="button-container">
             <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit=""
-                    lay-filter="user-update">
+                    lay-filter="dictData-update">
                 <i class="layui-icon layui-icon-ok"></i>
                 提交
             </button>
@@ -52,36 +65,23 @@
     layui.use(['form', 'jquery'], function () {
         let form = layui.form;
         let $ = layui.jquery;
-        let MODULE_PATH = rootPath+"/UserController";
-        //名称验证
-        form.verify({
-            confirm: function(value){
-                let pwd=$("input[name='password']").val();
-                let confirm=$("input[name='confirm']").val();
-                if(pwd!==confirm){
-                    return '两次密码输入不一致';
-                }
-                if(pwd.length < 4) {
-                    return '密码不能小于4位';
-                }
+        let MODULE_PATH = rootPath+"/CustomerController";
 
-            }
-        });
-
-        form.on('submit(user-update)', function (data) {
-            let loading = layer.load();
+        form.on('submit(dictData-update)', function (data) {
+            // console.log('[[${ids}]]')
+            // data.field.ids = [[${ids}]].map(num => num.replace('#',''));
+            console.log(data.field)
             $.ajax({
-                url: MODULE_PATH+'/editPwd',
+                url: MODULE_PATH+'/batchEdit',
                 data: data.field,
                 dataType: 'json',
                 contentType: 'application/x-www-form-urlencoded',
-                type: 'post',
+                type: 'put',
                 success: function (result) {
-                    layer.close(loading);
-                    if (result.code===200) {
+                    if (result.code==200) {
                         layer.msg(result.msg, {icon: 1, time: 1000}, function () {
                             parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页
-                            parent.layui.table.reload("user-table");
+                            parent.layui.table.reload("customer-table");
                         });
                     } else {
                         layer.msg(result.msg, {icon: 2, time: 1000});

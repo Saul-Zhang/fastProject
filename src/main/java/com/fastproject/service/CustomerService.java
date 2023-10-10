@@ -1,5 +1,8 @@
 package com.fastproject.service;
 
+import static com.fastproject.model.constant.Constant.BUSINESS_SALE_ID;
+import static com.fastproject.model.constant.Constant.SALES_MANAGER_ID;
+
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.io.IoUtil;
@@ -21,6 +24,7 @@ import com.fastproject.model.Customer;
 import com.fastproject.model.FieldType;
 import com.fastproject.model.RelationAuditUser;
 import com.fastproject.model.Template;
+import com.fastproject.model.request.body.BatchUpdateCustomerBody;
 import com.fastproject.model.response.AjaxResult;
 import com.fastproject.model.response.ColsResponse;
 import com.fastproject.model.response.CustomerEditResponse;
@@ -30,7 +34,6 @@ import com.github.pagehelper.PageInfo;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -344,8 +347,9 @@ public class CustomerService {
       ids.forEach(this::remove);
       return AjaxResult.success();
     }
-    List<AuditContent> contentList = new ArrayList<>();
+
     ids.forEach(id -> {
+      List<AuditContent> contentList = new ArrayList<>();
       AtomicLong auditBy = new AtomicLong();
       customerMapper.selectList(new LambdaQueryWrapperX<Customer>().eq(Customer::getCustomerId, id))
           .forEach(customer -> {
@@ -440,9 +444,10 @@ public class CustomerService {
     return AjaxResult.success();
   }
 
-  public void export(HttpServletResponse response, List<Long> ids, Map<String, String> query) throws UnsupportedEncodingException {
+  public void export(HttpServletResponse response, List<Long> ids, Map<String, String> query)
+      throws UnsupportedEncodingException {
     ExcelWriter writer = ExcelUtil.getWriter(true);
-    writer.write(exportList(ids , query), true);
+    writer.write(exportList(ids, query), true);
 
     response.setContentType(
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
@@ -462,11 +467,11 @@ public class CustomerService {
     IoUtil.close(excelOut);
   }
 
-  private List<Map<String, String>> exportList(List<Long> ids,Map<String, String> map) {
+  private List<Map<String, String>> exportList(List<Long> ids, Map<String, String> map) {
 
     Map<String, Template> templateMap = templateService.getTemplateList().stream()
         .collect(Collectors.toMap(template -> String.valueOf(template.getId()), t -> t));
-    if (CollectionUtils.isEmpty(ids)){
+    if (CollectionUtils.isEmpty(ids)) {
       ids = null;
       if (!roleService.isAdmin(SaTokenUtil.getUserId())) {
         ids = customerMapper.selectList(new LambdaQueryWrapperX<Customer>()
@@ -530,12 +535,13 @@ public class CustomerService {
   public void downloadTemplate(HttpServletResponse response) throws UnsupportedEncodingException {
     ExcelWriter writer = ExcelUtil.getWriter(true);
     Map<String, Object> collect = templateService.getTemplateList().stream()
-        .collect(Collectors.toMap(Template::getFieldName, value -> "",(v1, v2) -> v1, LinkedHashMap::new));
+        .collect(Collectors.toMap(Template::getFieldName, value -> "", (v1, v2) -> v1,
+            LinkedHashMap::new));
     writer.write(CollUtil.newArrayList(collect), true);
 
     response.setContentType(
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
-    String fileName = URLEncoder.encode("客户信息清单模板", "UTF-8")+ ".xlsx";
+    String fileName = URLEncoder.encode("客户信息清单模板", "UTF-8") + ".xlsx";
     response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
     ServletOutputStream excelOut = null;
     //将excel文件信息写入输出流，返回给调用者
@@ -548,5 +554,25 @@ public class CustomerService {
       writer.close();
     }
     IoUtil.close(excelOut);
+  }
+
+  @Transactional
+  public AjaxResult applyAuditBatchUpdateCustomer(BatchUpdateCustomerBody body) {
+    List<Customer> customers = customerMapper.selectList(
+        new LambdaQueryWrapperX<Customer>()
+            .in(Customer::getCustomerId, body.getIds())
+            .in(Customer::getFieldId, SALES_MANAGER_ID, BUSINESS_SALE_ID));
+    for (Customer customer : customers) {
+      if (customer.getFieldId().equals(SALES_MANAGER_ID) && StringUtils.isNotBlank(
+          body.getSalesManager())) {
+        customer.setValue(body.getSalesManager());
+      }
+      if (customer.getFieldId().equals(BUSINESS_SALE_ID) && StringUtils.isNotBlank(
+          body.getBusinessSales())) {
+        customer.setValue(body.getBusinessSales());
+      }
+      customerMapper.updateById(customer);
+    }
+    return AjaxResult.success();
   }
 }

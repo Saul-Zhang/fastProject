@@ -25,11 +25,16 @@
     <i class="layui-icon layui-icon-add-1"></i>
     新增
   </button>
-<!--  <button sa:hasPermission="system:customer:remove" class="pear-btn pear-btn-danger pear-btn-md"-->
-<!--          lay-event="batchRemove">-->
-<!--    <i class="layui-icon layui-icon-delete"></i>-->
-<!--    删除-->
-<!--  </button>-->
+  <button sa:hasPermission="system:customer:remove" class="pear-btn pear-btn-danger pear-btn-md"
+          lay-event="batchRemove">
+    <i class="layui-icon layui-icon-delete"></i>
+    批量删除
+  </button>
+  <button th:if="${session.admin}" sa:hasPermission="system:customer:edit" class="pear-btn pear-btn-danger pear-btn-md"
+          lay-event="batchUpdate">
+    <i class="layui-icon layui-icon-delete"></i>
+    批量更新
+  </button>
   <button sa:hasPermission="system:customer:upload" type="button" class="pear-btn pear-btn-primary pear-btn-md"  lay-options="{accept: 'file'}"
           lay-event="upload">
     <i class="layui-icon layui-icon-upload"></i>
@@ -146,12 +151,14 @@
         // table
         col.push({type: 'checkbox',fixed: 'left'});
         $.each(result, function (index, obj) {
-          if (index < 2){
+          if (index === 0){
+            // 合作抬头
+            col.push({field: obj.id, title: obj.fieldName,fixed: 'left', width:85});
+          }else if (index === 1){
             // 最左两列固定
-            col.push({field: obj.id, title: obj.fieldName,fixed: 'left', width:100});
+            col.push({field: obj.id, title: obj.fieldName,fixed: 'left', width:200});
           } else {
-            col.push({field: obj.id, title: obj.fieldName, expandedWidth: 200
-            });
+            col.push({field: obj.id, title: obj.fieldName, width:105});
           }
         });
         col.push({title: '操作', toolbar: '#customer-bar',fixed: 'right', align: 'center',width:120})
@@ -179,6 +186,194 @@
       }
     })
 
+
+
+    //table图标事件绑定
+    table.on('tool(customer-table)', function (obj) {
+      if (obj.event === 'remove') {
+        window.remove(obj);
+      } else if (obj.event === 'edit') {
+        window.edit(obj);
+      } else if (obj.event === 'updateStatus') {
+        window.updateStatus(obj);
+      }
+    });
+
+    //table工具栏绑定
+    table.on('toolbar(customer-table)', function (obj) {
+      if (obj.event === 'add') {
+        window.add();
+      } else if (obj.event === 'refresh') {
+        window.refresh();
+      } else if (obj.event === 'upload') {
+        window.upload(obj);
+      } else if (obj.event === 'exportCustomer'){
+        window.exportCustomer(obj)
+      }else if (obj.event === 'downloadTemplate'){
+        window.downloadTemplate(obj);
+      }else if (obj.event === 'batchRemove'){
+        window.batchRemove(obj);
+      } else if (obj.event === 'batchUpdate'){
+        window.batchUpdate(obj);
+      }
+    });
+
+    //查询按钮绑定
+    form.on('submit(customer_query)', function (data) {
+      table.reload('customer-table', {where: data.field})
+      return false;
+    });
+
+    //添加
+    window.add = function () {
+      layer.open({
+        type: 2,
+        title: '新增客户',
+        shade: 0.1,
+        area: ['600px', '600px'],
+        content: MODULE_PATH + '/add'
+      });
+    }
+    //修改
+    window.edit = function (obj) {
+      var path = MODULE_PATH + "/edit/" + obj.data["customerId"]
+      layer.open({
+        type: 2,
+        title: '修改客户信息',
+        shade: 0.1,
+        area: ['600px', '600px'],
+        content: path
+      });
+    }
+
+    window.batchUpdate = function (obj) {
+      let ids = [];
+      let data = table.checkStatus(obj.config.id).data;
+      if (data.length === 0) {
+        layer.msg("未选中数据", {icon: 3, time: 1000});
+        return false;
+      }
+      for (let i = 0; i < data.length; i++) {
+        ids.push(data[i].customerId);
+      }
+      var path = MODULE_PATH + "/batchEdit?ids=" + ids
+      layer.open({
+        type: 2,
+        title: '批量修改客户信息',
+        shade: 0.1,
+        area: ['500px', '400px'],
+        content: path
+      });
+    }
+
+    window.exportCustomer = function(obj){
+      var query=''
+      var t = $('#customer-form [name]').serializeArray();
+      $.each(t, function() {
+        query+="&"+ this.name +"=" +this.value;
+      });
+
+      let ids = [];
+      let data = table.checkStatus(obj.config.id).data;
+      for (let i = 0; i < data.length; i++) {
+        ids.push(data[i].customerId);
+      }
+        let domA = document.createElement('a'); // js创建a标签
+        domA.setAttribute('download', ''); // 给a标签设置download属性
+        var path = MODULE_PATH + "/export?ids="+ids+query
+        domA.setAttribute('href', path); // 给a标签href属性赋值为要下载文件的路径
+        domA.click(); // 点击下载
+    }
+
+    window.downloadTemplate = function(obj) {
+      let domA = document.createElement('a'); // js创建a标签
+      domA.setAttribute('download', ''); // 给a标签设置download属性
+      var path = MODULE_PATH + "/template"
+      domA.setAttribute('href', path); // 给a标签href属性赋值为要下载文件的路径
+      domA.click(); // 点击下载
+    }
+
+    window.batchRemove = function (obj) {
+      let ids = [];
+      let data = table.checkStatus(obj.config.id).data;
+      if (data.length === 0) {
+        layer.msg("未选中数据", {icon: 3, time: 1000});
+        return false;
+      }
+      for (let i = 0; i < data.length; i++) {
+        ids.push(data[i].customerId);
+      }
+
+      if ([[${session.admin}]]) {
+        layer.confirm('确定要删除这些客户', {icon: 3, title: '提示'}, function (index) {
+          layer.close(index);
+          removeAjax(ids,"");
+        });
+        return;
+      }
+      layer.prompt({
+        formType: 2,
+        // value: '初始值',
+        title: '请注明删除原因',
+        // area: ['800px', '350px'] //自定义文本域宽高
+      }, function(value, index, elem){
+        if (value.trim().length === 0){
+          return false;
+        }
+        removeAjax(ids,value )
+        layer.close(index);
+      });
+    }
+
+
+    window.remove = function (obj) {
+      if ([[${session.admin}]]) {
+        layer.confirm('确定要删除该客户', {icon: 3, title: '提示'}, function (index) {
+          layer.close(index);
+          removeAjax(obj.data['customerId'],"");
+        });
+        return;
+      }
+      layer.prompt({
+        formType: 2,
+        // value: '初始值',
+        title: '请注明删除原因',
+        // area: ['800px', '350px'] //自定义文本域宽高
+      }, function(value, index, elem){
+        if (value.trim().length === 0){
+          return false;
+        }
+        removeAjax(obj.data['customerId'],value )
+        layer.close(index);
+      });
+    }
+
+    function removeAjax(ids, description){
+      let loading = layer.load();
+      $.ajax({
+        url: MODULE_PATH + "/remove?ids=" + ids + "&description=" + description,
+        dataType: 'json',
+        type: 'delete',
+        success: function (result) {
+          layer.close(loading);
+          if (result.code === 200) {
+            layer.msg(result.msg, {icon: 1, time: 1000});
+            table.reload('customer-table');
+          } else {
+            layer.msg(result.msg, {icon: 2, time: 1000});
+          }
+        }
+      })
+    }
+
+    window.upload = function (){
+      $("#importFile").click();
+    }
+
+    //刷新按钮
+    window.refresh = function () {
+      table.reload('customer-table');
+    }
 
     function formToggle(options) {
       var defaultsOpt = {
@@ -232,144 +427,6 @@
           targetEl.addClass("layui-hide")
         }
       })
-    }
-
-    //table图标事件绑定
-    table.on('tool(customer-table)', function (obj) {
-      if (obj.event === 'remove') {
-        window.remove(obj);
-      } else if (obj.event === 'edit') {
-        window.edit(obj);
-      } else if (obj.event === 'editPwd') {
-        window.editPwd(obj);
-      } else if (obj.event === 'updateStatus') {
-        window.updateStatus(obj);
-      }
-    });
-
-    //table工具栏绑定
-    table.on('toolbar(customer-table)', function (obj) {
-      if (obj.event === 'add') {
-        window.add();
-      } else if (obj.event === 'refresh') {
-        window.refresh();
-      } else if (obj.event === 'upload') {
-        window.upload(obj);
-      } else if (obj.event === 'exportCustomer'){
-        window.exportCustomer(obj)
-      }else if (obj.event === 'downloadTemplate'){
-        window.downloadTemplate(obj);
-      }
-    });
-
-    //查询按钮绑定
-    form.on('submit(customer_query)', function (data) {
-      table.reload('customer-table', {where: data.field})
-      return false;
-    });
-
-    //添加
-    window.add = function () {
-      layer.open({
-        type: 2,
-        title: '新增客户',
-        shade: 0.1,
-        area: ['600px', '600px'],
-        content: MODULE_PATH + '/add'
-      });
-    }
-    //修改
-    window.edit = function (obj) {
-      var path = MODULE_PATH + "/edit/" + obj.data["customerId"]
-      layer.open({
-        type: 2,
-        title: '修改客户信息',
-        shade: 0.1,
-        area: ['600px', '600px'],
-        content: path
-      });
-    }
-
-    window.exportCustomer = function(obj){
-      var query=''
-      var t = $('#customer-form [name]').serializeArray();
-      $.each(t, function() {
-        query+="&"+ this.name +"=" +this.value;
-      });
-
-      let ids = [];
-      let data = table.checkStatus(obj.config.id).data;
-      for (let i = 0; i < data.length; i++) {
-        ids.push(data[i].customerId);
-      }
-        let domA = document.createElement('a'); // js创建a标签
-        domA.setAttribute('download', ''); // 给a标签设置download属性
-        // var path = MODULE_PATH + "/export?ids="+ids
-        var path = MODULE_PATH + "/export?ids="+ids+query
-        domA.setAttribute('href', path); // 给a标签href属性赋值为要下载文件的路径
-        domA.click(); // 点击下载
-        // return;
-      // }
-      // table.exportFile(obj.config.id, data, 'xlsx');
-    }
-
-    window.downloadTemplate = function(obj) {
-      let domA = document.createElement('a'); // js创建a标签
-      domA.setAttribute('download', ''); // 给a标签设置download属性
-      var path = MODULE_PATH + "/template"
-      domA.setAttribute('href', path); // 给a标签href属性赋值为要下载文件的路径
-      domA.click(); // 点击下载
-    }
-
-
-    window.remove = function (obj) {
-      if ([[${session.admin}]]) {
-        layer.confirm('确定要删除该客户', {icon: 3, title: '提示'}, function (index) {
-          layer.close(index);
-
-          removeAjax(obj.data['customerId'],"");
-        });
-        return;
-      }
-      layer.prompt({
-        formType: 2,
-        // value: '初始值',
-        title: '请注明删除原因',
-        // area: ['800px', '350px'] //自定义文本域宽高
-      }, function(value, index, elem){
-        if (value.trim().length === 0){
-          return false;
-        }
-        removeAjax(obj.data['customerId'],value )
-        layer.close(index);
-      });
-    }
-
-    function removeAjax(ids, description){
-      let loading = layer.load();
-      $.ajax({
-        url: MODULE_PATH + "/remove?ids=" + ids + "&description=" + description,
-        dataType: 'json',
-        type: 'delete',
-        success: function (result) {
-          layer.close(loading);
-          if (result.code === 200) {
-            layer.msg(result.msg, {icon: 1, time: 1000});
-            table.reload('customer-table');
-          } else {
-            layer.msg(result.msg, {icon: 2, time: 1000});
-          }
-        }
-      })
-    }
-
-    window.upload = function (){
-      $("#importFile").click();
-    }
-
-    //刷新按钮
-    window.refresh = function () {
-      table.reload('customer-table');
     }
   })
 </script>
