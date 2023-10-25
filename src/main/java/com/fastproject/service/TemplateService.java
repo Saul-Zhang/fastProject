@@ -1,5 +1,6 @@
 package com.fastproject.service;
 
+import com.fastproject.common.mybatis.LambdaQueryWrapperX;
 import com.fastproject.mapper.TemplateMapper;
 import com.fastproject.model.Template;
 import com.fastproject.model.response.AjaxResult;
@@ -28,7 +29,7 @@ public class TemplateService {
 
   //  @Cacheable("templates")
   public List<Template> getTemplateList() {
-    return templateMapper.selectList(null);
+    return templateMapper.selectList(new LambdaQueryWrapperX<Template>().orderByAsc(Template::getOrderNum));
   }
 
   public AjaxResult add(Template template) {

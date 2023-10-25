@@ -11,6 +11,31 @@ layui.define(['jquery', 'element', 'table'], function (exports) {
 
     var common = new function () {
 
+        this.updateNotificationBadge = function() {
+            $.ajax({
+                url: rootPath + "/AuditController" + "/auditNotice",
+                dataType: 'json',
+                type: 'get',
+                success: function (result) {
+                    $("#notice-badge").text(result.totalCount);
+                    if (result.pendingCount > 0) {
+                        $("#dd1").show()
+                        $("#applyNotice").text("有 " + result.pendingCount + " 条审批申请待处理");
+                    } else {
+                        $("#dd1").hide()
+                    }
+                    if (result.rejectCount > 0) {
+                        $("#dd2").show()
+                        $("#rejectNotice").text("有 " + result.rejectCount + " 条申请被驳回待查看");
+                    } else {
+                        $("#dd2").hide()
+                    }
+
+
+                }
+            })
+        }
+
         /**
          * 获取当前表格选中字段
          * @param obj 表格回调参数

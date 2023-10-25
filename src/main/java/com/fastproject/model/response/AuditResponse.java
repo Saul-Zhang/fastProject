@@ -1,6 +1,7 @@
 package com.fastproject.model.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
@@ -40,6 +41,10 @@ public class AuditResponse implements Serializable {
 
   private boolean done;
 
+  private Boolean unread;
+  // layui属性，选中这一行
+  private boolean checked = false;
+
   public static AuditResponse fromAudit(Audit audit,  Map<Long, Boolean> auditDoneMap) {
     AuditResponse response = fromAudit(audit);
     response.setDone(auditDoneMap.get(audit.getId()));
@@ -54,6 +59,8 @@ public class AuditResponse implements Serializable {
     response.setDescription(audit.getDescription());
     response.setCreateAt(audit.getCreateAt());
     response.setCreateBy(audit.getCreateBy());
+    response.setUnread(audit.getStatus() == AuditStatus.REJECTION && (audit.getUnread() == null || audit.getUnread()));
+    response.setChecked(response.getUnread());
     return response;
   }
 }

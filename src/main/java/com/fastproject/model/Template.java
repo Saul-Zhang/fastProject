@@ -19,4 +19,6 @@ public class Template extends DefinedField {
   private FieldType type;
   private Boolean required;
   private String dictTypeCode;
+
+  private Integer orderNum;
 }

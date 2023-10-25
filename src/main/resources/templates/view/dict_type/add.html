@@ -11,7 +11,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label required">字典名称</label>
           <div class="layui-input-block">
-            <input type="text" name="name" lay-verify="required|name" autocomplete="off"
+            <input type="text" id="name" name="name" lay-verify="required|name" autocomplete="off"
                    placeholder="字典名称" class="layui-input">
           </div>
         </div>
@@ -65,6 +65,14 @@
     let form = layui.form;
     let $ = layui.jquery;
     let MODULE_PATH = rootPath + "/DictTypeController";
+
+    $(function(){
+      //输入框的值改变时触发
+      $("#name").on("input",function(e){
+        //获取input输入的值
+        console.log(e.delegateTarget.value);
+      });
+    });
 
     //保存
     form.on('submit(dictType-save)', function (data) {

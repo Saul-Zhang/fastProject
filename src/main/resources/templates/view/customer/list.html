@@ -2,6 +2,17 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <th:block th:include="include :: header('客户列表')"/>
+  <style>
+    /*.layui-table-cell {*/
+    /*  font-size:14px;*/
+    /*  padding:0 5px;*/
+    /*  height:auto;*/
+    /*  overflow:visible;*/
+    /*  text-overflow:inherit;*/
+    /*  white-space:normal;*/
+    /*  word-break: break-all;*/
+    /*}*/
+  </style>
 </head>
 <body class="pear-container">
 <div class="layui-card">
@@ -14,7 +25,7 @@
 </div>
 <div class="layui-card">
   <div class="layui-card-body">
-    <table id="customer-table" lay-filter="customer-table"></table>
+    <table class="mytable" id="customer-table" lay-filter="customer-table"></table>
   </div>
 </div>
 </body>
@@ -76,7 +87,11 @@
       elem: '#importFile'
       , url: MODULE_PATH + "/upload"
       , accept: 'file' //普通文件
+      ,before: function (){
+        layer.load();
+      }
       , done: function (res) {
+        layer.closeLast('loading'); // 关闭最近一次打开的加载层
         if (res.code === 200){
           if ([[${session.admin}]]) {
             layer.msg('上传成功');
@@ -135,7 +150,7 @@
             + '\t<i class="layui-icon layui-icon-search"></i>\n'
             + '\t查询\n'
             + '</button>\n'
-            + '<button type="reset" class="pear-btn pear-btn-md">\n'
+            + '<button type="reset" class="pear-btn pear-btn-md"  lay-submit lay-filter="resetQuery">\n'
             + '\t<i class="layui-icon layui-icon-refresh"></i>\n'
             + '\t重置\n'
             + '</button>\n'
@@ -151,14 +166,30 @@
         // table
         col.push({type: 'checkbox',fixed: 'left'});
         $.each(result, function (index, obj) {
-          if (index === 0){
-            // 合作抬头
-            col.push({field: obj.id, title: obj.fieldName,fixed: 'left', width:85});
-          }else if (index === 1){
-            // 最左两列固定
-            col.push({field: obj.id, title: obj.fieldName,fixed: 'left', width:200});
-          } else {
-            col.push({field: obj.id, title: obj.fieldName, width:105});
+          if (index < 2){
+            let width = 100;
+            if (obj.fieldName === "合作抬头"){
+              width = 95
+            }
+            if (obj.fieldName === "客户名称"){
+              width = 205
+            }
+            col.push({field: obj.id, title: obj.fieldName,fixed: 'left', align: 'center',width:width});
+          }
+          // if (index < 0){
+          //   // 合作抬头
+          //   col.push({field: obj.id, title: obj.fieldName,fixed: 'left', align: 'center',width:85});
+          // }else if (index === 1){
+          //   // 最左两列固定
+          //   col.push({field: obj.id, title: obj.fieldName,fixed: 'left', align: 'center',width:200});
+          // }
+          else {
+            let length = obj.fieldName.length;
+            let width = 13 * (length - 4) + 82;
+            if (obj.fieldName==="备注"){
+              width = 210
+            }
+            col.push({field: obj.id, title: obj.fieldName, align: 'center',width:width, escape: false});
           }
         });
         col.push({title: '操作', toolbar: '#customer-bar',fixed: 'right', align: 'center',width:120})
@@ -171,7 +202,30 @@
           limit: 90,
           method: 'get',
           // where: form.val("customer-form"),
-          cols: cols,
+          // cols: cols,
+          cols: [function(){
+
+            // 初始化筛选状态
+            var local = layui.data('table-filter-test'); // 获取对应的本地记录
+            layui.each(col, function(index, item){
+              if(item.field in local){
+                item.hide = local[item.field];
+              }
+            });
+            return col;
+          }() ],
+          done: function(){
+            // 记录筛选状态
+            var that = this;
+            that.elem.next().on('mousedown', 'input[lay-filter="LAY_TABLE_TOOL_COLS"]+', function(){
+              var input = $(this).prev()[0];
+              // 此处表名可任意定义
+              layui.data('table-filter-test', {
+                key: input.name
+                ,value: input.checked
+              })
+            });
+          },
           cellMinWidth: 80,
           // lineStyle: 'height: 120px',
           // skin: 'line',
@@ -222,6 +276,11 @@
     form.on('submit(customer_query)', function (data) {
       table.reload('customer-table', {where: data.field})
       return false;
+    });
+    form.on('submit(resetQuery)', function(data){
+      console.log(data.field)
+      let q = {};
+      table.reload('customer-table',{where: q})
     });
 
     //添加

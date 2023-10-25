@@ -14,4 +14,11 @@ public class Constant {
    * 销售商务id
    */
   public final static Long BUSINESS_SALE_ID = 1672265408768327681L;
+
+  public final static Long CUSTOMER_NAME_ID = 1672263140513890306L;
+
+  /**
+   * 销售商务的字段key
+   */
+  public final static String DICT_KEY_BUSINESS_SALES = "business_sales";
 }

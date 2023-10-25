@@ -58,7 +58,7 @@ public class DictService {
     loadLocalCache();
     // 处理销售经理
     if ("sales_manager".equals(code) && StringUtils.isNotBlank(value)) {
-      UserResponse userResponse = userMapper.selectById(Long.parseLong(value));
+      UserResponse userResponse = userMapper.selectUserResponseById(Long.parseLong(value));
       if (userResponse == null) {
         return "已删除";
       }

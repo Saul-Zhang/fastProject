@@ -1,165 +1,191 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <th:block th:include="include :: header('审批列表')"/>
+    <th:block th:include="include :: header('审批列表')"/>
 </head>
 <body class="pear-container">
 <div class="layui-card">
-  <div class="layui-card-body">
-    <form class="layui-form" action="">
-      <div class="layui-form-item">
-        <label class="layui-form-label">审批对象</label>
-        <div class="layui-input-inline">
-          <select id="type" name="type" th:with="type=${@dict.getDict('audit_type')}">
-            <option value="">请选择</option>
-            <option th:each="dict : ${type}" th:text="${dict.value}"
-                    th:value="${dict.key}"></option>
-          </select>
-        </div>
+    <div class="layui-card-body">
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">审批对象</label>
+                <div class="layui-input-inline">
+                    <select id="type" name="type" th:with="type=${@dict.getDict('audit_type')}">
+                        <option value="">请选择</option>
+                        <option th:each="dict : ${type}" th:text="${dict.value}"
+                                th:value="${dict.key}"></option>
+                    </select>
+                </div>
 
-        <label class="layui-form-label">审批状态</label>
-        <div class="layui-input-inline">
-          <select id="status" name="status" th:with="type=${@dict.getDict('audit_status')}">
-            <option value="">请选择</option>
-            <option th:each="dict : ${type}" th:text="${dict.value}"
-                    th:value="${dict.key}"></option>
-          </select>
-        </div>
-        <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="apply-query">
-          <i class="layui-icon layui-icon-search"></i>
-          查询
-        </button>
-        <button type="reset" class="pear-btn pear-btn-md">
-          <i class="layui-icon layui-icon-refresh"></i>
-          重置
-        </button>
-      </div>
-    </form>
-  </div>
+                <label class="layui-form-label">审批状态</label>
+                <div class="layui-input-inline">
+                    <select id="status" name="status" th:with="type=${@dict.getDict('audit_status')}">
+                        <option value="">请选择</option>
+                        <option th:each="dict : ${type}" th:text="${dict.value}"
+                                th:value="${dict.key}"></option>
+                    </select>
+                </div>
+                <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="apply-query">
+                    <i class="layui-icon layui-icon-search"></i>
+                    查询
+                </button>
+                <button type="reset" class="pear-btn pear-btn-md">
+                    <i class="layui-icon layui-icon-refresh"></i>
+                    重置
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 <div class="layui-card">
-  <div class="layui-card-body">
-    <table id="apply-table" lay-filter="apply-table"></table>
-  </div>
+    <div class="layui-card-body">
+        <table id="apply-table" lay-filter="apply-table"></table>
+    </div>
 </div>
 </body>
 
 <script type="text/html" id="apply-toolbar">
-  <button sa:hasPermission="system:apply:add" class="pear-btn pear-btn-primary pear-btn-md"
-          lay-event="add">
-    <i class="layui-icon layui-icon-add-1"></i>
-    新增
-  </button>
-  <button sa:hasPermission="system:apply:remove" class="pear-btn pear-btn-danger pear-btn-md"
-          lay-event="batchRemove">
-    <i class="layui-icon layui-icon-delete"></i>
-    删除
-  </button>
+    <button sa:hasPermission="system:apply:add" class="pear-btn pear-btn-primary pear-btn-md"
+            lay-event="add">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增
+    </button>
+    <button sa:hasPermission="system:apply:remove" class="pear-btn pear-btn-danger pear-btn-md"
+            lay-event="batchRemove">
+        <i class="layui-icon layui-icon-delete"></i>
+        删除
+    </button>
 </script>
 
 <script type="text/html" id="apply-bar">
-  <button sa:hasPermission="system:apply:view" class="pear-btn pear-btn-primary pear-btn-sm"
-          lay-event="viewDetail" title="查看详情"><i class="layui-icon layui-icon-template-1"></i>
-
     <button sa:hasPermission="system:apply:view" class="pear-btn pear-btn-primary pear-btn-sm"
-            lay-event="viewProgress" title="查看进度"><i class="layui-icon layui-icon-log"></i>
+            lay-event="viewDetail" title="查看详情"><i class="layui-icon layui-icon-template-1"></i>
+
+        <button sa:hasPermission="system:apply:view" class="pear-btn pear-btn-primary pear-btn-sm"
+                lay-event="viewProgress" title="查看进度"><i class="layui-icon layui-icon-log"></i>
+
+            {{# if(d.unread == true){ }}
+            <button class="pear-btn pear-btn-warming pear-btn-sm"
+                    lay-event="read" title="已读"><i class="layui-icon layui-icon-chat"></i>
+                {{# } }}
 
 </script>
 
 <th:block th:include="include :: footer"/>
 <script>
-  layui.use(['table', 'form', 'jquery'], function () {
-    let table = layui.table;
-    let form = layui.form;
-    let $ = layui.jquery;
+    layui.use(['table', 'form', 'jquery','common'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let common = layui.common;
 
-    let MODULE_PATH = rootPath + "/AuditController/";
-    let cols = [
-      [
-        // {type: 'checkbox'},
-        {title: '审批对象', field: 'type', align: 'center'},
-        {title: '审批状态', field: 'status', align: 'center'},
-        {title: '发起时间', field: 'createAt', align: 'center'},
-        {title: '说明', field: 'description', align: 'center'},
-        {title: '操作', toolbar: '#apply-bar', align: 'center'}
-      ]
-    ]
+        let MODULE_PATH = rootPath + "/AuditController/";
+        let cols = [
+            [
+                // {type: 'checkbox'},
+                {title: '审批对象', field: 'type', align: 'center'},
+                {title: '审批状态', field: 'status', align: 'center'},
+                {title: '发起时间', field: 'createAt', align: 'center'},
+                {title: '说明', field: 'description', align: 'center'},
+                {title: '操作', toolbar: '#apply-bar', align: 'center'}
+            ]
+        ]
 
-    table.render({
-      elem: '#apply-table',
-      url: MODULE_PATH + 'apply-list',
-      page: true,
-      method: 'get',
-      cols: cols,
-      skin: 'line',
-      toolbar: '#apply-toolbar',
-      defaultToolbar: [{
-        layEvent: 'refresh',
-        icon: 'layui-icon-refresh',
-      }, 'filter']
-    });
+        table =  $.extend(table, {config: {checkName: 'unread'}});
+        table.render({
+            elem: '#apply-table',
+            url: MODULE_PATH + 'apply-list',
+            page: true,
+            method: 'get',
+            cols: cols,
+            skin: 'line',
+            toolbar: '#apply-toolbar',
+            defaultToolbar: [{
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'filter']
+        });
 
-    table.on('tool(apply-table)', function (obj) {
-      if (obj.event === 'approve') {
-        window.approve(obj);
-      } else if (obj.event === 'viewProgress') {
-        window.viewProgress(obj);
-      } else if (obj.event === 'viewDetail') {
-        window.viewDetail(obj);
-      }
-    });
+        table.on('tool(apply-table)', function (obj) {
+            if (obj.event === 'approve') {
+                window.approve(obj);
+            } else if (obj.event === 'viewProgress') {
+                window.viewProgress(obj);
+            } else if (obj.event === 'viewDetail') {
+                window.viewDetail(obj);
+            } else if (obj.event === 'read') {
+                window.read(obj);
+            }
+        });
 
-    table.on('toolbar(apply-table)', function (obj) {
-      if (obj.event === 'add') {
-        window.add();
-      } else if (obj.event === 'refresh') {
-        window.refresh();
-      } else if (obj.event === 'batchRemove') {
-        window.batchRemove(obj);
-      }
-    });
+        table.on('toolbar(apply-table)', function (obj) {
+            if (obj.event === 'add') {
+                window.add();
+            } else if (obj.event === 'refresh') {
+                window.refresh();
+            } else if (obj.event === 'batchRemove') {
+                window.batchRemove(obj);
+            }
+        });
 
-    form.on('submit(apply-query)', function (data) {
-      table.reload('apply-table', {where: data.field})
-      return false;
-    });
+        form.on('submit(apply-query)', function (data) {
+            table.reload('apply-table', {where: data.field})
+            return false;
+        });
 
 
+        window.viewProgress = function (obj) {
+            layer.open({
+                type: 2,
+                title: '审批进度',
+                shade: 0.1,
+                area: ['650px', '600px'],
+                content: MODULE_PATH + 'apply/progress-view/' + obj.data['id']
+            });
+        }
 
-    window.viewProgress = function (obj) {
-      layer.open({
-        type: 2,
-        title: '审批进度',
-        shade: 0.1,
-        area: ['650px', '600px'],
-        content: MODULE_PATH + 'apply/progress-view/' + obj.data['id']
-      });
-    }
+        window.viewDetail = function (obj) {
+            layer.open({
+                type: 2,
+                title: '修改详情',
+                shade: 0.1,
+                area: ['650px', '600px'],
+                content: MODULE_PATH + 'detail-view/' + obj.data['id']
+            });
+        }
 
-    window.viewDetail = function (obj) {
-      layer.open({
-        type: 2,
-        title: '修改详情',
-        shade: 0.1,
-        area: ['650px', '600px'],
-        content: MODULE_PATH + 'detail-view/' + obj.data['id']
-      });
-    }
+        //修改
+        window.edit = function (obj) {
+            layer.open({
+                type: 2,
+                title: '修改',
+                shade: 0.1,
+                area: ['500px', '500px'],
+                content: MODULE_PATH + 'edit/' + obj.data['id']
+            });
+        }
 
-    //修改
-    window.edit = function (obj) {
-      layer.open({
-        type: 2,
-        title: '修改',
-        shade: 0.1,
-        area: ['500px', '500px'],
-        content: MODULE_PATH + 'edit/' + obj.data['id']
-      });
-    }
+        window.read = function (obj) {
+            let loading = layer.load();
+            $.ajax({
+                url: MODULE_PATH + "read?auditId=" + obj.data['id'],
+                dataType: 'json',
+                type: 'POST',
+                success: function (result) {
+                    layer.close(loading);
+                    if (result.code == 200) {
+                        table.reload('apply-table');
+                    } else {
+                        layer.msg(result.msg, {icon: 2, time: 1000});
+                    }
+                }
+            })
+        }
 
-    window.refresh = function () {
-      table.reload('apply-table');
-    }
-  })
+
+        window.refresh = function () {
+            table.reload('apply-table');
+        }
+    })
 </script>
 </html>

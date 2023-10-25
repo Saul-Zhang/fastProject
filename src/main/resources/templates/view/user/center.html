@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('基本资料')"/>
+        <style type="text/css">
+            .layui-input {
+                height: 44px !important;
+                line-height: 44px !important;
+                padding-left: 15px !important;
+                border-radius: 3px !important;
+                width: 500px;
+            }
+        </style>
+</head>
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body" style="height: 500px">
+        <form class="layui-form" style="text-align: center" action="" th:object="${user}">
+            <div class="main-container">
+                <div class="layui-form-item layui-hide">
+                    <label class="layui-form-label">编号</label>
+                    <div class="layui-input-block">
+                        <input type="text" th:value="*{id}" name="id" lay-verify="title"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户账号</label>
+                    <div class="layui-input-inline">
+                        <input th:value="*{username}" type="text" name="username"
+                               lay-verify="idCard" autocomplete="off" placeholder="用户账号" disabled
+                               class="layui-input">
+                    </div>
+
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">姓名</label>
+                    <div class="layui-input-inline">
+                        <input th:value="*{realName}" type="text" name="realName"
+                               lay-verify="realName" autocomplete="off" placeholder="姓名"
+                               class="layui-input">
+                    </div>
+
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">电话</label>
+                    <div class="layui-input-inline">
+                        <input th:value="*{phone}" type="text" name="phone" lay-verify="phone"
+                               autocomplete="off" placeholder="电话" class="layui-input">
+                    </div>
+
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">邮箱</label>
+                    <div class="layui-input-inline">
+                        <input th:value="*{email}" type="text" name="email" lay-verify="email"
+                               autocomplete="off" placeholder="邮箱" class="layui-input">
+                    </div>
+
+                </div>
+                <!--                <div class="layui-form-item">-->
+                <!--                    <label class="layui-form-label">岗位</label>-->
+                <!--                    <div class="layui-input-inline">-->
+                <!--                        <select id="positionId" name="posId" th:field="*{posId}">-->
+                <!--                            <option th:each="list : ${sysPositionsList}" th:text="${list.postName}" th:value="${list.id}"></option>-->
+                <!--                        </select>-->
+                <!--                    </div>-->
+                <!--                </div>-->
+                <div class="layui-form-item">
+                    <label class="layui-form-label">角色</label>
+                    <div class="layui-input-inline">
+                        <input th:each="sysRole:${roleVos}" th:value="${sysRole.id}"
+                               th:title="${sysRole.name}" th:checked="${sysRole.checked}"
+                               type="checkbox" lay-skin="primary" disabled>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!--            <div class="bottom" style="text-align: center">-->
+            <!--                <div class="">-->
+            <!--                    <button type="submit" class="layui-btn layui-btn-normal layui-btn-normal" lay-submit=""-->
+            <!--                            lay-filter="user-update">-->
+            <!--                        <i class="layui-icon layui-icon-ok"></i>-->
+            <!--                        提交修改-->
+            <!--                    </button>-->
+            <!--                    <button type="reset" class="layui-btn layui-btn-primary layui-btn-normal">-->
+            <!--                        <i class="layui-icon layui-icon-refresh"></i>-->
+            <!--                        提交修改-->
+            <!--                    </button>-->
+            <!--                </div>-->
+            <!--            </div>-->
+
+            <div class="bottom" style="text-align: center">
+                <div class="button-container">
+                    <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm"
+                            lay-submit=""
+                            lay-filter="user-update">
+                        <i class="layui-icon layui-icon-ok"></i>
+                        提交修改
+                    </button>
+                    <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        取消
+                    </button>
+                    <button type="button" class="pear-btn pear-btn-warming pear-btn-sm"
+                            id="editPwd">
+                        <i class="layui-icon layui-icon-password"></i>
+                        修改密码
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script>
+    layui.use(['form', 'jquery','dtree'], function () {
+        let form = layui.form;
+        let $ = layui.jquery;
+        let MODULE_PATH = rootPath+"/UserController";
+        let username='[[${user.username}]]';
+
+
+        form.on('submit(user-update)', function (data) {
+<!--            let roleIds = "";-->
+<!--            $('input[type=checkbox]:checked').each(function () {-->
+<!--                roleIds += $(this).val() + ",";-->
+<!--            });-->
+<!--            roleIds = roleIds.substr(0, roleIds.length - 1);-->
+<!--            data.field.roleIds = roleIds;-->
+
+            $.ajax({
+                url: MODULE_PATH+'/current/edit',
+                data: data.field,
+                dataType: 'json',
+                contentType: 'application/x-www-form-urlencoded',
+                type: 'post',
+                success: function (result) {
+                    if (result.code==200) {
+                        layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                            parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页
+                            parent.layui.table.reload("user-table");
+                        });
+                    } else {
+                        layer.msg(result.msg, {icon: 2, time: 1000});
+                    }
+                }
+            })
+            return false;
+        });
+            //修改密码
+     $("#editPwd").click(function(){
+     layer.open({
+        type: 2,
+        title: '修改密码',
+        shade: 0.1,
+        area: ['500px', '500px'],
+        content: MODULE_PATH + '/current/editPwd-view'
+      });
+    });
+
+    })
+</script>
+</body>
+</html>

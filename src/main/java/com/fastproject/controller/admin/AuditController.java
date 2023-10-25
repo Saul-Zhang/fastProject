@@ -5,17 +5,13 @@ import cn.dev33.satoken.annotation.SaMode;
 import com.fastproject.common.annotation.Log;
 import com.fastproject.model.request.query.AuditQuery;
 import com.fastproject.model.response.AjaxResult;
-import com.fastproject.model.response.ApplyProgressResponse;
+import com.fastproject.model.response.AuditNoticeResponse;
 import com.fastproject.model.response.PageResponse;
 import com.fastproject.service.AuditService;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author fastproject
@@ -47,10 +43,16 @@ public class AuditController {
     return PageResponse.page(auditService.list(query));
   }
 
-  @GetMapping("/pendingCount")
+  @GetMapping("/auditNotice")
   @ResponseBody
-  public AjaxResult getPendingCount() {
-    return auditService.getPendingCount();
+  public AuditNoticeResponse getAuditNotice() {
+    return auditService.getAuditNotice();
+  }
+  @PostMapping("/read")
+  @ResponseBody
+  public AjaxResult read(Long auditId){
+    auditService.read(auditId);
+    return AjaxResult.success();
   }
 
   @GetMapping("/detail-view/{auditId}")

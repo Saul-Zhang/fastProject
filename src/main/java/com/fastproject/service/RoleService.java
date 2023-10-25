@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -96,6 +97,18 @@ public class RoleService {
     return roleMapper.selectList(new LambdaQueryWrapperX<Role>()
             .inIfPresent(Role::getId, roleIds)).stream()
         .anyMatch(role -> RoleCode.ADMIN.equals(role.getCode()));
+  }
+
+  public boolean isOnlyBusinessSales(Long userId) {
+    List<Long> roleIds = roleUserMapper.selectList(new LambdaQueryWrapperX<RelationRoleUser>()
+            .eq(RelationRoleUser::getUserId, userId)).stream()
+        .map(RelationRoleUser::getRoleId).collect(Collectors.toList());
+    if (!CollectionUtils.isEmpty(roleIds) && roleIds.size() > 1) {
+        return false;
+    }
+    return roleMapper.selectList(new LambdaQueryWrapperX<Role>()
+            .inIfPresent(Role::getId, roleIds)).stream()
+        .allMatch(role -> RoleCode.BUSINESS_SALES.equals(role.getCode()));
   }
   /**
    * 根据用户id查询角色

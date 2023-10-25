@@ -4,6 +4,7 @@ import com.fastproject.common.annotation.Dict;
 import com.fastproject.model.DefinedField;
 import com.fastproject.model.FieldType;
 import com.fastproject.model.Template;
+import io.swagger.models.auth.In;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +28,8 @@ public class TemplateResponse extends DefinedField {
   private Boolean required;
   private String dictTypeCode;
 
+  private Integer orderNum;
+
   public static TemplateResponse fromTemplate(Template template) {
     return TemplateResponse.builder()
         .id(String.valueOf(template.getId()))
@@ -35,6 +38,7 @@ public class TemplateResponse extends DefinedField {
         .type(template.getType())
         .required(template.getRequired())
         .dictTypeCode(template.getDictTypeCode())
+        .orderNum(template.getOrderNum())
         .build();
   }
 }

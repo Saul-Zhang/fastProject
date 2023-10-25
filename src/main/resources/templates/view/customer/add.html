@@ -49,8 +49,8 @@
             labelClass = "layui-form-label"
           }
           var label = `<label class="${labelClass}">${obj.fieldName}</label>`;
-          var input = ` <div class="layui-input-block"><input type="text" name="${obj.id}" class="layui-input" ${inputVerify}></div>`
-          if (obj.type === 'TEXTAREA'){
+          var input = ` <div class="layui-input-block"><input type="text" id = "${obj.id}" lay-verify="${obj.id}" name="${obj.id}" class="layui-input" ${inputVerify}></div>`
+          if (obj.type === 'TEXTAREA') {
             input = ` <div class="layui-input-block"><textarea name="${obj.id}" class="layui-input" ${inputVerify}></textarea></div>`
           }
 
@@ -70,8 +70,44 @@
           $(`#item-${index}`).append(input)
         });
         form.render();
+        $(function () {
+          //输入框的值改变时触发
+          $("#1672263140513890306").on("input", function (e) {
+            //获取input输入的值
+            console.log(e.delegateTarget.value);
+            $.ajax({
+              url: MODULE_PATH + '/checkName',
+              data: {
+                "customerName": e.delegateTarget.value
+              },
+              dataType: 'json',
+              type: 'GET',
+              success: function (result) {
+                if (result.code !== 200) {
+                  layer.msg(result.msg, {icon: 2, time: 2000});
+                }
+              }
+            });
+
+          })
+        })
       }
     })
+
+    // 自定义验证规则
+    form.verify({
+      '1672263140513890306': function(value, elem) {
+        console.log(value); // 当前进入验证的表单项的值
+        console.log(elem); // 当前进入验证的表单项的 DOM 元素
+        // 校验客户名称是否已经存在
+        var msg = "";
+
+        if (msg !== "") {
+          console.log(msg);
+            return msg;
+        }
+      }
+    });
 
     function addAjax(data) {
       let loading = layer.load();
@@ -105,7 +141,7 @@
 
       layer.prompt({
         formType: 2,
-        title: '请添加说明',
+        title: '请添加新增客户说明',
         // area: ['800px', '350px'] //自定义文本域宽高
       }, function (value, index, elem) {
         if (value.trim().length === 0) {

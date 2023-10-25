@@ -29,16 +29,7 @@ public interface UserMapper extends BaseMapper<User> {
 
   List<UserResponse> getAll(@Param("e") UserQuery query);
 
-  UserResponse selectById(Long id);
+  UserResponse selectUserResponseById(Long id);
 
-//  @Select("SELECT u.id,\n"
-//      + "       u.username,\n"
-//      + "       u.real_name AS realName,\n"
-//      + "       r.id AS roleId,\n"
-//      + "       r.code AS roleCode,\n"
-//      + "       u.employee_id AS employeeId\n"
-//      + "FROM def_user u\n"
-//      + "         LEFT JOIN rel_role_user ur ON u.id = ur.user_id\n"
-//      + "         LEFT JOIN def_role r ON ur.role_id = r.id")
   List<UserRoleVo> getAllUserRole();
 }

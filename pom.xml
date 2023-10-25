@@ -135,12 +135,12 @@
 <!--    </dependency>-->
 
 
-    <!-- 热部署 -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-devtools</artifactId>
-      <optional>false</optional>
-    </dependency>
+<!--    &lt;!&ndash; 热部署 &ndash;&gt;-->
+<!--    <dependency>-->
+<!--      <groupId>org.springframework.boot</groupId>-->
+<!--      <artifactId>spring-boot-devtools</artifactId>-->
+<!--      <optional>false</optional>-->
+<!--    </dependency>-->
 
     <!-- Hutool是一个Java工具包 http://hutool.cn/ -->
     <dependency>
@@ -281,5 +281,32 @@
 
     </plugins>
   </build>
+
+  <!-- 配置阿里云仓库 -->
+  <repositories>
+    <repository>
+      <id>aliyun-repos</id>
+      <url>https://maven.aliyun.com/repository/public</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>aliyun-repos</id>
+      <url>https://maven.aliyun.com/repository/public</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
 
 </project>

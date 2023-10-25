@@ -16,20 +16,31 @@
         <!-- 顶 部 左 侧 功 能 -->
         <ul class="layui-nav layui-layout-left">
             <li class="collapse layui-nav-item"><a href="#" class="layui-icon layui-icon-shrink-right"></a></li>
-            <li class="refresh layui-nav-item"><a href="#" class="layui-icon layui-icon-refresh-1" title="刷新页面" loading=600></a></li>
+            <li class="refresh layui-nav-item"><a href="#" class="layui-icon layui-icon-refresh-1" title="刷新页面"
+                                                  loading=600></a></li>
         </ul>
         <!-- 顶 部 右 侧 菜 单 -->
         <div id="control" class="layui-layout-control"></div>
         <ul class="layui-nav layui-layout-right">
-            <li class="layui-nav-item layui-hide-xs"><a href="#" class="fullScreen layui-icon layui-icon-screen-full"></a></li>
+            <li class="layui-nav-item layui-hide-xs"><a href="#"
+                                                        class="fullScreen layui-icon layui-icon-screen-full"></a></li>
             <li class="layui-nav-item layui-hide-xs">
-                <!--<a th:href="@{/SysNoticeController/viewUser}" class="layui-icon layui-icon-notice">
-                    <span class="layui-badge" th:text="${session.notices.size()}"></span>
-                </a>-->
 
-                <a id="menu-msg" class="layui-icon layui-icon-notice" menu-type="1" >
-                    <span id="notice-badge" class="layui-badge" >0</span>
+                <!--                <a id="menu-msg" class="layui-icon layui-icon-notice" menu-type="1" >-->
+                <!--                    <span id="notice-badge" class="layui-badge" >0</span>-->
+                <!--                </a>-->
+
+                <a class="layui-icon layui-icon-notice" menu-type="1">
+                    <span id="notice-badge" class="layui-badge">0</span>
                 </a>
+                <dl class="layui-nav-child">
+                    <dd id="dd1"><a href="javascript:void(0);" user-menu-url="/AuditController/view"
+                                    user-menu-id="832576319278682113" user-menu-title="我审批的" id="applyNotice">收到 1
+                        条审批申请</a></dd>
+                    <dd id="dd2"><a href="javascript:void(0);" user-menu-url="/AuditController/apply-view"
+                                    user-menu-id="832576319278682114" user-menu-title="我发起的" id="rejectNotice">有 1
+                        条申请被驳回</a></dd>
+                </dl>
 
             </li>
             <li class="layui-nav-item">
@@ -40,7 +51,8 @@
                 </a>
                 <!-- 功 能 菜 单 -->
                 <dl class="layui-nav-child">
-<!--                    <dd><a user-menu-url="/system/user/center" user-menu-id="5555" user-menu-title="基本资料">基本资料</a></dd>-->
+                    <dd><a href="javascript:void(0);" user-menu-url="/UserController/center-view" user-menu-id="5555"
+                           user-menu-title="个人资料">个人资料</a></dd>
                     <dd><a href="javascript:void(0);" class="logout">注销登录</a></dd>
                 </dl>
             </li>
@@ -73,59 +85,77 @@
 <th:block th:include="include :: footer"/>
 <script th:src="@{/static/admin/js/headImg.js}"></script>
 <script th:inline="javascript">
-    layui.use(['admin','jquery','layer','popup'], function () {
+    layui.use(['admin', 'jquery', 'layer', 'popup'], function () {
         let admin = layui.admin;
         let $ = layui.jquery;
         let layer = layui.layer;
         let popup = layui.popup;
         admin.render();
 
-        $('#headImg').attr("src",makeHeadImgByUserName([[${session.sessionUserName}]]));
+        $('#headImg').attr("src", makeHeadImgByUserName([[${session.sessionUserName}]]));
 
-         $("#menu-msg").click(function(){
-             if ( $("#notice-badge").text() != '0'){
+        $("#menu-msg").click(function () {
+            if ($("#notice-badge").text() != '0') {
                 // layui.tab.addTabOnlyByElem("content",{id:$(this).attr("menu-id"),title:"公告展示",url:$(this).attr("menu-url"),close:"允许关闭"})
-                layui.tab.addTabOnlyByElem("content",{id:"832576319278682113",title:"我审批的",url:"/AuditController/view",close:"允许关闭"})
-             }else {
-                 layer.msg("暂无新消息");
-             }
-        })
-        
-        // 注销实现
-        admin.logout(function(){
-        	 let loading = layer.load();
-        	 $.ajax({
-     			url: rootPath+'/admin/Loginout',
-     			dataType: 'json',
-     			type: 'get',
-     			success: function(result) {
-     				if (result.code==200) {
-     					popup.success(result.msg, function() {
-     						location.href = rootPath+"/";
-                        });
-                        return true;
-     				}
-     			}
-     		})
-     		 return true;
+                layui.tab.addTabOnlyByElem("content", {
+                    id: "832576319278682113",
+                    title: "我审批的",
+                    url: "/AuditController/view",
+                    close: "允许关闭"
+                })
+            } else {
+                layer.msg("暂无新消息");
+            }
         })
 
-        let MODULE_PATH = rootPath+"/AuditController";
-        function updateNotificationBadge() {
+        // 注销实现
+        admin.logout(function () {
+            let loading = layer.load();
             $.ajax({
-                url: MODULE_PATH + "/pendingCount",
+                url: rootPath + '/admin/Loginout',
                 dataType: 'json',
                 type: 'get',
                 success: function (result) {
                     if (result.code == 200) {
-                        $("#notice-badge").text(result.msg);
+                        popup.success(result.msg, function () {
+                            location.href = rootPath + "/";
+                        });
+                        return true;
                     }
+                }
+            })
+            return true;
+        })
+
+        let MODULE_PATH = rootPath + "/AuditController";
+
+        function updateNotificationBadge() {
+            $.ajax({
+                url: MODULE_PATH + "/auditNotice",
+                dataType: 'json',
+                type: 'get',
+                success: function (result) {
+                    $("#notice-badge").text(result.totalCount);
+                    if (result.pendingCount > 0) {
+                        $("#dd1").show()
+                        $("#applyNotice").text("有 " + result.pendingCount + " 条审批申请待处理");
+                    } else {
+                        $("#dd1").hide()
+                    }
+                    if (result.rejectCount > 0) {
+                        $("#dd2").show()
+                        $("#rejectNotice").text("有 " + result.rejectCount + " 条申请被驳回");
+                    } else {
+                        $("#dd2").hide()
+                    }
+
+
                 }
             })
         }
 
-        // Set the update interval (e.g., 1 minute)
-        var updateInterval = 10000 * 5; // 5 minute in milliseconds
+        // Set the update interval
+        var updateInterval = 1000 * 15; // 15s
 
         // Update the content initially
         updateNotificationBadge();

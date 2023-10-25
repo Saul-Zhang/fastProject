@@ -30,4 +30,6 @@ public class Audit extends DefinedField {
   private AuditStatus status;
 
   private String description;
+
+  private Boolean unread;
 }

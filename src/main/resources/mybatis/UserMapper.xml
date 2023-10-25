@@ -62,7 +62,7 @@
       </if>
     </where>
   </select>
-  <select id="selectById" resultType="UserResponse">
+  <select id="selectUserResponseById" resultType="UserResponse">
     select * from def_user where id=#{id}
   </select>
 

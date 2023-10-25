@@ -23,6 +23,7 @@ public class DictDataService {
 
   private final DictDataMapper dictDataMapper;
   private final DictTypeMapper dictTypeMapper;
+  private final DictService dictService;
 
   /**
    * 分页查询
@@ -40,6 +41,7 @@ public class DictDataService {
    */
   public AjaxResult add(DictData record) {
     insert(record);
+    dictService.clear();
     return AjaxResult.success();
   }
 
@@ -58,12 +60,14 @@ public class DictDataService {
       return AjaxResult.error("字典编码不能为空");
     }
     dictDataMapper.updateById(record);
+    dictService.clear();
     return AjaxResult.success();
   }
 
 
   public AjaxResult deleteByIds(List<Long> ids) {
     dictDataMapper.deleteBatchIds(ids);
+    dictService.clear();
     return AjaxResult.success();
   }
 
@@ -72,6 +76,7 @@ public class DictDataService {
     record.setStatus(status);
     record.setId(id);
     dictDataMapper.updateById(record);
+    dictService.clear();
     return AjaxResult.success();
   }
 

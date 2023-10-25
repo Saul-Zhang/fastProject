@@ -77,6 +77,15 @@ public class CustomerController {
     return customerService.applyAuditAddCustomer(map);
   }
 
+  @GetMapping("/checkName")
+  @ResponseBody
+  public AjaxResult checkName(String customerName, String customerId) {
+    if(!customerService.checkName(customerName, customerId)){
+        return AjaxResult.error("客户名称已存在");
+    }
+    return AjaxResult.success();
+  }
+
 
   @GetMapping("/edit/{customerId}")
   @SaCheckPermission("system:customer:edit")
