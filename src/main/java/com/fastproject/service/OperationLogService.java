@@ -23,15 +23,15 @@ public class OperationLogService {
   private final OperationLogMapper operationLogMapper;
 
 
-  public PageInfo<OperationLogResponse> list(LogQuery query) {
+  public PageInfo<OperationLog> list(LogQuery query) {
 
     PageHelper.startPage(query.getPage(), query.getLimit());
-    List<OperationLogResponse> operationLogs = operationLogMapper.selectList(
+    List<OperationLog> operationLogs = operationLogMapper.selectList(
         new LambdaQueryWrapperX<OperationLog>()
             .likeIfPresent(OperationLog::getTitle, query.getTitle())
             .eqIfPresent(OperationLog::getOperator, query.getOperator())
-            .orderByDesc(OperationLog::getCreateAt)).stream().map(OperationLogResponse::fromOperationLog).collect(
-        Collectors.toList());
+            .orderByDesc(OperationLog::getCreateAt));
+
     return new PageInfo<>(operationLogs);
   }
 

@@ -28,4 +28,6 @@ public class CustomerEditResponse {
   private Boolean required;
 
   private FieldType type;
+
+  private Integer orderNum;
 }

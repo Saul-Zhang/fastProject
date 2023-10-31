@@ -3,9 +3,12 @@ package com.fastproject.controller.admin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.fastproject.model.OperationLog;
 import com.fastproject.model.request.query.LogQuery;
+import com.fastproject.model.response.OperationLogResponse;
 import com.fastproject.model.response.PageResponse;
 import com.fastproject.service.OperationLogService;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -33,7 +36,10 @@ public class LogController {
 	@SaCheckPermission("system:log:list")
 	@ResponseBody
 	public PageResponse list(LogQuery query){
-    return PageResponse.page(operationLogService.list(query));
+        PageInfo<OperationLog> pageInfo = operationLogService.list(query);
+        return PageResponse.page(pageInfo.getList().stream()
+            .map(OperationLogResponse::fromOperationLog).collect(
+                Collectors.toList()) ,pageInfo.getTotal());
 	}
 
 }

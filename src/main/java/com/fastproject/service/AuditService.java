@@ -1,25 +1,33 @@
 package com.fastproject.service;
 
+import static com.fastproject.model.response.AuditResponse.fromAudit;
+
 import cn.hutool.core.collection.CollectionUtil;
 import com.fastproject.common.mybatis.LambdaQueryWrapperX;
 import com.fastproject.mapper.AuditMapper;
 import com.fastproject.mapper.AuditUserMapper;
-import com.fastproject.model.*;
+import com.fastproject.model.Audit;
+import com.fastproject.model.AuditStatus;
+import com.fastproject.model.AuditType;
+import com.fastproject.model.FieldType;
+import com.fastproject.model.RelationAuditUser;
+import com.fastproject.model.Template;
 import com.fastproject.model.request.query.AuditQuery;
-import com.fastproject.model.response.*;
+import com.fastproject.model.response.AjaxResult;
+import com.fastproject.model.response.ApplyProgressResponse;
+import com.fastproject.model.response.AuditDetailResponse;
+import com.fastproject.model.response.AuditNoticeResponse;
+import com.fastproject.model.response.AuditResponse;
 import com.fastproject.satoken.SaTokenUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static com.fastproject.model.response.AuditResponse.fromAudit;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author fastProject
@@ -54,12 +62,16 @@ public class AuditService {
             return new PageInfo<>();
         }
         PageHelper.startPage(query.getPage(), query.getLimit());
-        List<AuditResponse> audits = auditMapper.selectList(
+        List<Audit> audits = auditMapper.selectList(
                         new LambdaQueryWrapperX<Audit>().inIfPresent(Audit::getId, auditIds)
                                 .eqIfPresent(Audit::getStatus, query.getStatus())
-                                .eqIfPresent(Audit::getType, query.getType()).orderByDesc(Audit::getCreateAt))
-                .stream().map(t -> fromAudit(t, auditDoneMap)).collect(Collectors.toList());
-        return new PageInfo<>(audits);
+                                .eqIfPresent(Audit::getType, query.getType()).orderByDesc(Audit::getCreateAt));
+        PageInfo<Audit> auditPageInfo = new PageInfo<>(audits);
+        List<AuditResponse> collect = auditPageInfo.getList()
+            .stream().map(t -> fromAudit(t, auditDoneMap)).collect(Collectors.toList());
+        PageInfo<AuditResponse> pageInfo = new PageInfo<>(collect);
+        pageInfo.setTotal(auditPageInfo.getTotal());
+        return pageInfo;
     }
 
     public List<AuditDetailResponse> detail(Long auditId) {
@@ -135,13 +147,13 @@ public class AuditService {
         return AjaxResult.success();
     }
 
-    public PageInfo<AuditResponse> getApplyList(AuditQuery query) {
+    public PageInfo<Audit> getApplyList(AuditQuery query) {
         PageHelper.startPage(query.getPage(), query.getLimit());
-        List<AuditResponse> auditResponses = auditMapper.selectList(
+        List<Audit> auditResponses = auditMapper.selectList(
                         new LambdaQueryWrapperX<Audit>().eq(Audit::getCreateBy, SaTokenUtil.getUserId())
                                 .eqIfPresent(Audit::getStatus, query.getStatus())
                                 .eqIfPresent(Audit::getType, query.getType()).orderByDesc(Audit::getCreateAt))
-                .stream().map(AuditResponse::fromAudit).collect(Collectors.toList());
+                ;
         return new PageInfo<>(auditResponses);
     }
 

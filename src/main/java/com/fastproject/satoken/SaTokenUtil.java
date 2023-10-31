@@ -48,6 +48,15 @@ public class SaTokenUtil {
 		return StpUtil.getLoginIdAsLong();
 	}
 
+	public static Long getUserIdOrAdmin() {
+		try {
+			return StpUtil.getLoginIdAsLong();
+		}catch (Exception e) {
+			return 1L;
+		}
+	}
+
+
 	/**
 	 * 获取登录用户name
 	 */

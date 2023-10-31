@@ -3,11 +3,15 @@ package com.fastproject.controller.admin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaMode;
 import com.fastproject.common.annotation.Log;
+import com.fastproject.model.Audit;
 import com.fastproject.model.request.query.AuditQuery;
 import com.fastproject.model.response.AjaxResult;
 import com.fastproject.model.response.AuditNoticeResponse;
+import com.fastproject.model.response.AuditResponse;
 import com.fastproject.model.response.PageResponse;
 import com.fastproject.service.AuditService;
+import com.github.pagehelper.PageInfo;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -96,7 +100,9 @@ public class AuditController {
   @SaCheckPermission("system:apply:view")
   @ResponseBody
   public PageResponse getApplyList(AuditQuery query) {
-    return PageResponse.page(auditService.getApplyList(query));
+    PageInfo<Audit> auditPageInfo = auditService.getApplyList(query);
+    return PageResponse.page(auditPageInfo.getList().stream().map(AuditResponse::fromAudit).collect(
+        Collectors.toList()),auditPageInfo.getTotal());
   }
 
   @GetMapping("/apply/progress-view/{auditId}")

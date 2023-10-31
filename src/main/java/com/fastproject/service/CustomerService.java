@@ -11,6 +11,7 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.fastproject.common.mybatis.LambdaQueryWrapperX;
+import com.fastproject.common.mybatis.QueryWrapperX;
 import com.fastproject.mapper.AuditMapper;
 import com.fastproject.mapper.AuditUserMapper;
 import com.fastproject.mapper.CustomerMapper;
@@ -40,6 +41,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -139,14 +141,15 @@ public class CustomerService {
                     // 求交集
                     ids.retainAll(customerIds);
                 }
+                if(CollectionUtils.isEmpty(ids)){
+                    return null;
+                }
             }
         }
 
-        if(CollectionUtils.isEmpty(ids)){
-            return null;
-        }
+
         List<Customer> customers = customerMapper.selectList(
-            new LambdaQueryWrapperX<Customer>().in(Customer::getCustomerId, ids));
+            new LambdaQueryWrapperX<Customer>().inIfPresent(Customer::getCustomerId, ids));
         // 将数据转化为第二份数据的格式
         return customers.stream()
             .collect(
@@ -297,6 +300,7 @@ public class CustomerService {
                     .value(customer.getValue())
                     .required(template.getRequired())
                     .type(template.getType())
+                    .orderNum(template.getOrderNum())
                     .build();
                 if (FieldType.SELECT.equals(template.getType())) {
                     // 处理销售商务
@@ -314,7 +318,8 @@ public class CustomerService {
                 return customerEditResponse;
             })
             .filter(customer -> customer.getFieldName() != null)
-            .collect(Collectors.toList());
+            .collect(Collectors.toList()).stream().sorted(Comparator.comparing(CustomerEditResponse::getOrderNum)).collect(
+                Collectors.toList());
 
     }
 
@@ -525,13 +530,13 @@ public class CustomerService {
         IoUtil.close(excelOut);
     }
 
-    private List<Map<String, String>> exportList(List<Long> ids, Map<String, String> map) {
+    public List<Map<String, String>> exportList(List<Long> ids, Map<String, String> map) {
 
         Map<String, Template> templateMap = templateService.getTemplateList().stream()
             .collect(Collectors.toMap(template -> String.valueOf(template.getId()), t -> t));
         if (CollectionUtils.isEmpty(ids)) {
             ids = null;
-            if (!roleService.isAdmin(SaTokenUtil.getUserId())) {
+            if (!roleService.isAdmin(SaTokenUtil.getUserIdOrAdmin())) {
                 ids = customerMapper.selectList(new LambdaQueryWrapperX<Customer>()
                         .eq(Customer::getFieldId, "1672265362920390658")
                         .eq(Customer::getValue, SaTokenUtil.getUserId())
@@ -566,15 +571,24 @@ public class CustomerService {
                         // 求交集
                         ids.retainAll(customerIds);
                     }
+                    if(CollectionUtils.isEmpty(ids)){
+                        return null;
+                    }
                 }
             }
         }
-        List<Customer> customers = customerMapper.selectList(
-            new LambdaQueryWrapperX<Customer>().inIfPresent(Customer::getCustomerId, ids));
+//        List<Customer> customers = customerMapper.selectList(
+//            new LambdaQueryWrapperX<Customer>().inIfPresent(Customer::getCustomerId, ids));
+        List<Customer> customers;
+        if (CollectionUtils.isEmpty(ids)) {
+            customers = customerMapper.selectOrderByOrderNum();
+        }else {
+            customers = customerMapper.selectByIdsOrderByOrderNum(ids);
+        }
         // 将数据转化为第二份数据的格式
         return customers.stream()
             .collect(
-                Collectors.groupingBy(Customer::getCustomerId, TreeMap::new, Collectors.toList()))
+                Collectors.groupingBy(Customer::getCustomerId, LinkedHashMap::new, Collectors.toList()))
             .values().stream()
             .map(customerGroup -> {
                 Map<String, String> customerData = new LinkedHashMap<>();
